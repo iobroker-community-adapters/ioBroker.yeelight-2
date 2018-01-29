@@ -1,0 +1,43 @@
+{
+    "common": {
+        "name": "yeelight",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "Adapter for Yeelight (ceiling, color bulb)",
+                "ru": "Драйвер для Yeelight (Люстра, цветная лампочка)"
+            }            
+        },
+		"title": "Yeelight adapter",
+        "titleLang": {
+            "en": "Yeelight adapter",           
+            "ru": "Драйвер для Yeelight"            
+        },
+        "desc": {
+            "en": "ioBroker Yeelight Adapter",            
+            "ru": "ioBroker драйвер для Yeelight"            
+        },
+        "authors": [
+            "cahek2202 <cahek2202@mail.ru>"
+        ],
+        "docs": {
+            "en": "docs/en/admin.md",
+            "ru": "docs/ru/admin.md"            
+        },
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "icon": "yeelight.png",
+        "materialize": false,
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.template/master/admin/template.png",
+        "keywords": ["xiaomi", "yeelight", "mihome"],
+        "readme": "https://github.com/ioBroker/ioBroker.template/blob/master/README.md",
+        "loglevel": "info",
+        "type": "lighting"        
+    },
+    "native": {
+    },
+    "objects": [
+
+    ]
+}

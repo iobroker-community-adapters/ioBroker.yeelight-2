@@ -1,0 +1,41 @@
+{
+  "name": "iobroker.yeelight",
+  "version": "0.0.1",
+  "description": "ioBroker Yeelight Adapter",
+  "author": {
+    "name": "cahek2202",
+    "email": "cahek2202@mail.ru"
+  },
+  "contributors": [
+    {
+      "name": "cahek2202",
+      "email": "cahek2202@mail.ru"
+    }
+  ],
+  "homepage": "https://github.com/ioBroker/ioBroker.template",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "yeelight",
+    "xiaomi",
+    "mihome"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.template"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.template/issues"
+  },
+  "readmeFilename": "README.md"
+}

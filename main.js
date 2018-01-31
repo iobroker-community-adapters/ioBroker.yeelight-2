@@ -14,9 +14,11 @@ var yeelight = require(__dirname + '/lib/yeelight');
 var adapter = new utils.Adapter('yeelight');
 var objects = {};
 
+
 adapter.on('unload', function (callback) {
     try {
         adapter.log.info('cleaned everything up...');
+
         yeelight.stopDiscovering();
     } catch (e) {
         yeelight.stopDiscovering();
@@ -24,17 +26,30 @@ adapter.on('unload', function (callback) {
 });
 
 adapter.on('stateChange', function (id, state) {
+    adapter.log.info(JSON.stringify(id));
+    adapter.log.info(JSON.stringify(state));
     var changeState = id.split('.');
-    if (changeState[4] == 'IPAdress'){
+    var sid = adapter.namespace + '.' + changeState[2];
+    adapter.getState(sid + '.info.IPAdress', function (err, Ip) {
+        if (err) {
+            adapter.log.error(err);
+        } else {
+            adapter.log.warn(JSON.stringify(Ip));
+            var host = Ip.val;
+            adapter.log.warn(host);
+            if (changeState[3] == 'info') {
+                if (changeState[4] == 'IPAdress') {
+                    uploadState(sid, host, 'all');
+                }
+            } else {
+                if (!state.ack) {
+                    uploadState(sid, host, changeState[3], state.val);
+                }
+            }
+        }
 
-        uploadState(adapter.namespace + '.' + changeState[2], 'all');
-    }
-    //adapter.log.info(JSON.stringify(changeState));
-    //adapter.log.info('stateChange ' + id);
-    // you can use the ack flag to detect if it is status (true) or command (false)
-    if (state && !state.ack) {
-        adapter.log.info('ack is not set!');
-    }
+
+    })
 });
 
 adapter.on('ready', function () {
@@ -265,20 +280,27 @@ function createDevice() {
         } ;
     });
 };
-function uploadState(id, parameter) {
+/*function firstUploadState(id) {
+
+    adapter.getState(id + '.info.IPAdress', function (err, Ip) {
+        if (err) {
+            adapter.log.error(err);
+        } else {
+            adapter.log.warn(Ip.val);
+            var host = Ip.val;
+            uploadState(id, host, 'all');
+        }
+    });
+}*/
+function uploadState(id, host, parameter, val) {
     var device = new yeelight;
-    adapter.log.warn(id);
-    adapter.log.warn(getState(id + '.info.IPAdress').val);
-    device.host = adapter.getState(id + '.info.IPAdress'),
-        device.port = adapter.getState(id + '.info.Port')||55443
-    adapter.log.warn(device.host);
-    adapter.log.warn(device.port);
+    device.host = host;
+    device.port = 55443;
     switch (parameter) {
 
         case 'all':
             device.sendCommand('get_prop', ['power', 'bright', 'ct', 'active_mode', 'rgb'], function (err, result) {
-                adapter.log.info('Отправка команды выполняется');
-                adapter.log.info(result);
+                //adapter.log.info('Отправка команды выполняется');
                 if (result) {
                     adapter.setState(id + '.info.connect', true, true);
                     for (var i = 0, l = result.length; i < l; i++) {
@@ -301,7 +323,15 @@ function uploadState(id, parameter) {
                                     break;
 
                                 case 3:
-                                    adapter.setState(id + '.moon', result[i], true);
+                                    switch (result [i]) {
+                                        case '0':
+                                            adapter.setState(id + '.moon', false, true);
+                                            break;
+                                        case '1':
+                                            adapter.setState(id + '.moon', true, true);
+                                            break;
+                                    }
+
                                     break;
 
                                 case 4:
@@ -320,23 +350,137 @@ function uploadState(id, parameter) {
             break;
 
         case 'power':
-
+            var powerState;
+            switch (val) {
+                case true:
+                    powerState = 'on';
+                    break;
+                case false:
+                    powerState = 'off';
+                    break;
+            }
+            device.sendCommand('set_power', [powerState, 'smooth', 1000], function (err, result) {
+                if (err) {
+                    adapter.log.error(err)
+                } else {
+                    if (result) {
+                        adapter.log.warn(JSON.stringify(result));
+                        if (result[0] == 'ok') {
+                            adapter.log.warn('Подтверждение');
+                            adapter.setState(id + '.' + parameter, val, true)
+                        }
+                    } else {
+                        if (val == getProp (device.host, parameter)) {
+                            adapter.setState(id + '.' + parameter, val, true);
+                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                    }
+                }
+            })
             break;
 
         case 'dimmer':
-
+            device.sendCommand('set_bright', [val, 'smooth', 1000], function (err, result) {
+                if (err) {
+                    adapter.log.error(err)
+                } else {
+                    if (result) {
+                        adapter.log.debug(JSON.stringify(result));
+                        if (result[0] == 'ok') {
+                            adapter.log.warn('Подтверждение');
+                            adapter.setState(id + '.' + parameter, val, true)
+                        }
+                    } else {
+                        if (val == getProp (device.host, parameter)) {
+                            adapter.setState(id + '.' + parameter, val, true);
+                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                    }
+                }
+            })
             break;
 
         case 'ct':
-
+            device.sendCommand('set_ct_abx', [val, 'smooth', 1000], function (err, result) {
+                if (err) {
+                    adapter.log.error(err)
+                } else {
+                    if (result) {
+                        adapter.log.debug(JSON.stringify(result));
+                        if (result[0] == 'ok') {
+                            adapter.log.warn('Подтверждение');
+                            adapter.setState(id + '.' + parameter, val, true)
+                        }
+                    } else {
+                        if (val == getProp (device.host, parameter)) {
+                            adapter.setState(id + '.' + parameter, val, true);
+                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                    }
+                }
+            })
             break;
 
         case 'moon':
+            switch (val) {
+                case true:
+                    device.sendCommand('set_power', ['on', 'smooth', 1000, 5], function (err, result) {
+                        if (err) {
+                            adapter.log.error(err)
+                        } else {
+                            if (result) {
+                                adapter.log.debug(JSON.stringify(result));
+                                if (result[0] == 'ok') {
+                                    adapter.log.warn('Подтверждение');
+                                    adapter.setState(id + '.' + parameter, val, true);
+                                    adapter.setState(id + '.power', true, true);
+                                }
+                            } else {
+                                if (val == getProp (device.host, parameter)) {
+                                    adapter.setState(id + '.' + parameter, val, true);
+                                } else {adapter.log.warn('Ошибка подтверждения команды')}
+                            }
+                        }
+                    })
+                    break;
+                case false:
+                    device.sendCommand('set_power', ['on', 'smooth', 1000, 1], function (err, result) {
+                        if (err) {
+                            adapter.log.error(err)
+                        } else {
+                            if (result) {
+                                adapter.log.debug(JSON.stringify(result));
+                                if (result[0] == 'ok') {
+                                    adapter.log.warn('Подтверждение');
+                                    adapter.setState(id + '.' + parameter, val, true);
+                                }
+                            } else {
+                                if (val == getProp (device.host, parameter)) {
+                                    adapter.setState(id + '.' + parameter, val, true);
+                                } else {adapter.log.warn('Ошибка подтверждения команды')}
+                            }
+                        }
+                    })
+                    break;
+            }
 
             break;
 
         case 'rgb':
-
+            device.sendCommand('set_rgb', [val, 'smooth', 1000], function (err, result) {
+                if (err) {
+                    adapter.log.error(err)
+                } else {
+                    if (result) {
+                        adapter.log.debug(JSON.stringify(result));
+                        if (result[0] == 'ok') {
+                            adapter.log.warn('Подтверждение');
+                            adapter.setState(id + '.' + parameter, val, true)
+                        }
+                    } else {
+                        if (val == getProp (device.host, parameter)) {
+                            adapter.setState(id + '.' + parameter, val, true);
+                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                    }
+                }
+            })
             break;
 
     }
@@ -345,3 +489,29 @@ function uploadState(id, parameter) {
 /*function stop() {
     yeelight.stopDiscovering();
 }*/
+function getProp(host, parameter) {
+    var device = new yeelight;
+    device.host = host;
+    device.port = 55443;
+    var param;
+    switch (parameter) {
+        case 'dimmer':
+            param = 'bright';
+            break;
+        case 'moon':
+            param = 'active_mode';
+            break;
+        default:
+            param = parameter;
+            break;
+    }
+    device.sendCommand('get_prop', [param], function (err, result) {
+        if (err) {
+            adapter.log.error(err)
+        } else {
+            if (result) {
+                return result[0];
+            }
+        }
+    })
+}

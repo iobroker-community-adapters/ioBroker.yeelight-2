@@ -21,17 +21,16 @@
             "cahek2202 <cahek2202@mail.ru>"
         ],
         "docs": {
-            "en": "docs/en/admin.md",
-            "ru": "docs/ru/admin.md"            
+
         },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
         "icon": "yeelight.png",
         "materialize": false,
         "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.template/master/admin/template.png",
+        "extIcon": "https://github.com/cahek2202/ioBroker.yeelight/admin/yeelight.png",
         "keywords": ["xiaomi", "yeelight", "mihome"],
-        "readme": "https://github.com/ioBroker/ioBroker.template/blob/master/README.md",
+        "readme": "https://github.com/cahek2202/ioBroker.yeelight/README.md",
         "loglevel": "info",
         "type": "lighting"        
     },

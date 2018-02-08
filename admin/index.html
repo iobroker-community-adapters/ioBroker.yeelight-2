@@ -35,7 +35,16 @@ function load(settings, onChange) {
     // ... and the function save has to exist.
     // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
-        
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+			if ($this.attr('type') === 'checkbox') {
+				obj[$this.attr('id')] = $this.prop('checked');
+			} else {
+				obj[$this.attr('id')] = $this.val();
+			}
+        });
+        callback(obj);
     }
     </script>
 

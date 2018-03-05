@@ -28,7 +28,7 @@
         "icon": "yeelight.png",
         "materialize": false,
         "enabled": true,
-        "extIcon": "https://github.com/cahek2202/ioBroker.yeelight/admin/yeelight.png",
+        "extIcon": "https://raw.githubusercontent.com/cahek2202/ioBroker.yeelight/master/admin/yeelight.png",
         "keywords": ["xiaomi", "yeelight", "mihome"],
         "readme": "https://github.com/cahek2202/ioBroker.yeelight/README.md",
         "loglevel": "info",

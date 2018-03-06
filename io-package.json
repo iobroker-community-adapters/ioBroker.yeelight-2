@@ -1,22 +1,41 @@
 {
     "common": {
         "name": "yeelight",
-        "version": "0.0.1",
-        "news": {
-            "0.0.1": {
-                "en": "Adapter for Yeelight (ceiling, color bulb)",
-                "ru": "Драйвер для Yeelight (Люстра, цветная лампочка)"
-            }            
-        },
+        "version": "0.0.2",
+      "news": {
+        "0.0.1": {
+          "en": "initial adapter",
+          "de": "Initiale Version",
+          "ru": "ÐŸÐµÑ€Ð²Ð¾Ð½Ð°Ñ‡Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð°Ð´Ð°Ð¿Ñ‚ÐµÑ€",
+          "pt": "VersÃ£o inicial",
+          "fr": "Version initiale",
+          "nl": "Eerste release"
+        }
+
+      },
 		"title": "Yeelight adapter",
-        "titleLang": {
-            "en": "Yeelight adapter",           
-            "ru": "Драйвер для Yeelight"            
-        },
-        "desc": {
-            "en": "ioBroker Yeelight Adapter",            
-            "ru": "ioBroker драйвер для Yeelight"            
-        },
+      "titleLang": {
+        "en": "Yeelight adapter",
+        "de": "Yeelight Adapter",
+        "ru": "Драйвер для Yeelight",
+        "pt": "Adaptador Yeelight",
+        "nl": "Yeelight-adapter",
+        "fr": "Yeelight adaptateur",
+        "it": "Adattatore Yeelight",
+        "es": "Adaptador Yeelight",
+        "pl": "Adapter światła"
+      },
+      "desc": {
+        "en": "ioBroker Yeelight Adapter",
+        "de": "iobroker Yeelight Adapter",
+        "ru": "ioBroker драйвер для Yeelight",
+        "pt": "iobroker Adaptador Yeelight",
+        "nl": "iobroker Yeelight-adapter",
+        "fr": "iobroker Yeelight adaptateur",
+        "it": "adattatore iobroker Yeelight",
+        "es": "adaptador Yeelight iobroker",
+        "pl": "Adapter iobroker Yeelight"
+      },
         "authors": [
             "cahek2202 <cahek2202@mail.ru>"
         ],
@@ -26,7 +45,7 @@
         "platform": "Javascript/Node.js",
         "mode": "daemon",
         "icon": "yeelight.png",
-        "materialize": false,
+        "materialize": true,
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/cahek2202/ioBroker.yeelight/master/admin/yeelight.png",
         "keywords": ["xiaomi", "yeelight", "mihome"],

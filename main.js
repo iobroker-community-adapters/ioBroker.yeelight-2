@@ -169,7 +169,7 @@ function createDevice() {
 							}	
 						}	
 					} else {
-						adapter.log.warn('Нет ответа от устройства по адресу: ' + YeelState.host + ':' + YeelState.port);
+                        adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
 					}
 				}
 			})
@@ -198,9 +198,9 @@ function uploadState(id, host, parameter, val) {
                     adapter.log.error(err)
                 } else {
                     if (result) {
-                        adapter.log.warn(JSON.stringify(result));
+                        adapter.log.debug(JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            //adapter.log.warn('Подтверждение');
+                            //adapter.log.warn('Message ok');
                             adapter.setState(id + '.' + parameter, val, true);
                             adapter.getState(id + '.color_mode', function(err, state){
                                 if (err) {
@@ -231,7 +231,7 @@ function uploadState(id, host, parameter, val) {
                             if (val) {
                                 adapter.setState(id + '.active_bright', getProp(device.host, parameter));
                             }
-                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                        } else { adapter.log.warn('Error verifying the command')}
                     }
                 }
             })
@@ -251,7 +251,7 @@ function uploadState(id, host, parameter, val) {
                     } else {
                         if (val == getProp (device.host, parameter)) {
                             adapter.setState(id + '.' + parameter, val, true);
-                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                        } else { adapter.log.warn('Error verifying the command')}
                     }
                 }
             })
@@ -271,7 +271,7 @@ function uploadState(id, host, parameter, val) {
                     } else {
                         if (val == getProp (device.host, parameter)) {
                             adapter.setState(id + '.' + parameter, val, true);
-                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                        } else { adapter.log.warn('Error verifying the command')}
                     }
                 }
             })
@@ -297,7 +297,7 @@ function uploadState(id, host, parameter, val) {
                                     adapter.setState(id + '.' + parameter, val, true);
                                     adapter.setState(id + '.power', true, true);
                                     adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                } else {adapter.log.warn('Ошибка подтверждения команды')}
+                                } else { adapter.log.warn('Error verifying the command')}
                             }
                         }
                     })
@@ -318,7 +318,7 @@ function uploadState(id, host, parameter, val) {
                                 if (val == getProp (device.host, parameter)) {
                                     adapter.setState(id + '.' + parameter, val, true);
                                     adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                } else {adapter.log.warn('Ошибка подтверждения команды')}
+                                } else { adapter.log.warn('Error verifying the command')}
                             }
                         }
                     })
@@ -351,7 +351,7 @@ function uploadState(id, host, parameter, val) {
                                 adapter.setState(id + '.active_bright', getProp(device.host, parameter));
                                 break;
                             default:
-                                adapter.log.warn('Ошибка подтверждения команды');
+                                adapter.log.warn('Error verifying the command');
                                 break;
                         }
                     }
@@ -369,7 +369,7 @@ function uploadState(id, host, parameter, val) {
                     } else {
                         if (val == getProp (device.host, parameter)) {
                             adapter.setState(id + '.' + parameter, val, true);
-                        } else {adapter.log.warn('Ошибка подтверждения команды')}
+                        } else { adapter.log.warn('Error verifying the command')}
                     }
                 }
             })
@@ -395,7 +395,7 @@ function uploadState(id, host, parameter, val) {
                                         adapter.setState(id + '.' + parameter, false, true);
                                         break;
                                     default:
-                                        adapter.log.warn('Ошибка подтверждения команды');
+                                        adapter.log.warn('Error verifying the command');
                                         break;
                                 }
                             }
@@ -421,7 +421,7 @@ function uploadState(id, host, parameter, val) {
                                         adapter.setState(id + '.' + parameter, false, true);
                                         break;
                                     default:
-                                        adapter.log.warn('Ошибка подтверждения команды');
+                                        adapter.log.warn('Error verifying the command');
                                         break;
                                 }
                             }
@@ -490,13 +490,13 @@ function listen(host, port, callback) {
 
 }
 function setStateDevice(ip, state){
-    adapter.log.warn(ip);
+    adapter.log.debug(ip);
     var id = sockets[ip];
-    adapter.log.warn(id);
-    adapter.log.warn(JSON.stringify(state));
-    adapter.log.warn(JSON.stringify(sockets));
+    adapter.log.debug(id);
+    adapter.log.debug(JSON.stringify(state));
+    adapter.log.debug(JSON.stringify(sockets));
     for (var key in state) {
-        adapter.log.warn(key);
+        adapter.log.debug(key);
         switch(key) {
             case 'power':
                 switch(state[key]) {

@@ -1,61 +1,74 @@
 {
-    "common": {
-        "name": "yeelight",
-        "version": "0.0.2",
-      "news": {
-        "0.0.1": {
-          "en": "initial adapter",
-          "de": "Initiale Version",
-          "ru": "ÐŸÐµÑ€Ð²Ð¾Ð½Ð°Ñ‡Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ð°Ð´Ð°Ð¿Ñ‚ÐµÑ€",
-          "pt": "VersÃ£o inicial",
-          "fr": "Version initiale",
-          "nl": "Eerste release"
-        }
-
-      },
-		"title": "Yeelight adapter",
-      "titleLang": {
-        "en": "Yeelight adapter",
-        "de": "Yeelight Adapter",
-        "ru": "Драйвер для Yeelight",
-        "pt": "Adaptador Yeelight",
-        "nl": "Yeelight-adapter",
-        "fr": "Yeelight adaptateur",
-        "it": "Adattatore Yeelight",
-        "es": "Adaptador Yeelight",
-        "pl": "Adapter światła"
-      },
-      "desc": {
-        "en": "ioBroker Yeelight Adapter",
-        "de": "iobroker Yeelight Adapter",
-        "ru": "ioBroker драйвер для Yeelight",
-        "pt": "iobroker Adaptador Yeelight",
-        "nl": "iobroker Yeelight-adapter",
-        "fr": "iobroker Yeelight adaptateur",
-        "it": "adattatore iobroker Yeelight",
-        "es": "adaptador Yeelight iobroker",
-        "pl": "Adapter iobroker Yeelight"
-      },
-        "authors": [
-            "cahek2202 <cahek2202@mail.ru>"
-        ],
-        "docs": {
-
-        },
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "icon": "yeelight.png",
-        "materialize": true,
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/cahek2202/ioBroker.yeelight/master/admin/yeelight.png",
-        "keywords": ["xiaomi", "yeelight", "mihome"],
-        "readme": "https://github.com/cahek2202/ioBroker.yeelight/README.md",
-        "loglevel": "info",
-        "type": "lighting"        
+  "common": {
+    "name": "yeelight",
+    "version": "0.0.2",
+    "news": {
+      "0.0.2": {
+        "en": "testing added, log changed",
+        "de": "Testen hinzugefügt, Protokoll geändert",
+        "ru": "добавлено тестирование, журнал изменен",
+        "pt": "teste adicionado, registro alterado",
+        "nl": "testen toegevoegd, log gewijzigd",
+        "fr": "test ajouté, journal modifié",
+        "it": "test aggiunto, registro modificato",
+        "es": "prueba agregada, registro cambiado",
+        "pl": "dodano testowanie, zmieniono log"
+      }
     },
+
+      "0.0.1": {
+        "en": "initial adapter",
+        "de": "Initiale Version",
+        "ru": "Драйвер для Yeelight (Люстра, цветная лампочка)",
+        "pt": "VersÃ£o inicial",
+        "fr": "Version initiale",
+        "nl": "Eerste release"
+      }
+
+    },
+    "title": "Yeelight adapter",
+    "titleLang": {
+      "en": "Yeelight adapter",
+      "de": "Yeelight Adapter",
+      "ru": "Драйвер для Yeelight",
+      "pt": "Adaptador Yeelight",
+      "nl": "Yeelight-adapter",
+      "fr": "Yeelight adaptateur",
+      "it": "Adattatore Yeelight",
+      "es": "Adaptador Yeelight",
+      "pl": "Adapter światła"
+    },
+    "desc": {
+      "en": "ioBroker Yeelight Adapter",
+      "de": "iobroker Yeelight Adapter",
+      "ru": "ioBroker драйвер для Yeelight",
+      "pt": "iobroker Adaptador Yeelight",
+      "nl": "iobroker Yeelight-adapter",
+      "fr": "iobroker Yeelight adaptateur",
+      "it": "adattatore iobroker Yeelight",
+      "es": "adaptador Yeelight iobroker",
+      "pl": "Adapter iobroker Yeelight"
+    },
+    "authors": [
+      "cahek2202 <cahek2202@mail.ru>"
+    ],
+    "docs": {
+
+    },
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "yeelight.png",
+    "materialize": true,
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/cahek2202/ioBroker.yeelight/master/admin/yeelight.png",
+    "keywords": [ "xiaomi", "yeelight", "mihome" ],
+    "readme": "https://github.com/cahek2202/ioBroker.yeelight/README.md",
+    "loglevel": "info",
+    "type": "lighting"
+  },
     "native": {
     },
     "objects": [
 
     ]
-}
+  }

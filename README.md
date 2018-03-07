@@ -3,11 +3,16 @@
 =================
 
 This adapter for Yeelight device
+## Changelog
+### 0.0.2 (2018-03-07)
+* (MeisterTR) testing added, log changed
+### 0.0.1 (2018-01-29)
+* (cahek2202) initinal version
 
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2018 @@Author@@ <@@email@@>
+Copyright (c) 2018 cahek2202 <cahek2202@mail.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

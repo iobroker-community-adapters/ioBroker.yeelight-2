@@ -1,4 +1,4 @@
-{ 
+{
   "common": {
     "name": "yeelight",
     "version": "0.0.2",
@@ -61,7 +61,7 @@
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/cahek2202/ioBroker.yeelight/master/admin/yeelight.png",
     "keywords": [ "xiaomi", "yeelight", "mihome" ],
-    "readme": "https://github.com/cahek2202/ioBroker.yeelight/README.md",
+    "readme": "https://github.com/cahek2202/ioBroker.yeelight/blob/master/README.md",
     "loglevel": "info",
     "type": "lighting"
   },

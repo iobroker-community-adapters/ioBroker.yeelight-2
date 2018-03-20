@@ -1,8 +1,13 @@
 {
   "common": {
     "name": "yeelight",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "news": {
+      "0.0.3": {
+        "en": "objects not overwirte after restart",
+        "de": "Objekte werden nach neustart nicht mehr überschrieben"
+      },
+
       "0.0.2": {
         "en": "testing added, log changed",
         "de": "Testen hinzugefügt, Protokoll geändert",

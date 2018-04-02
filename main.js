@@ -14,6 +14,8 @@ var adapter = new utils.Adapter('yeelight');
 var objects = {};
 var sockets = {};
 
+var bright_selector;
+var bright_modi = ["active_bright", "bright"]
 
 
 adapter.on('unload', function (callback) {
@@ -22,24 +24,26 @@ adapter.on('unload', function (callback) {
 });
 
 adapter.on('stateChange', function (id, state) {
-    var changeState = id.split('.');
-    var sid = adapter.namespace + '.' + changeState[2];
-    adapter.getState(sid + '.info.IPAdress', function (err, Ip) {
-        if (err) {
-            adapter.log.error(err);
-        } else {
-            //adapter.log.warn(JSON.stringify(Ip));
-            var host = Ip.val;
-            //adapter.log.warn(host);
-            if (changeState[3] != 'info') {
-                if (!state.ack) {
-                    uploadState(sid, host, changeState[3], state.val);
+    if (state && !state.ack) {
+        var changeState = id.split('.');
+        var sid = adapter.namespace + '.' + changeState[2];
+        adapter.getState(sid + '.info.IPAdress', function (err, data) {
+            if (err) {
+                adapter.log.error(err);
+            } else {
+                //adapter.log.warn(data.val);
+                //var host = data.val;
+                //adapter.log.warn("Host:"+ host);
+                if (changeState[3] != 'info') {
+                    if (!state.ack) {
+                        uploadState(sid, data.val, changeState[3], state.val);
+                    }
                 }
             }
-        }
 
 
-    })
+        })
+    }
 });
 
 adapter.on('ready', function () {
@@ -120,7 +124,7 @@ function createDevice() {
             var YeelState = new yeelight;
             YeelState.host = device.host;
             YeelState.port = device.port;
-            YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright'], function (err, result) {
+            YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright', 'hue', 'sat'], function (err, result) {
                 if (err) {
                     adapter.log.error(err);
                 } else {
@@ -156,8 +160,10 @@ function createDevice() {
                                     addState(sid, 'moon_mode', true);
                                     break;
                             }
-                        } else {
-                            if (result[5]) {
+                        }
+                        if (result[5]) {
+                            if (true) {
+
                                 switch (+result[5]) {
                                     case 1:
                                         addState(sid, 'color_mode', true);
@@ -168,6 +174,12 @@ function createDevice() {
                                 }
                             }
                         }
+                        if (result[7]) {
+                            addState(sid, 'hue', result[7]);
+                        }
+                        if (result[8]) {
+                            addState(sid, 'sat', result[7]);
+                        }
                     } else {
                         adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
                     }
@@ -177,10 +189,12 @@ function createDevice() {
         };
     });
 };
+
 function uploadState(id, host, parameter, val) {
     var device = new yeelight;
     device.host = host;
     device.port = 55443;
+    adapter.log.debug("Upload State " + parameter + " host: " + host + " Value: " + val);
     switch (parameter) {
 
         case 'power':
@@ -198,9 +212,8 @@ function uploadState(id, host, parameter, val) {
                     adapter.log.error(err)
                 } else {
                     if (result) {
-                        adapter.log.debug(JSON.stringify(result));
+                        adapter.log.debug("Answer from set_power: " + JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            //adapter.log.warn('Message ok');
                             adapter.setState(id + '.' + parameter, val, true);
                             adapter.getState(id + '.color_mode', function (err, state) {
                                 if (err) {
@@ -212,49 +225,66 @@ function uploadState(id, host, parameter, val) {
                                 }
                             });
                             if (val) {
-                                adapter.setState(id + '.active_bright', getProp(device.host, parameter));
+                                getProp(device.host, "bright", function (result) {
+                                    adapter.log.debug("Read bright because poweron: " + result[0]);
+                                    adapter.setState(id + '.active_bright', result[0], true);
+                                });
                             }
-
                         }
                     } else {
-                        if (val == getProp(device.host, parameter)) {
-                            adapter.setState(id + '.' + parameter, val, true);
-                            adapter.getState(id + '.color_mode', function (err, state) {
-                                if (err) {
-                                    adapter.log.error(err)
-                                } else {
-                                    if (state) {
-                                        adapter.setState(id + '.' + '.color_mode', false, true);
+                        getProp(device.host, parameter, function (result) {
+                            adapter.log.debug("Wrong respons at power on, ckeck again --> " + powerState + "  <<--soll ist-->> " + result[0]);
+
+                            if (powerState == result[0]) {
+                                adapter.setState(id + '.' + parameter, val, true);
+                                adapter.getState(id + '.color_mode', function (err, state) {
+                                    if (err) {
+                                        adapter.log.error(err)
+                                    } else {
+                                        if (state) {
+                                            adapter.setState(id + '.' + '.color_mode', false, true);
+                                        }
                                     }
+                                });
+                                if (val) {
+                                    getProp(device.host, "bright", function (result) {
+                                        adapter.log.debug("Read bright because poweron: " + result[0]);
+                                        adapter.setState(id + '.active_bright', result[0], true);
+                                    });
                                 }
-                            });
-                            if (val) {
-                                adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                            }
-                        } else { adapter.log.warn('Error verifying the command') }
+                            } else { adapter.log.warn('Error verifying power_on command') }
+                        });
+
+
                     }
                 }
             })
             break;
 
         case 'active_bright':
+            // TODO 0 for Light off and power on brfore change!
+
             device.sendCommand('set_bright', [val, 'smooth', 1000], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
                     if (result) {
-                        adapter.log.debug(JSON.stringify(result));
+                        adapter.log.debug("Answer from set_bright: " + JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            //adapter.log.warn('Подтверждение');
                             adapter.setState(id + '.' + parameter, val, true)
                         }
                     } else {
-                        if (val == getProp(device.host, parameter)) {
-                            adapter.setState(id + '.' + parameter, val, true);
-                        } else { adapter.log.warn('Error verifying the command') }
+                        getProp(device.host, "active_bright", function (result) {
+                            adapter.log.debug("Wrong respons set_bright, ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
+                            if (val == result[0]) {
+                                adapter.setState(id + '.' + parameter, result[0], true);
+                            } else {
+                                adapter.log.warn('Error verifying active_bright command');
+                            }
+                        });
                     }
                 }
-            })
+            });
             break;
 
         case 'ct':
@@ -263,18 +293,23 @@ function uploadState(id, host, parameter, val) {
                     adapter.log.error(err)
                 } else {
                     if (result) {
-                        adapter.log.debug(JSON.stringify(result));
+                        adapter.log.debug("Answer from set_ct: " + JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            //adapter.log.warn('Подтверждение');
-                            adapter.setState(id + '.' + parameter, val, true)
+                            adapter.setState(id + '.' + parameter, val, true);
+
                         }
                     } else {
-                        if (val == getProp(device.host, parameter)) {
-                            adapter.setState(id + '.' + parameter, val, true);
-                        } else { adapter.log.warn('Error verifying the command') }
+                        getProp(device.host, parameter, function (result) {
+                            adapter.log.debug("Wrong respons set_ct, ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
+                            if (val == result[0]) {
+                                adapter.setState(id + '.' + parameter, val, true);
+                            } else {
+                                adapter.log.warn('Error verifying set_ct command');
+                            }
+                        });
                     }
                 }
-            })
+            });
             break;
 
         case 'moon_mode':
@@ -284,41 +319,71 @@ function uploadState(id, host, parameter, val) {
                         if (err) {
                             adapter.log.error(err)
                         } else {
+                            adapter.log.debug("Answer from moon_mode: " + JSON.stringify(result));
                             if (result) {
                                 adapter.log.debug(JSON.stringify(result));
                                 if (result[0] == 'ok') {
-                                    //adapter.log.warn('Подтверждение');
                                     adapter.setState(id + '.' + parameter, val, true);
                                     adapter.setState(id + '.power', true, true);
-                                    adapter.setState(id + '.active_bright', getProp(device.host, parameter));
+                                    getProp(device.host, "active_bright", function (result) {
+                                        adapter.log.debug("Read bright because moon_mode: " + result[0]);
+                                        adapter.setState(id + '.active_bright', result[0], true);
+                                    });
                                 }
+
                             } else {
-                                if (val == getProp(device.host, parameter)) {
-                                    adapter.setState(id + '.' + parameter, val, true);
-                                    adapter.setState(id + '.power', true, true);
-                                    adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                } else { adapter.log.warn('Error verifying the command') }
+                                getProp(device.host, "active_mode", function (result) {
+                                    val = val ? 1 : 0;
+                                    adapter.log.debug("Wrong respons for moon_mode , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
+                                    if (val == result[0]) {
+                                        adapter.setState(id + '.' + parameter, true, true);
+                                        adapter.setState(id + '.power', true, true);
+                                        getProp(device.host, "active_bright", function (result) {
+                                            adapter.log.debug("Read bright because moon_mode: " + result[0]);
+                                            adapter.setState(id + '.active_bright', result[0], true);
+                                        });
+                                    } else {
+                                        adapter.log.warn('Error verifying set_moon_mode command');
+                                    }
+                                });
                             }
                         }
                     })
                     break;
+
                 case false:
                     device.sendCommand('set_power', ['on', 'smooth', 1000, 1], function (err, result) {
                         if (err) {
                             adapter.log.error(err)
                         } else {
+                            adapter.log.debug("Answer from moon_mode: " + JSON.stringify(result));
                             if (result) {
-                                adapter.log.debug(JSON.stringify(result));
                                 if (result[0] == 'ok') {
-                                    //adapter.log.warn('Подтверждение');
                                     adapter.setState(id + '.' + parameter, val, true);
-                                    adapter.setState(id + '.active_bright', getProp(device.host, parameter));
+                                    getProp(device.host, "active_bright", function (result) {
+                                        adapter.log.debug("Read bright because moon_mode_off: " + result[0]);
+                                        adapter.setState(id + '.active_bright', result[0], true);
+                                    });
                                 }
                             } else {
                                 if (val == getProp(device.host, parameter)) {
                                     adapter.setState(id + '.' + parameter, val, true);
                                     adapter.setState(id + '.active_bright', getProp(device.host, parameter));
                                 } else { adapter.log.warn('Error verifying the command') }
+
+                                getProp(device.host, "active_mode", function (result) {
+                                    val = val ? 1 : 0;
+                                    adapter.log.debug("Wrong respons for moon_mode , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
+                                    if (val == result[0]) {
+                                        adapter.setState(id + '.' + parameter, false, true);
+                                        getProp(device.host, "active_bright", function (result) {
+                                            adapter.log.debug("Read bright because moon_mode_off: " + result[0]);
+                                            adapter.setState(id + '.active_bright', result[0], true);
+                                        });
+                                    } else {
+                                        adapter.log.warn('Error verifying set_moon_mode_off command');
+                                    }
+                                });
                             }
                         }
                     })
@@ -328,52 +393,212 @@ function uploadState(id, host, parameter, val) {
             break;
 
         case 'rgb':
-            var rgb = hex2dec(val);
-            device.sendCommand('set_power', ['on', 'smooth', 1000, 2], function (err, result) {
+            var isOk = /^#[0-9A-F]{6}$/i.test(val);
+            // ckeck if it is a Hex Format
+            if (isOk) {
+                var rgb = hex2dec(val);
+                adapter.log.debug("rgb to hs: " + JSON.stringify(rgbToHsl(val)));
+                device.sendCommand('set_power', ['on', 'smooth', 1000, 2], function (err, result) {
+                    if (err) {
+                        adapter.log.error(err)
+                    } else {
+                        adapter.log.debug("Answer from rgb _power on an color mode before set: " + JSON.stringify(result));
+                        if (result) {
+                            if (result[0] == 'ok') {
+                                adapter.setState(id + '.color_mode', true, true);
+
+                                getProp(device.host, parameter, function (result) {
+                                    adapter.log.debug("Read rgb because color_mode_on: " + result[0]);
+                                    adapter.setState(id + '.rgb', dec2hex(result[0]), true);
+                                });
+                            }
+                        } else {
+                            getProp(device.host, 'color_mode', function (result) {
+                                adapter.log.debug("No response, request color mode again: " + result[0]);
+
+
+                                switch (result[0]) {
+                                    case 1:
+                                        adapter.setState(id + '.color_mode', true, true);
+
+                                        break;
+                                    case 2:
+                                        adapter.setState(id + '.color_mode', false, true);
+
+                                        break;
+                                    default:
+                                        adapter.log.warn('Error verifying rgb command');
+                                        break;
+                                }
+                            });
+
+
+                        }
+                    }
+                });
+                device.sendCommand('set_rgb', [+rgb, 'smooth', 1000], function (err, result) {
+                    if (err) {
+                        adapter.log.error(err)
+                    } else {
+                        if (result) {
+                            //adapter.log.debug(JSON.stringify(result));
+                            if (result[0] == 'ok') {
+                                adapter.setState(id + '.' + parameter, val, true)
+                            }
+                        } else {
+                            getProp(device.host, parameter, function (result) {
+                                adapter.log.debug("Wrong respons for set_rgb , ckeck again --> " + rgb + "  <<--soll ist-->> " + result[0]);
+                                if (rgb == result[0]) {
+                                    adapter.setState(id + '.' + parameter, val, true);
+                                } else {
+                                    adapter.log.warn('Error verifying set_rgb command');
+                                }
+                            });
+
+                        }
+                    }
+                })
+            }
+            else {
+                adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
+            }
+            break;
+
+        case 'hue':
+            // TODO catch NAN an 1-360;
+
+
+            device.sendCommand('set_power', ['on', 'smooth', 1000, 3], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
+                    adapter.log.debug("Answer from rgb _power on an color mode 3 before set: " + JSON.stringify(result));
                     if (result) {
                         adapter.log.debug(JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            //adapter.log.warn('Подтверждение');
-                            adapter.setState(id + '.color_mode', true, true)
-                            adapter.setState(id + '.active_bright', getProp(device.host, parameter));
+                            adapter.setState(id + '.color_mode', true, true);
+
+                            getProp(device.host, parameter, function (result) {
+                                adapter.log.debug("Read hsv because color_mode_on: " + result[0]);
+                                adapter.setState(id + '.hue', (result[0]), true);
+                            });
                         }
                     } else {
-                        switch (getProp(device.host, 'color_mode')) {
-                            case 1:
-                                adapter.setState(id + '.color_mode', true, true);
-                                adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                break;
-                            case 2:
-                                adapter.setState(id + '.color_mode', false, true);
-                                adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                break;
-                            default:
-                                adapter.log.warn('Error verifying the command');
-                                break;
-                        }
+                        getProp(device.host, 'color_mode', function (result) {
+                            adapter.log.debug("No response, request color mode again: " + result[0]);
+
+
+                            switch (result[0]) {
+                                case 1:
+                                    adapter.setState(id + '.color_mode', true, true);
+
+                                    break;
+                                case 2:
+                                    adapter.setState(id + '.color_mode', false, true);
+
+                                    break;
+                                default:
+                                    adapter.log.warn('Error verifying rgb command');
+                                    break;
+                            }
+                        });
                     }
                 }
             });
-            device.sendCommand('set_rgb', [+rgb, 'smooth', 1000], function (err, result) {
+
+            adapter.getState(id + '.sat', function (err, state) {
+                var saturation = state.val;
+
+                adapter.log.debug("Answer from rgb _power on an color mode 3 beforesat_val: " + saturation);
+
+                device.sendCommand('set_hsv', [val, saturation, 'smooth', 1000], function (err, result) {
+                    if (err) {
+                        adapter.log.error(err)
+                    } else {
+                        if (result) {
+                            //adapter.log.debug(JSON.stringify(result));
+                            if (result[0] == 'ok') {
+                                adapter.setState(id + '.' + parameter, val, true)
+                            }
+                        } else {
+                            getProp(device.host, parameter, function (result) {
+                                adapter.log.debug("Wrong respons for set_hue , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
+                                if (val == result[0]) {
+                                    adapter.setState(id + '.' + parameter, result[0], true);
+                                } else {
+                                    adapter.log.warn('Error verifying set_hue command');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+            break;
+
+
+        case 'sat':
+            // TODO catch NAN an 1-100;
+            device.sendCommand('set_power', ['on', 'smooth', 1000, 3], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
+                    adapter.log.debug("Answer from rgb _power on an color mode 3 before set: " + JSON.stringify(result));
                     if (result) {
-                        //adapter.log.debug(JSON.stringify(result));
+                        adapter.log.debug(JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            adapter.setState(id + '.' + parameter, val, true)
+                            adapter.setState(id + '.color_mode', true, true);
                         }
                     } else {
-                        if (val == getProp(device.host, parameter)) {
-                            adapter.setState(id + '.' + parameter, val, true);
-                        } else { adapter.log.warn('Error verifying the command') }
+                        getProp(device.host, 'color_mode', function (result) {
+                            adapter.log.debug("No response, request color mode again: " + result[0]);
+
+
+                            switch (result[0]) {
+                                case 1:
+                                    adapter.setState(id + '.color_mode', true, true);
+
+                                    break;
+                                case 2:
+                                    adapter.setState(id + '.color_mode', false, true);
+
+                                    break;
+                                default:
+                                    adapter.log.warn('Error verifying sat command');
+                                    break;
+                            }
+                        });
                     }
                 }
-            })
+            });
+
+            adapter.getState(id + '.hue', function (err, state) {
+                var huevalue = state.val;
+                adapter.log.debug("hue" + huevalue + " sat " + val);
+                device.sendCommand('set_hsv', [parseInt(huevalue), parseInt(val), 'smooth', 1000], function (err, result) {
+                    if (err) {
+                        adapter.log.error(err)
+                    } else {
+                        if (result) {
+                            //adapter.log.debug(JSON.stringify(result));
+                            if (result[0] == 'ok') {
+                                adapter.setState(id + '.' + parameter, val, true)
+                            }
+                        } else {
+                            getProp(device.host, parameter, function (result) {
+                                adapter.log.debug("Wrong respons for set_hue , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
+                                if (val == result[0]) {
+                                    adapter.setState(id + '.' + parameter, result[0], true);
+                                } else {
+                                    adapter.log.warn('Error verifying set_sat command');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
             break;
+
+
         case 'color_mode':
             switch (val) {
                 case true:
@@ -387,17 +612,24 @@ function uploadState(id, host, parameter, val) {
                                     adapter.setState(id + '.' + parameter, val, true)
                                 }
                             } else {
-                                switch (getProp(device.host, 'color_mode')) {
-                                    case 1:
-                                        adapter.setState(id + '.' + parameter, true, true);
-                                        break;
-                                    case 2:
-                                        adapter.setState(id + '.' + parameter, false, true);
-                                        break;
-                                    default:
-                                        adapter.log.warn('Error verifying the command');
-                                        break;
-                                }
+                                getProp(device.host, 'color_mode', function (result) {
+                                    adapter.log.debug("No response, request color mode again: " + result[0]);
+
+
+                                    switch (result[0]) {
+                                        case 1:
+                                            adapter.setState(id + '.color_mode', true, true);
+
+                                            break;
+                                        case 2:
+                                            adapter.setState(id + '.color_mode', false, true);
+
+                                            break;
+                                        default:
+                                            adapter.log.warn('Error verifying color_mode command');
+                                            break;
+                                    }
+                                });
                             }
                         }
                     })
@@ -413,32 +645,43 @@ function uploadState(id, host, parameter, val) {
                                     adapter.setState(id + '.' + parameter, val, true);
                                 }
                             } else {
-                                switch (getProp(device.host, 'color_mode')) {
-                                    case 1:
-                                        adapter.setState(id + '.' + parameter, true, true);
-                                        break;
-                                    case 2:
-                                        adapter.setState(id + '.' + parameter, false, true);
-                                        break;
-                                    default:
-                                        adapter.log.warn('Error verifying the command');
-                                        break;
-                                }
+                                getProp(device.host, 'color_mode', function (result) {
+                                    adapter.log.debug("No response, request color mode again: " + result[0]);
+
+
+                                    switch (result[0]) {
+                                        case 1:
+                                            adapter.setState(id + '.color_mode', true, true);
+
+                                            break;
+                                        case 2:
+                                            adapter.setState(id + '.color_mode', false, true);
+
+                                            break;
+                                        default:
+                                            adapter.log.warn('Error verifying color_mode command');
+                                            break;
+                                    }
+                                });
                             }
                         }
                     });
                     break;
             }
             break;
+        default:
+            adapter.log.warn('State not found');
     }
 
 
 };
-function getProp(host, parameter) {
+function getProp(host, parameter, callback) {
     var device = new yeelight;
     device.host = host;
     device.port = 55443;
     var param;
+
+
     switch (parameter) {
 
         case 'moon_mode':
@@ -448,11 +691,14 @@ function getProp(host, parameter) {
             param = parameter;
             break;
     }
+
     device.sendCommand('get_prop', [param], function (err, result) {
         if (err) {
             adapter.log.error(err)
+
         } else {
             if (result) {
+                if (callback && typeof (callback) === "function") callback(result);
                 return result[0];
             }
         }
@@ -603,6 +849,38 @@ function addState(id, state, val) {
             });
             adapter.setState(id + '.' + state, val, true);
             break;
+        case 'hue':
+            adapter.setObjectNotExists(id + '.' + state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    role: 'level.' + state,
+                    write: true,
+                    read: true,
+                    type: 'number',
+                    min: 0,
+                    max: 360
+                },
+                native: {}
+            });
+            adapter.setState(id + '.' + state, val, true);
+            break;
+        case 'sat':
+            adapter.setObjectNotExists(id + '.' + state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    role: 'level.' + state,
+                    write: true,
+                    read: true,
+                    type: 'number',
+                    min: 0,
+                    max: 360
+                },
+                native: {}
+            });
+            adapter.setState(id + '.' + state, val, true);
+            break;
         case 'rgb':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
@@ -707,7 +985,13 @@ function hslToRgb(h, s, l) {
  * @param   {number}  b       The blue color value
  * @return  {Array}           The HSL representation
  */
-function rgbToHsl(r, g, b) {
+function rgbToHsl(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    var r = parseInt(result[1], 16);
+    var g = parseInt(result[2], 16);
+    var b = parseInt(result[3], 16);
+
     r /= 255, g /= 255, b /= 255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
     var h, s, l = (max + min) / 2;
@@ -725,5 +1009,5 @@ function rgbToHsl(r, g, b) {
         h /= 6;
     }
 
-    return [h, s, l];
+    return [Math.round(h * 360), Math.round(s * 100)];
 }

@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight",
-    "version": "0.0.3",
+    "version": "0.1.0",
     "news": {
+      "0.1.0": {
+        "en": "many changes, add hue and sat for alexa control",
+        "de": "Viele Änderungen,  hue und sat für alexa control hinzugefügt",
+        "ru": "много изменений, добавить оттенок и сидеть для контроля alexa",
+        "pt": "muitas mudanças, adicionar matiz e sentou-se para controle alexa",
+        "nl": "veel veranderingen, tint toevoegen en sat voor alexa controle",
+        "fr": "de nombreux changements, ajouter de la teinte et assis pour le contrôle alexa",
+        "it": "molti cambiamenti, aggiungere tonalità e sab per il controllo di alexa",
+        "es": "muchos cambios, agregue matiz y sat para el control alexa",
+        "pl": "wiele zmian, dodaj hue i sat dla kontroli alexa"
+      },
       "0.0.3": {
         "en": "objects not overwirte after restart",
         "de": "Objekte werden nach neustart nicht mehr überschrieben"

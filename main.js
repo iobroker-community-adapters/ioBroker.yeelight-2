@@ -24,6 +24,8 @@ adapter.on('unload', function (callback) {
 });
 
 adapter.on('stateChange', function (id, state) {
+    //adapter.log.warn('state:' + JSON.stringify(state));
+    //adapter.log.warn('id:' + JSON.stringify(id));
     if (state && !state.ack) {
         var changeState = id.split('.');
         var sid = adapter.namespace + '.' + changeState[2];
@@ -31,9 +33,6 @@ adapter.on('stateChange', function (id, state) {
             if (err) {
                 adapter.log.error(err);
             } else {
-                //adapter.log.warn(data.val);
-                //var host = data.val;
-                //adapter.log.warn("Host:"+ host);
                 if (changeState[3] != 'info') {
                     if (!state.ack) {
                         uploadState(sid, data.val, changeState[3], state.val);
@@ -48,6 +47,12 @@ adapter.on('stateChange', function (id, state) {
 
 adapter.on('ready', function () {
     main();
+});
+
+adapter.on('message', function (callback) {
+    
+    //yeelight.stopDiscovering();
+    adapter.log.warn('here is a Message');
 });
 
 function main() {
@@ -72,7 +77,25 @@ function readObjects(callback) {
 function createDevice() {
 
     yeelight.discover(function (device) {
+        adapter.log.warn('D:' + JSON.stringify(device));
+
         var sid = adapter.namespace + '.' + device.model + '_' + device.id;
+
+        adapter.setObjectNotExists(sid + '.info.com', {
+            common: {
+                name: 'Command',
+                role: 'state',
+                write: false,
+                read: true,
+                type: 'string'
+            },
+            type: 'state',
+            native: {}
+        });
+
+        adapter.setState(sid + '.info.com', JSON.stringify(device), true);
+
+        
         if (!objects[sid]) {
             adapter.setObjectNotExists(sid, {
                 type: 'channel',
@@ -207,7 +230,7 @@ function uploadState(id, host, parameter, val) {
                     powerState = 'off';
                     break;
             }
-            device.sendCommand('set_power', [powerState, 'smooth', 1000, 1], function (err, result) {
+            device.sendCommand('set_power', [powerState, 'smooth', 1000], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
@@ -835,12 +858,25 @@ function addState(id, state, val) {
             adapter.setState(id + '.' + state, val, true);
             break;
         case 'ct':
+            adapter.setObjectNotExists(id + '.' + state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    role: 'level.color.temperature',
+                    write: true,
+                    read: true,
+                    type: 'number'
+                },
+                native: {}
+            });
+            adapter.setState(id + '.' + state, val, true);
+            break;
         case 'active_bright':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
-                    role: 'level.' + state,
+                    role: 'level.dimmer',
                     write: true,
                     read: true,
                     type: 'number'
@@ -854,7 +890,7 @@ function addState(id, state, val) {
                 type: 'state',
                 common: {
                     name: state,
-                    role: 'level.' + state,
+                    role: 'level.color.hue',
                     write: true,
                     read: true,
                     type: 'number',
@@ -870,7 +906,7 @@ function addState(id, state, val) {
                 type: 'state',
                 common: {
                     name: state,
-                    role: 'level.' + state,
+                    role: 'level.color.saturation',
                     write: true,
                     read: true,
                     type: 'number',

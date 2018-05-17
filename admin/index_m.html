@@ -10,68 +10,330 @@
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
     <script type="text/javascript" src="words.js"></script>
-    <style>
-        .m .col .select-wrapper + label {
-            top: -26px;
-        }
-
-        .m span {
-            font-size: 0.9em;
-        }
-    </style>
-    <!-- you have to define 2 functions in the global scope: -->
     <script type="text/javascript">
+        var devices = [];
+        var active = false;
+        var g_onChange;
 
-        // the function loadSettings has to exist ...
+        var SEP = '_';
+        if (typeof _ !== 'function') _ = translateWord;
+
         function load(settings, onChange) {
-            // example: select elements with id=key and class=value and insert value
-            if (!settings) return;
-            $('.value').each(function () {
-                var $key = $(this);
-                var id = $key.attr('id');
-                if ($key.attr('type') === 'checkbox') {
-                    // do not call onChange direct, because onChange could expect some arguments
-                    $key.prop('checked', settings[id]).change(function () {
+
+            g_onChange = onChange;
+            $('#find').on('click', function () {
+                var $find = $('#find');
+
+
+                if (!active) {
+
+                    console.log("Not_active");
+                    showToast(_('Please activate instance'));
+                    return;
+                }
+                $find.addClass('disabled');
+                $('#loader1').removeClass('seenot');
+
+
+                console.log("we wqill send to: " + adapter + "." + instance);
+
+                var devices = [];
+                var IPs = [];
+                devices = table2values('values');
+
+                devices.forEach(function (element) {
+                    if (!IPs.includes(element.ip)) {
+                        IPs.push(element.ip);
+                    }
+
+                });
+
+                console.log(JSON.stringify(devices));
+
+                sendTo(adapter + "." + instance, 'discovery', { "turnon": 1 }, function (result) {
+
+                    console.log(JSON.stringify(result));
+                    $find.removeClass('disabled');
+                    $('#loader1').addClass('seenot');
+
+
+                    var arr = JSON.parse(result);
+
+                    for (var i = 0; i < arr.length; i++) {
+                        var port = arr[i].port;
+                        var ip = arr[i].host;
+                        var name = arr[i].id;
+                        var type = arr[i].model;
+                        devices.push({ port: port, ip: ip, name: name, type: type });
+                        values2table('values', devices, g_onChange);
+                        g_onChange(true);
+
+                    }
+                });
+
+            });
+            $('#values').on('click', function () {
+                //checkDevices();
+            });
+
+            function checkDevices() {
+                console.log("Ceck devices");
+                var oldDev = table2values('values');
+                var newDev = [];
+                var tmpIp = [];
+
+                for (var i = 0; i < oldDev.length; i++) {
+                    console.log(JSON.stringify(tmpIp));
+                    if (!tmpIp.includes(oldDev[i].ip)) {
+
+                        tmpIp.push(oldDev[i].ip);
+                        newDev.push(oldDev[i]);
+                        if (i === oldDev.length - 1) {
+                            console.log("safe");
+                            values2table('values', newDev, true);
+                        }
+                    }
+                }
+
+            };
+
+            //checkDevices();
+
+            socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
+                active = /*common.enabled ||*/ (state && state.val);
+            });
+
+            changed = true;
+            g_onChange = onChange;
+            function getVal(id) {
+                var ar = id.split(SEP);
+                var obj = settings;
+                for (var i = 0; i < ar.length - 1; i++) {
+                    if (obj[ar[i]] === undefined) obj[ar[i]] = {};
+                    obj = obj[ar[i]];
+                }
+                return obj[ar[ar.length - 1]];
+            }
+            function forAllKeys(obj, s, cb) {
+                var sep = SEP; //'.';
+                if (typeof s === 'function') {
+                    cb = s;
+                    s = '';
+                }
+                for (var i in obj) {
+                    if (typeof obj[i] === 'object') {
+                        if (Array.isArray(obj[i])) continue;
+                        forAllKeys(obj[i], s ? s + sep + i : i, cb)
+                    } else {
+                        cb && cb(s ? s + sep + i : i);
+                    }
+                }
+            }
+            //for (var key in settings) {
+            forAllKeys(settings, function (key) {
+                // example: select elements with id=key and class=value and insert value
+                var val = getVal(key);
+                if ($('#' + key + '.value').attr('type') == 'checkbox') {
+                    $('#' + key + '.value').prop('checked', val).change(function () {
+                        if ($('#auth').prop('checked')) {
+                            $('#secure').prop('checked', true);
+                        }
                         onChange();
+                        //showHideSettings();
                     });
                 } else {
-                    // do not call onChange direct, because onChange could expect some arguments
-                    $key.val(settings[id]).change(function () {
+                    $('#' + key + '.value').val(val).change(function () {
                         onChange();
                     }).keyup(function () {
                         onChange();
                     });
                 }
             });
-            onChange(false);
-            M.updateTextFields();  // function Materialize.updateTextFields(); to reinitialize all the Materialize labels on the page if you are dynamically adding inputs.
-        }
+            // Set default language
+            if (!settings.language) {
+                settings.language = systemLang || 'en';
+                $('#language').val(settings.language).trigger('change');
+            }
+            devices = settings.devices; // || [ {name: '', ip: "", mac: ""} ];
+            values2table('values', devices, onChange);
 
-        // ... and the function save has to exist.
-        // you have to make sure the callback is called with the settings object as first param!
+            //changed = true;
+            onChange(false);
+        }
+        function setVal(obj, id, val) {
+            var ar = id.split(SEP);
+            for (var i = 0; i < ar.length - 1; i++) {
+                if (obj[ar[i]] === undefined) obj[ar[i]] = {};
+                obj = obj[ar[i]];
+            }
+            obj[ar[ar.length - 1]] = val;
+        }
         function save(callback) {
-            // example: select elements with class=value and build settings object
             var obj = {};
+            changed = true;
             $('.value').each(function () {
-                var $this = $(this);
-                if ($this.attr('type') === 'checkbox') {
-                    obj[$this.attr('id')] = $this.prop('checked');
-                } else {
-                    obj[$this.attr('id')] = $this.val();
+                var $this = $(this), val;
+                switch ($this.attr('type')) {
+                    case 'checkbox':
+                        val = $this.prop('checked');
+                        break;
+                    case 'number':
+                    case 'value':
+                        val = ~~$this.val();
+                        break;
+                    default:
+                        val = $this.val();
                 }
+                setVal(obj, $this.attr('id'), val);
             });
+            obj.devices = table2values('values');
             callback(obj);
         }
+        function initDialog(callback) {
+            var $editDialog = $('#dialog-name-edit');
+            if (!$editDialog.data('inited')) {
+                $editDialog.data('inited', true);
+                $editDialog.modal({
+                    dismissible: false
+                });
+                $editDialog.find('.btn-set').on('click', function () {
+                    var $editDialog = $('#dialog-name-edit');
+                    var callback = $editDialog.data('callback');
+                    if (typeof callback === 'function') callback();
+                    $editDialog.data('callback', null);
+                });
+                $('#edit_name').on('keyup', function (e) {
+                    if (e.keyCode === 13) {
+                        setTimeout(function () {
+                            $editDialog.find('.btn-set').trigger('click');
+                        }, 100);
+                    }
+                });
+            }
+            $editDialog.data('callback', callback);
+            $editDialog.modal('open');
+        }
+
     </script>
+    <style>
+        .loader {
+            border: 4px solid #b8d1f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 2s linear infinite;
+        }
+
+        .seenot {
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="m adapter-container">
         <div class="row">
-            <div class="col s12 m4 l2">
-                <img src="yeelight.png" class="logo" style="width:300px; height:300px">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s5"><a href="#tab-main" class="translate active">Main settings</a></li>
+                    <li class="tab col s5 tab-astro"><a href="#tab-astro" class="translate">settings</a></li>
+                </ul>
+            </div>
+            <div id="tab-main" class="col s12 page">
+                <div class="row">
+                    <div class="col s6 m4 l2">
+                        <img src="yeelight.png" class="logo">
+                    </div>
+                </div>
+                <div class="row tab-smart-devices-toolbar  " id="values">
+                    <div class="col s2 m1 l1 center">
+                        <button title="Add device" class="table-button-add btn-floating waves-effect waves-light btn-small"><i class=" material-icons">add</i></button>
+                    </div>
+
+                    <div class="col s2 m1 l1">
+                        <a id="find" class=" btn-small translate">Find Device<span></span></a>
+                    </div>
+                    <div class="col s2 ">
+                        <div class="loader seenot" id="loader1"> </div>
+                    </div>
+                    <div class="col s12 m12 l12">
+                        <table class="table-values" style="width: 100%; margin-top: 8px">
+                            <thead>
+                                <tr>
+                                    <th data-name="_index" style="width: 40px" class="translate"></th>
+                                    <th data-name="name" style="width: 30%" class="translate">Name</th>
+                                    <th data-name="ip" class="translate">IP Address</th>
+                                    <th data-name="port" class="translate">Port</th>
+                                    <th data-name="smart_name" class="translate">Smartname</th>
+                                    <th data-name="type" class="translate" data-options="color;ceiling1;bslamp1;desklamp;mono;stripe" data-type="select">type</th>
+                                    <th data-buttons="delete" style="width: 40px"></th>                             
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
+</body>
+
+</html>
+
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+<div id="tab-astro" class="col s12 page">
+    <div class="row top-padding">
+        <div class="col s12 m6">
+            <div class="row">
+                <div class="input-field col s12">
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col s12 m6 map">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+<div class="m material-dialogs">
+    <div id="dialog-name-edit" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <div class="row">
+                <div class="col s12">
+                    <h6 class="title"><span class="translate">Smart name:</span><span class="name"></span></h6>
+                </div>
+            </div>
+            <div class="row textarea">
+                <div class="input-field col s12">
+                    <input style="width: calc(100% - 10px)" type="text" id="edit_name" />
+                    <span class="translate" for="edit_name">(you can separate names with comma)</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Ok</span></a>
+            <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left">close</i><span class="translate">Cancel</span></a>
+        </div>
+    </div>
+
+</div>
 </body>
 </html>

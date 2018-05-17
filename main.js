@@ -13,6 +13,8 @@ var yeelight = require(__dirname + '/lib/yeelight');
 var adapter = new utils.Adapter('yeelight');
 var objects = {};
 var sockets = {};
+var sel_devices = [];
+var ready = false;
 
 var bright_selector;
 var bright_modi = ["active_bright", "bright"]
@@ -21,6 +23,7 @@ var bright_modi = ["active_bright", "bright"]
 adapter.on('unload', function (callback) {
     sockets = null;
     yeelight.stopDiscovering();
+
 });
 
 adapter.on('stateChange', function (id, state) {
@@ -47,22 +50,61 @@ adapter.on('stateChange', function (id, state) {
 
 adapter.on('ready', function () {
     main();
+    adapter.log.debug('from_conf: ' + JSON.stringify(adapter.config));
+    sel_devices = adapter.config.devices;
 });
 
-adapter.on('message', function (callback) {
-    
+adapter.on('message', function (obj) {
+
     //yeelight.stopDiscovering();
-    adapter.log.warn('here is a Message');
+    adapter.log.debug('here is a Message' + JSON.stringify(obj));
+
+    if (!obj) return;
+
+    function reply(result) {
+        adapter.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
+    }
+
+    switch (obj.command) {
+        case 'discovery':
+            var onlyActive, reread;
+            var deviceDiscovered = [];
+            sockets = null;
+            yeelight.stopDiscovering();
+
+
+            if (typeof obj.message === 'object') {
+                //onlyActive = obj.message.onlyActive;
+                //reread = obj.message.reread;
+            }
+
+
+            yeelight.discover(function (device) {
+                adapter.log.debug('Device:' + JSON.stringify(device));
+                deviceDiscovered.push(device);
+            });
+
+            setTimeout(function () {
+                yeelight.stopDiscovering();
+                reply(deviceDiscovered);
+            }, 10000);
+
+            return true;
+            break;
+        default:
+            adapter.log.warn('Unknown command: ' + obj.command);
+            break;
+    }
 });
 
 function main() {
-    readObjects(createDevice());
+    readObjects(createDevice);
     adapter.subscribeStates('*');
 
 };
 
 function readObjects(callback) {
-    adapter.getForeignObjects(adapter.namespace + ".*", 'channel', function (err, list) {
+    adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
         if (err) {
             adapter.log.error(err);
         } else {
@@ -70,45 +112,53 @@ function readObjects(callback) {
             objects = list;
             createSocketsList();
             updateConnect();
+            adapter.log.warn(JSON.stringify(objects));
+            //ScheckChanges();
             callback && callback();
         }
     });
 };
 function createDevice() {
+    var devC = adapter.config.devices;
 
-    yeelight.discover(function (device) {
-        adapter.log.warn('D:' + JSON.stringify(device));
+    for (var i = 0; i < devC.length; i++) {
 
-        var sid = adapter.namespace + '.' + device.model + '_' + device.id;
+        var sid = adapter.namespace + '.' + devC[i].type + '-' + devC[i].name;
+        adapter.log.debug("Create Device: " + sid);
 
-        adapter.setObjectNotExists(sid + '.info.com', {
-            common: {
-                name: 'Command',
-                role: 'state',
-                write: false,
-                read: true,
-                type: 'string'
-            },
-            type: 'state',
-            native: {}
-        });
-
-        adapter.setState(sid + '.info.com', JSON.stringify(device), true);
-
-        
         if (!objects[sid]) {
-            adapter.setObjectNotExists(sid, {
-                type: 'channel',
-                common: {
-                    name: device.model,
-                    icon: '/icons/' + device.model + '.png',
-                },
-                native: {
-                    sid: device.id,
-                    type: device.model
-                }
+            adapter.setObject(sid + '.info', {
+                type: 'channel'
             });
 
+
+            adapter.setObjectNotExists(sid + '.info.com', {
+                common: {
+                    name: 'Command',
+                    role: 'state',
+                    write: false,
+                    read: true,
+                    type: 'string'
+                },
+                type: 'state',
+                native: {}
+            });
+
+            adapter.setState(sid + '.info.com', JSON.stringify(devC[i]), true);
+
+            
+            adapter.setObject(sid, {
+                type: 'device',
+                common: {
+                    name: devC[i].type,
+                    icon: '/icons/' + devC[i].type + '.png',
+                },
+                native: {
+                    sid: devC[i].name,
+                    type: devC[i].type
+                }
+            });
+            
             adapter.setObjectNotExists(sid + '.info.connect', {
                 common: {
                     name: 'Connect',
@@ -142,76 +192,122 @@ function createDevice() {
                 type: 'state',
                 native: {}
             });
-            adapter.setState(sid + '.info.IPAdress', device.host, true);
-            adapter.setState(sid + '.info.Port', device.port, true);
-            var YeelState = new yeelight;
-            YeelState.host = device.host;
-            YeelState.port = device.port;
-            YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright', 'hue', 'sat'], function (err, result) {
-                if (err) {
-                    adapter.log.error(err);
-                } else {
-                    adapter.setState(sid + '.info.connect', true, true);
-                    if (result) {
-                        if (result[0]) {
-                            switch (result[0]) {
-                                case 'on':
-                                    addState(sid, 'power', true);
-                                    break;
-                                case 'off':
-                                    addState(sid, 'power', false);
-                                    break;
-                            }
-                        }
-                        if (result[1]) {
-                            addState(sid, 'active_bright', result[1]);
-                        } else {
-                            addState(sid, 'active_bright', result[6]);
-                        }
-                        if (result[2]) {
-                            addState(sid, 'ct', result[2]);
-                        }
-                        if (result[3]) {
-                            addState(sid, 'rgb', result[3]);
-                        }
-                        if (result[4]) {
-                            switch (+result[4]) {
-                                case 0:
-                                    addState(sid, 'moon_mode', false);
-                                    break;
-                                case 1:
-                                    addState(sid, 'moon_mode', true);
-                                    break;
-                            }
-                        }
-                        if (result[5]) {
-                            if (true) {
+            adapter.setState(sid + '.info.IPAdress', devC[i].ip, true);
+            adapter.setState(sid + '.info.Port', devC[i].port, true);
+            //getPrps(devC[i].ip, devC[i].port, sid, devC[i].type, devC[i].smart_name);
+            getPrps(sid, devC[i]);
 
-                                switch (+result[5]) {
-                                    case 1:
-                                        addState(sid, 'color_mode', true);
-                                        break;
-                                    case 2:
-                                        addState(sid, 'color_mode', false);
-                                        break;
-                                }
-                            }
-                        }
-                        if (result[7]) {
-                            addState(sid, 'hue', result[7]);
-                        }
-                        if (result[8]) {
-                            addState(sid, 'sat', result[7]);
-                        }
-                    } else {
-                        adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
+            listen(devC[i].ip, devC[i].port, setStateDevice);
+        };
+
+        if (i === devC.length - 1) checkChanges();
+    };
+
+};
+
+function getPrps(sid, device) {
+
+    var YeelState = new yeelight;
+    YeelState.host = device.ip;
+    YeelState.port = device.port;
+
+    YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright', 'hue', 'sat'], function (err, result) {
+        adapter.log.debug('Device:' + JSON.stringify(result));
+        if (err) {
+            adapter.log.error(err);
+        } else {
+            adapter.setState(sid + '.info.connect', true, true);
+            if (result) {
+                if (!(result[0] === "")) {
+                    switch (result[0]) {
+                        case 'on':
+                            addState(sid, 'power', true, device);
+                            break;
+                        case 'off':
+                            addState(sid, 'power', false, device);
+                            break;
                     }
                 }
-            })
-            listen(device.host, device.port, setStateDevice);
-        };
+                if (!(result[1] === "")) {
+                    addState(sid, 'active_bright', result[1], device);
+                } else {
+                    addState(sid, 'active_bright', result[6], device);
+                }
+                if (!(result[2] === "")) {
+                    addState(sid, 'ct', result[2], device);
+                }
+                if (!(result[3] === "")) {
+                    addState(sid, 'rgb', result[3], device);
+                }
+                if (!(result[4] === "")) {
+                    switch (+result[4]) {
+                        case 0:
+                            addState(sid, 'moon_mode', false, device);
+                            break;
+                        case 1:
+                            addState(sid, 'moon_mode', true, device);
+                            break; 
+                    }
+                }
+                if (!(result[5] === "")) {
+                    if (true) {
+
+                        switch (+result[5]) {
+                            case 1:
+                                addState(sid, 'color_mode', true, device);
+                                break;
+                            case 2:
+                                addState(sid, 'color_mode', false, device);
+                                break;
+                        }
+                    }
+                }
+                if (!(result[7] === "")) {
+                    addState(sid, 'hue', result[7], device);
+                }
+                if (!(result[8] === "")) {
+                    addState(sid, 'sat', result[7], device);
+                }
+            } else {
+                adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
+            }
+        }
+    })
+
+   
+}
+
+function checkChanges() {
+    adapter.getDevices(function (err, list) {
+        adapter.log.warn(JSON.stringify(list))
     });
-};
+
+    for (var element in objects) {
+
+        var sid = objects[element].native.sid;
+        var type = objects[element].native.type;
+
+        var isThere = false;
+
+        for (var i = 0; i < sel_devices.length; i++){
+
+            if (sel_devices[i].name == sid && sel_devices[i].type == type) isThere = true;
+
+            if (i === sel_devices.length - 1 && isThere === false) {
+
+                adapter.deleteDevice(element, function (err,dat) {
+                    if (err) adapter.log.error(err);
+                    adapter.log.warn('object: '+ JSON.stringify(dat) + ' deleded');
+                });
+
+                adapter.log.warn('object: ' + objects[element]._id + ' deleded');
+            }
+               
+            
+        }
+
+    };
+}
 
 function uploadState(id, host, parameter, val) {
     var device = new yeelight;
@@ -275,7 +371,7 @@ function uploadState(id, host, parameter, val) {
                                         adapter.setState(id + '.active_bright', result[0], true);
                                     });
                                 }
-                            } else { adapter.log.warn('Error verifying power_on command') }
+                            } else { adapter.log.debug('Error verifying power_on command') }
                         });
 
 
@@ -302,7 +398,7 @@ function uploadState(id, host, parameter, val) {
                             if (val == result[0]) {
                                 adapter.setState(id + '.' + parameter, result[0], true);
                             } else {
-                                adapter.log.warn('Error verifying active_bright command');
+                                adapter.log.debug('Error verifying active_bright command');
                             }
                         });
                     }
@@ -839,9 +935,40 @@ function updateConnect() {
         })
     }
 }
-function addState(id, state, val) {
+function addState(id, state, val, device) {
+
+    var ct_min = 1700;
+    var ct_max = 6500;
+    var smartname = "";
+
+    if (typeof device.type !== 'undefined') {
+        if (device.type === 'ceiling1') { ct_min = 2600 };
+    }
+    if (typeof device.smart_name !== 'undefined') {
+        if (device.smart_name !== '') { smartname = device.smart_name };
+        //adapter.log.warn(device.smart_name);
+    }
+
     switch (state) {
         case 'power':
+            adapter.setObjectNotExists(id + '.' + state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    role: 'switch',
+                    write: true,
+                    read: true,
+                    type: 'boolean',
+                    smartName: {
+                        de: smartname,
+                        smartType: "LIGHT"
+                    }
+                },
+                native: {}
+            });
+            adapter.setState(id + '.' + state, val, true);
+            break;
+
         case 'moon_mode':
         case 'color_mode':
             adapter.setObjectNotExists(id + '.' + state, {
@@ -865,7 +992,13 @@ function addState(id, state, val) {
                     role: 'level.color.temperature',
                     write: true,
                     read: true,
-                    type: 'number'
+                    type: 'number',
+                    min: ct_min,
+                    max: ct_max,
+                    smartName: {
+                        de: smartname,
+                        smartType: "LIGHT"
+                    }
                 },
                 native: {}
             });
@@ -879,7 +1012,12 @@ function addState(id, state, val) {
                     role: 'level.dimmer',
                     write: true,
                     read: true,
-                    type: 'number'
+                    type: 'number',
+                    smartName: {
+                        de: smartname,
+                        smartType: "LIGHT",
+                        byON: "-"
+                    }
                 },
                 native: {}
             });
@@ -895,7 +1033,11 @@ function addState(id, state, val) {
                     read: true,
                     type: 'number',
                     min: 0,
-                    max: 360
+                    max: 360,
+                    smartName: {
+                        de: smartname,
+                        smartType: "LIGHT"
+                    }
                 },
                 native: {}
             });
@@ -911,7 +1053,11 @@ function addState(id, state, val) {
                     read: true,
                     type: 'number',
                     min: 0,
-                    max: 360
+                    max: 100,
+                    smartName: {
+                        de: smartname,
+                        smartType: "LIGHT"
+                    }
                 },
                 native: {}
             });

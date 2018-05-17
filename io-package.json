@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "news": {
+      "0.2.0": {
+        "en": "many changes add smartname option. add manual devices. many fixes",
+        "de": "Viele Änderungen fügen die Smartname-Option hinzu. Fügen Sie manuelle Geräte hinzu. viele Korrekturen",
+        "ru": "многие изменения добавляют опцию smartname. добавьте ручные устройства. многие исправления",
+        "pt": "muitas alterações adicionam a opção smartname. adicione dispositivos manuais. muitas correções",
+        "nl": "veel wijzigingen toevoegen de optie smartname. handmatige apparaten toevoegen. veel oplossingen",
+        "fr": "de nombreux changements ajoutent l'option smartname. ajouter des appareils manuels. beaucoup de corrections",
+        "it": "molte modifiche aggiungono l'opzione smartname. aggiungi dispositivi manuali. molte correzioni",
+        "es": "muchos cambios agregan la opción de nombre inteligente. agregar dispositivos manuales. muchas correcciones",
+        "pl": "wiele zmian dodaje opcję smartname. dodaj urządzenia ręczne. wiele poprawek"
+      },
       "0.1.0": {
         "en": "many changes, add hue and sat for alexa control",
         "de": "Viele Änderungen,  hue und sat für alexa control hinzugefügt",
@@ -17,27 +28,6 @@
       "0.0.3": {
         "en": "objects not overwirte after restart",
         "de": "Objekte werden nach neustart nicht mehr überschrieben"
-      },
-
-      "0.0.2": {
-        "en": "testing added, log changed",
-        "de": "Testen hinzugefügt, Protokoll geändert",
-        "ru": "добавлено тестирование, журнал изменен",
-        "pt": "teste adicionado, registro alterado",
-        "nl": "testen toegevoegd, log gewijzigd",
-        "fr": "test ajouté, journal modifié",
-        "it": "test aggiunto, registro modificato",
-        "es": "prueba agregada, registro cambiado",
-        "pl": "dodano testowanie, zmieniono log"
-      },
-
-      "0.0.1": {
-        "en": "initial adapter",
-        "de": "Initiale Version",
-        "ru": "Драйвер для Yeelight (Люстра, цветная лампочка)",
-        "pt": "VersÃ£o inicial",
-        "fr": "Version initiale",
-        "nl": "Eerste release"
       }
 
     },
@@ -65,6 +55,7 @@
       "pl": "Adapter iobroker Yeelight"
     },
     "authors": [
+      "<MeisterTR <meistertr.smarthome@gmail.com>",
       "cahek2202 <cahek2202@mail.ru>"
     ],
     "docs": {
@@ -75,9 +66,9 @@
     "icon": "yeelight.png",
     "materialize": true,
     "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/cahek2202/ioBroker.yeelight/master/admin/yeelight.png",
+    "extIcon": "https://raw.githubusercontent.com/MeisterTR/ioBroker.yeelight/master/admin/yeelight.png",
     "keywords": [ "xiaomi", "yeelight", "mihome" ],
-    "readme": "https://github.com/cahek2202/ioBroker.yeelight/blob/master/README.md",
+    "readme": "https://github.com/MeisterTR/ioBroker.yeelight/blob/master/README.md",
     "loglevel": "info",
     "type": "lighting"
   },

@@ -1,5 +1,5 @@
 /**
- *
+ * 
  * yeelight adapter
  *
  *

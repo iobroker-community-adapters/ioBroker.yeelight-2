@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "yeelight",
-    "version": "0.2.0",
+    "version": "0.2.5",
     "news": {
+      "0.2.5": {
+        "en": "many fixes"
+
+      },
       "0.2.0": {
         "en": "many changes add smartname option. add manual devices. many fixes",
         "de": "Viele Änderungen fügen die Smartname-Option hinzu. Fügen Sie manuelle Geräte hinzu. viele Korrekturen",

@@ -1,10 +1,10 @@
 { 
   "name": "iobroker.yeelight",
-  "version": "0.2.0",
+  "version": "0.2.5",
   "description": "ioBroker Yeelight Adapter",
   "author": {
-    "name": "cahek2202",
-    "email": "cahek2202@mail.ru"
+    "name": "MeisterTR",
+    "email": "meistertr.smarthome@gmail.com"
   },
   "contributors": [
     {

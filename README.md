@@ -2,20 +2,39 @@
 # ioBroker.yeelight
 =================
 
-This adapter for Yeelight device
+[![NPM version](http://img.shields.io/npm/v/iobroker.landroid-s.svg)](https://www.npmjs.com/package/iobroker.landroid-s)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.landroid-s.svg)](https://www.npmjs.com/package/iobroker.landroid-s)
+[![bitHound Overall Score](https://www.bithound.io/github/MeisterTR/ioBroker.yeelight/badges/score.svg)](https://www.bithound.io/github/MeisterTR/iobroker.yeelight)
 
-## CAUTION: Version 0.2.0 is not finished jet and could brake your system
+[![NPM](https://nodei.co/npm/iobroker.yeelight.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight/)
+
+**Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight)
+Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight/)
+
+
+[Deutsche Beschreibung hier](README_de.md)
+
+This adapter control your Yeelight device
 
 ## Installation
 for RGB Bulbs you have to enable the LAN in the settings of the yeelight app.
 
-## Change name of lights
-if you want to change the name of the lights, you can change the name. Never change the ID name
+## Config
+you can add manually devices or find devices in network. the basic port is 55443. if you want, you can change the name, ip, port and smartname
+
+### smartname
+if you type in a smartname, the device is add to the iobroker.cloud and can control by alexa. 
+
+### Find device
+with this button you can scan your Network for devices, if something is found, the divices added to the table. It takes about 20 seconds to scan the network. if the devices not found, the Lan mode is not enabled or the bulbs are in a nother network.
+
 
 ## Changelog
+### 0.2.5 (2018-05-29)
+* (MeisterTR) fixed manny bugs.
 ### 0.2.0 (2018-03-07)
-* (MeisterTR)many changes add smartname Option, add manual devices, many fixes
-* (MeisterTR)fix role for alexa
+* (MeisterTR) many changes add smartname Option, add manual devices, many fixes
+* (MeisterTR) fix role for alexa
 ### 0.1.1 (2018-03-07)
 * (MeisterTR)return to default value when turn on
 * (MeisterTR)fix role for alexa

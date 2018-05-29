@@ -1,5 +1,5 @@
 /**
- *
+ * 
  * yeelight adapter
  *
  *
@@ -12,6 +12,7 @@ var net = require('net');
 var yeelight = require(__dirname + '/lib/yeelight');
 var adapter = new utils.Adapter('yeelight');
 var objects = {};
+var devices = [];
 var sockets = {};
 var sel_devices = [];
 var ready = false;
@@ -98,39 +99,141 @@ adapter.on('message', function (obj) {
 });
 
 function main() {
-    readObjects(createDevice);
+    checkChanges(createDevice);
     adapter.subscribeStates('*');
 
 };
 
-function readObjects(callback) {
+function checkChanges(callback) {
     adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
         if (err) {
             adapter.log.error(err);
         } else {
-            adapter.subscribeStates('*');
             objects = list;
-            createSocketsList();
-            updateConnect();
-            adapter.log.warn(JSON.stringify(objects));
-            //ScheckChanges();
-            callback && callback();
+
+            adapter.log.debug("found Devices:_" + JSON.stringify(objects));
+
+            var count = Object.keys(objects).length;
+            adapter.log.debug("count Devices:_" + count);
+            //check every device
+            for (var j = 0; j < count; j++) {
+                var element = Object.keys(objects)[j];
+                adapter.log.debug("Element:_" + element);
+
+                var sid = objects[element].native.sid;
+                var type = objects[element].native.type;
+                getastate( element, ifinConfig);
+
+                if (j === count -1) {
+                    setTimeout(function () {
+                        updateConnect();
+                        adapter.subscribeStates('*');
+                        callback && callback();
+                    }, 2000);
+
+
+                }
+
+            }
+            if (count === 0) {
+                setTimeout(function () {
+                    updateConnect();
+                    adapter.subscribeStates('*');
+                    callback && callback();
+                }, 2000);
+            }
         }
     });
-};
+    function getastate(element, callback) {
+        var info = adapter.getState(element + '.info.com', function (err, state) {
+            adapter.log.debug("hier die ate cfg: "+state.val)
+            if (callback && typeof (callback) === "function") callback(element, JSON.parse(state.val));
+        });
+
+    }
+
+    function ifinConfig(element, oldConfig) {
+
+        var sid = objects[element].native.sid;
+        var type = objects[element].native.type;
+
+        var isThere = false;
+        for (var i = 0; i < sel_devices.length; i++) {
+            if (sel_devices[i].name == sid && sel_devices[i].type == type) {
+                isThere = true;
+                adapter.log.debug("der sm: " + sel_devices[i].smart_name)
+                if (sel_devices[i].ip !== oldConfig.ip) {
+                    adapter.setState(element + ".info.IPAdress", sel_devices[i].ip, true)
+                    adapter.setState(element + ".info.com", JSON.stringify(sel_devices[i]), true)
+                }
+                if (sel_devices[i].port !== oldConfig.port) {
+                    adapter.setState(element + ".info.Port", sel_devices[i].port, true)
+                    adapter.setState(element + ".info.com", JSON.stringify(sel_devices[i]), true)
+                }
+                if (sel_devices[i].smart_name !== oldConfig.smart_name) {
+                    changeSmartName(element, sel_devices[i].smart_name)
+                    adapter.setState(element + ".info.com", JSON.stringify(sel_devices[i]), true)
+                }
+
+            } 
+            
+            if (i === sel_devices.length - 1 && isThere === false) {
+                delDev(element.split(".")[2]);
+
+                adapter.log.debug('object: ' + objects[element]._id + ' deleded');
+            }
+        }
+    };
+
+    function changeSmartName(element, newSm) {
+        var Names = ["power", "ct", "active_bright", "hue", "sat"];
+        adapter.log.debug("canged " + Names.length + " smartname to : " + newSm)
+
+        for (var i =0 ; i < Names.length; i++) {
+            adapter.extendObject(element + ".control." + Names[i], {
+                common: {
+                    smartName: {
+                        de: newSm
+                    }
+                }
+            });
+        }
+
+
+    }
+
+    function delDev(id) {
+        adapter.deleteDevice(id, function (err, dat) {
+            if (err) adapter.log.warn(err);
+            //adapter.log.debug(dat);
+        });
+    }
+}
+
 function createDevice() {
     var devC = adapter.config.devices;
 
     for (var i = 0; i < devC.length; i++) {
 
         var sid = adapter.namespace + '.' + devC[i].type + '-' + devC[i].name;
+        var device = devC[i].type + '-' + devC[i].name;
+
         adapter.log.debug("Create Device: " + sid);
 
         if (!objects[sid]) {
-            adapter.setObject(sid + '.info', {
-                type: 'channel'
-            });
 
+            adapter.createDevice(device,
+                {
+                    name: devC[i].type,
+                    icon: '/icons/' + devC[i].type + '.png',
+                },
+                {
+                    sid: devC[i].name,
+                    type: devC[i].type
+                }
+            );
+            adapter.createChannel(device, "info");
+            adapter.createChannel(device, "control");
 
             adapter.setObjectNotExists(sid + '.info.com', {
                 common: {
@@ -146,19 +249,6 @@ function createDevice() {
 
             adapter.setState(sid + '.info.com', JSON.stringify(devC[i]), true);
 
-            
-            adapter.setObject(sid, {
-                type: 'device',
-                common: {
-                    name: devC[i].type,
-                    icon: '/icons/' + devC[i].type + '.png',
-                },
-                native: {
-                    sid: devC[i].name,
-                    type: devC[i].type
-                }
-            });
-            
             adapter.setObjectNotExists(sid + '.info.connect', {
                 common: {
                     name: 'Connect',
@@ -192,15 +282,14 @@ function createDevice() {
                 type: 'state',
                 native: {}
             });
+
             adapter.setState(sid + '.info.IPAdress', devC[i].ip, true);
             adapter.setState(sid + '.info.Port', devC[i].port, true);
-            //getPrps(devC[i].ip, devC[i].port, sid, devC[i].type, devC[i].smart_name);
-            getPrps(sid, devC[i]);
 
             listen(devC[i].ip, devC[i].port, setStateDevice);
         };
 
-        if (i === devC.length - 1) checkChanges();
+        getPrps(sid + ".control", devC[i]);
     };
 
 };
@@ -246,7 +335,7 @@ function getPrps(sid, device) {
                             break;
                         case 1:
                             addState(sid, 'moon_mode', true, device);
-                            break; 
+                            break;
                     }
                 }
                 if (!(result[5] === "")) {
@@ -274,40 +363,10 @@ function getPrps(sid, device) {
         }
     })
 
-   
+
 }
 
-function checkChanges() {
-    adapter.getDevices(function (err, list) {
-        adapter.log.warn(JSON.stringify(list))
-    });
 
-    for (var element in objects) {
-
-        var sid = objects[element].native.sid;
-        var type = objects[element].native.type;
-
-        var isThere = false;
-
-        for (var i = 0; i < sel_devices.length; i++){
-
-            if (sel_devices[i].name == sid && sel_devices[i].type == type) isThere = true;
-
-            if (i === sel_devices.length - 1 && isThere === false) {
-
-                adapter.deleteDevice(element, function (err,dat) {
-                    if (err) adapter.log.error(err);
-                    adapter.log.warn('object: '+ JSON.stringify(dat) + ' deleded');
-                });
-
-                adapter.log.warn('object: ' + objects[element]._id + ' deleded');
-            }
-               
-            
-        }
-
-    };
-}
 
 function uploadState(id, host, parameter, val) {
     var device = new yeelight;
@@ -830,6 +889,7 @@ function hex2dec(hex) {
     return parseInt(hex.substring(1), 16);
 }
 function listen(host, port, callback) {
+    adapter.log.debug("listen to: " + host);
     var socket = net.connect(port, host);
     socket.on('data', function (data) {
         if (callback) {
@@ -910,31 +970,42 @@ function setStateDevice(ip, state) {
 
 }
 function updateConnect() {
-    for (var key in objects) {
-        var id = key;
-        adapter.getState(id + '.info.IPAdress', function (err, Ip) {
-            if (err) {
-                adapter.log.error(err);
-            } else {
-                var device = new yeelight;
-                device.host = Ip.val;
-                device.port = 55443;
-                device.sendCommand('get_prop', ['power'], function (err, result) {
+    adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
+        if (err) {
+            adapter.log.error(err);
+        } else {
+            objects = list;
+            for (var key in objects) {
+                var id = key;
+                adapter.log.debug("Update connection for:_" + id);
+                adapter.getState(id + '.info.IPAdress', function (err, Ip) {
                     if (err) {
                         adapter.log.error(err);
                     } else {
-                        if (result) {
-                            adapter.setState(id + '.info.connect', true, true);
-                        } else {
-                            adapter.setState(id + '.info.connect', false, true);
-                        }
+                        var device = new yeelight;
+                        device.host = Ip.val;
+                        device.port = 55443;
+                        device.sendCommand('get_prop', ['power'], function (err, result) {
+                            if (err) {
+                                adapter.log.error(err);
+                            } else {
+                                if (result) {
+                                    adapter.setState(id + '.info.connect', true, true);
+                                } else {
+                                    adapter.setState(id + '.info.connect', false, true);
+                                }
+                            }
+                        })
+                        listen(Ip.val, 55443, setStateDevice);
                     }
                 })
-                listen(Ip.val, 55443, setStateDevice);
             }
-        })
-    }
+        }
+
+    });
+
 }
+
 function addState(id, state, val, device) {
 
     var ct_min = 1700;

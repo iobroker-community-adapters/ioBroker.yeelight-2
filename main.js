@@ -32,14 +32,14 @@ adapter.on('stateChange', function (id, state) {
     //adapter.log.warn('id:' + JSON.stringify(id));
     if (state && !state.ack) {
         var changeState = id.split('.');
-        var sid = adapter.namespace + '.' + changeState[2];
+        var sid = adapter.namespace + '.' + changeState[2] + '.' + changeState[3];
         adapter.getState(sid + '.info.IPAdress', function (err, data) {
             if (err) {
                 adapter.log.error(err);
             } else {
                 if (changeState[3] != 'info') {
                     if (!state.ack) {
-                        uploadState(sid, data.val, changeState[3], state.val);
+                        uploadState(sid, data.val, changeState[4], state.val);
                     }
                 }
             }

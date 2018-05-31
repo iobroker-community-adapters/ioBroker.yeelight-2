@@ -211,8 +211,10 @@ function checkChanges(callback) {
 }
 
 function createDevice() {
-    var devC = null | adapter.config.devices;
-    if (devC === null ) return
+    var devC =  adapter.config.devices;
+    
+    if (typeof devC === "undefined") return
+
     for (var i = 0; i < devC.length; i++) {
 
         var sid = adapter.namespace + '.' + devC[i].type + '-' + devC[i].name;

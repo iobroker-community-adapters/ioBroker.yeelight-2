@@ -30,7 +30,7 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.2.5 (2018-05-29)
+### 0.2.6 (2018-05-31)
 * (MeisterTR) fixed manny bugs.
 ### 0.2.0 (2018-03-07)
 * (MeisterTR) many changes add smartname Option, add manual devices, many fixes

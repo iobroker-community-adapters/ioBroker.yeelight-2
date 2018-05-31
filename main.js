@@ -88,7 +88,7 @@ adapter.on('message', function (obj) {
             setTimeout(function () {
                 yeelight.stopDiscovering();
                 reply(deviceDiscovered);
-            }, 10000);
+            }, 30000);
 
             return true;
             break;

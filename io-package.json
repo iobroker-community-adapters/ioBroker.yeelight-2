@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "yeelight",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "news": {
-      "0.2.6": {
+      "0.2.7": {
         "en": "many fixes"
 
       },

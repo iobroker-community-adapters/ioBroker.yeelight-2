@@ -28,23 +28,28 @@ adapter.on('unload', function (callback) {
 });
 
 adapter.on('stateChange', function (id, state) {
-    //adapter.log.warn('state:' + JSON.stringify(state));
-    //adapter.log.warn('id:' + JSON.stringify(id));
     if (state && !state.ack) {
         var changeState = id.split('.');
         var sid = adapter.namespace + '.' + changeState[2];
+        adapter.log.warn(JSON.stringify(changeState))
         adapter.getState(sid + '.info.IPAdress', function (err, data) {
             if (err) {
                 adapter.log.error(err);
             } else {
                 if (changeState[3] != 'info') {
                     if (!state.ack) {
-                        uploadState(sid + '.' + changeState[3], data.val, changeState[4], state.val);
+                        adapter.getState(sid + '.info.Port', function (err, data2) {
+                            if (err) {
+                                adapter.log.error(err);
+                            }
+                            else {
+                                uploadState(sid + '.' + changeState[3], data.val,data2.val, changeState[4], state.val);
+                            }
+                        });
+                        
                     }
                 }
             }
-
-
         })
     }
 });
@@ -370,11 +375,11 @@ function getPrps(sid, device) {
 
 
 
-function uploadState(id, host, parameter, val) {
+function uploadState(id, host,port, parameter, val) {
     var device = new yeelight;
     device.host = host;
-    device.port = 55443;
-    adapter.log.debug("Upload State " + parameter + " host: " + host + " Value: " + val);
+    device.port = port;
+    adapter.log.debug("Upload State " + parameter + " host: " + host + " Port: " + port + " Value: " + val);
     switch (parameter) {
 
         case 'power':
@@ -891,7 +896,7 @@ function hex2dec(hex) {
     return parseInt(hex.substring(1), 16);
 }
 function listen(host, port, callback) {
-    adapter.log.debug("listen to: " + host);
+    adapter.log.debug("listen to: " + host +':'+ port);
     var socket = net.connect(port, host);
     socket.on('data', function (data) {
         if (callback) {
@@ -1068,6 +1073,7 @@ function addState(id, state, val, device) {
                     type: 'number',
                     min: ct_min,
                     max: ct_max,
+                    unit: 'K',
                     smartName: {
                         de: smartname,
                         smartType: "LIGHT"

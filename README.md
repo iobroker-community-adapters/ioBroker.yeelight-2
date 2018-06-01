@@ -4,8 +4,6 @@
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.landroid-s.svg)](https://www.npmjs.com/package/iobroker.landroid-s)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.landroid-s.svg)](https://www.npmjs.com/package/iobroker.landroid-s)
-[![bitHound Overall Score](https://www.bithound.io/github/MeisterTR/ioBroker.yeelight/badges/score.svg)](https://www.bithound.io/github/MeisterTR/iobroker.yeelight)
-
 [![NPM](https://nodei.co/npm/iobroker.yeelight.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight/)
 
 **Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight)
@@ -30,6 +28,8 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
+### 0.2.7 (2018-06-01)
+* (MeisterTR) fixed bug wit port, fixed set ct by alexa
 ### 0.2.6 (2018-05-31)
 * (MeisterTR) fixed manny bugs.
 ### 0.2.0 (2018-03-07)

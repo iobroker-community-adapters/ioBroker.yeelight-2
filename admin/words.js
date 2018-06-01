@@ -80,5 +80,16 @@ systemDictionary = {
         "it": "smartname",
         "es": "nombre inteligente",
         "pl": "smartname"
+    },
+    "type": {
+        "en": "type",
+        "de": "Art",
+        "ru": "тип",
+        "pt": "tipo",
+        "nl": "type",
+        "fr": "type",
+        "it": "genere",
+        "es": "tipo",
+        "pl": "rodzaj"
     }
 };

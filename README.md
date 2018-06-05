@@ -2,9 +2,9 @@
 # ioBroker.yeelight
 =================
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.landroid-s.svg)](https://www.npmjs.com/package/iobroker.landroid-s)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.landroid-s.svg)](https://www.npmjs.com/package/iobroker.landroid-s)
-[![NPM](https://nodei.co/npm/iobroker.yeelight.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight/)
+[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![NPM](https://nodei.co/npm/iobroker.yeelight-2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight-2/)
 
 **Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight)
 Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight/)
@@ -28,7 +28,7 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.2.7 (2018-06-01)
+### 0.2.8 (2018-06-01)
 * (MeisterTR) fixed bug wit port, fixed set ct by alexa
 ### 0.2.6 (2018-05-31)
 * (MeisterTR) fixed manny bugs.

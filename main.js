@@ -10,7 +10,7 @@
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var net = require('net');
 var yeelight = require(__dirname + '/lib/yeelight');
-var adapter = new utils.Adapter('yeelight');
+var adapter = new utils.Adapter('yeelight2');
 var objects = {};
 var devices = [];
 var sockets = {};

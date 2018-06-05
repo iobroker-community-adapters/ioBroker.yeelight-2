@@ -1,14 +1,14 @@
 ![Logo](admin/yeelight.png)
-# ioBroker.yeelight
+# ioBroker.yeelight2
 =================
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight2.svg)](https://www.npmjs.com/package/iobroker.yeelight2)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight2.svg)](https://www.npmjs.com/package/iobroker.yeelight2)
 
-[![NPM](https://nodei.co/npm/iobroker.yeelight-2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight-2/)
+[![NPM](https://nodei.co/npm/iobroker.yeelight2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight2/)
 
-**Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight)
-Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight/)
+**Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight2.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight2)
+Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight2/)
 
 
 [Deutsche Beschreibung hier](README_de.md)

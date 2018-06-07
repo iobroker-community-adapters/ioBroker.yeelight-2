@@ -1,5 +1,5 @@
 { 
-  "name": "iobroker.yeelight2",
+  "name": "iobroker.yeelight-2",
   "version": "0.2.9",
   "description": "ioBroker Yeelight Adapter",
   "author": {

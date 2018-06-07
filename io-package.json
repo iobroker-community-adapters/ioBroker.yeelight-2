@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "news": {
       "0.2.9": {
         "en": "change name"

@@ -1,6 +1,6 @@
 { 
   "name": "iobroker.yeelight2",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "ioBroker Yeelight Adapter",
   "author": {
     "name": "MeisterTR",
@@ -16,7 +16,7 @@
       "email": "meistertr.smarthome@gmail.com"
     }
   ],
-  "homepage": "https://github.com/MeisterTR/ioBroker.yeelight2",
+  "homepage": "https://github.com/MeisterTR/ioBroker.yeelight-2",
   "license": "MIT",
   "keywords": [
     "ioBroker",
@@ -26,7 +26,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/MeisterTR/ioBroker.yeelight2"
+    "url": "https://github.com/MeisterTR/ioBroker.yeelight-2"
   },
   "dependencies": {
 
@@ -41,7 +41,7 @@
     "test": "node node_modules/mocha/bin/mocha --exit"
   },
   "bugs": {
-    "url": "https://github.com/MeisterTR/ioBroker.yeelight2/issues"
+    "url": "https://github.com/MeisterTR/ioBroker.yeelight-2/issues"
   },
   "readmeFilename": "README.md"
 }

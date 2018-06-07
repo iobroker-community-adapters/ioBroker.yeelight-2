@@ -1,10 +1,10 @@
 {
   "common": {
-    "name": "yeelight2",
+    "name": "yeelight-2",
     "version": "0.2.8",
     "news": {
-      "0.2.8": {
-        "en": "many fixes"
+      "0.2.9": {
+        "en": "change name"
 
       },
       "0.2.0": {
@@ -71,9 +71,9 @@
     "materialize": true,
     "enabled": true,
     "messagebox": true,
-    "extIcon": "https://raw.githubusercontent.com/MeisterTR/ioBroker.yeelight2/master/admin/yeelight.png",
+    "extIcon": "https://raw.githubusercontent.com/MeisterTR/ioBroker.yeelight-2/master/admin/yeelight.png",
     "keywords": [ "xiaomi", "yeelight", "mihome" ],
-    "readme": "https://github.com/MeisterTR/ioBroker.yeelight2/blob/master/README.md",
+    "readme": "https://github.com/MeisterTR/ioBroker.yeelight-2/blob/master/README.md",
     "loglevel": "info",
     "type": "lighting"
   },

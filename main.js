@@ -31,7 +31,7 @@ adapter.on('stateChange', function (id, state) {
     if (state && !state.ack) {
         var changeState = id.split('.');
         var sid = adapter.namespace + '.' + changeState[2];
-        adapter.log.warn(JSON.stringify(changeState))
+        adapter.log.debug(JSON.stringify(changeState))
         adapter.getState(sid + '.info.IPAdress', function (err, data) {
             if (err) {
                 adapter.log.error(err);
@@ -131,6 +131,7 @@ function checkChanges(callback) {
 
                 if (j === count -1) {
                     setTimeout(function () {
+                        createSocketsList();
                         updateConnect();
                         adapter.subscribeStates('*');
                         callback && callback();
@@ -142,6 +143,7 @@ function checkChanges(callback) {
             }
             if (count === 0) {
                 setTimeout(function () {
+                    createSocketsList();
                     updateConnect();
                     adapter.subscribeStates('*');
                     callback && callback();
@@ -923,8 +925,8 @@ function listen(host, port, callback) {
 }
 function setStateDevice(ip, state) {
     adapter.log.debug(ip);
-    var id = sockets[ip];
-    adapter.log.debug(id);
+    var id = sockets[ip] + ".control";
+    adapter.log.debug("This id:_"+id);
     adapter.log.debug(JSON.stringify(state));
     adapter.log.debug(JSON.stringify(sockets));
     for (var key in state) {
@@ -1172,6 +1174,7 @@ function createSocketsList() {
                     var id = key;
                     var ip = temp[key].val;
                     var sid = id.split('.');
+                    adapter.log.debug("sid by socket:_"+JSON.stringify(sid));
                     id = sid[0] + '.' + sid[1] + '.' + sid[2];
                     sockets[ip] = id;
                     //adapter.log.warn(JSON.stringify(sockets));

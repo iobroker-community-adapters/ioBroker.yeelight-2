@@ -29,6 +29,8 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
+### 0.3.0 (2018-06-08)
+* (MeisterTR) fix update states
 ### 0.2.9 (2018-06-07)
 * (MeisterTR) change name for repo and npm
 ### 0.2.8 (2018-06-01)

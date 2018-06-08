@@ -1,11 +1,18 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.2.9",
+    "version": "0.3.0",
     "news": {
-      "0.2.9": {
-        "en": "change name"
-
+      "0.3.0": {
+        "en": "fix state update error",
+        "de": "Update-Fehler behoben",
+        "ru": "исправить ошибку обновления состояния",
+        "pt": "corrigir erro de atualização de estado",
+        "nl": "fix state update error",
+        "fr": "correction d'une erreur de mise à jour",
+        "it": "correggere l'errore di aggiornamento dello stato",
+        "es": "corregir el error de actualización del estado",
+        "pl": "napraw błąd stanu aktualizacji"
       },
       "0.2.0": {
         "en": "many changes add smartname option. add manual devices. many fixes",

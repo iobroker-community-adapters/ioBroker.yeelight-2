@@ -309,8 +309,8 @@ function getPrps(sid, device) {
     YeelState.host = device.ip;
     YeelState.port = device.port;
 
-    YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright', 'hue', 'sat'], function (err, result) {
-        adapter.log.debug('Device:' + JSON.stringify(result));
+    YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright', 'hue', 'sat','flowing','main_power','bg_power','bg_color_mode','bg_bright','bg_hue','bg_sat'], function (err, result) {
+        adapter.log.debug('regest params from:'+ sid +" _params:_" + JSON.stringify(result));
         if (err) {
             adapter.log.error(err);
         } else {
@@ -365,6 +365,16 @@ function getPrps(sid, device) {
                 }
                 if (!(result[8] === "")) {
                     addState(sid, 'sat', result[7], device);
+                } 
+                if (!(result[11] === "")) {
+                    switch (result[11]) {
+                        case 'on':
+                            addState(sid, 'bg_power', true, device);
+                            break;
+                        case 'off':
+                            addState(sid, 'bg_power', false, device);
+                            break;
+                    }
                 }
             } else {
                 adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
@@ -385,6 +395,7 @@ function uploadState(id, host,port, parameter, val) {
     switch (parameter) {
 
         case 'power':
+        case 'bg_power':
             var powerState;
             switch (val) {
                 case true:
@@ -394,7 +405,7 @@ function uploadState(id, host,port, parameter, val) {
                     powerState = 'off';
                     break;
             }
-            device.sendCommand('set_power', [powerState, 'smooth', 1000], function (err, result) {
+            device.sendCommand('set_'+parameter, [powerState, 'smooth', 1000], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
@@ -1031,6 +1042,7 @@ function addState(id, state, val, device) {
 
     switch (state) {
         case 'power':
+        case 'bg_power':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
@@ -1094,6 +1106,9 @@ function addState(id, state, val, device) {
                     write: true,
                     read: true,
                     type: 'number',
+                    min: 0,
+                    max: 100,
+                    unit:"%",
                     smartName: {
                         de: smartname,
                         smartType: "LIGHT",

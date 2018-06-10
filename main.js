@@ -21,6 +21,27 @@ var bright_selector;
 var bright_modi = ["active_bright", "bright"]
 
 
+var PARAMETERLIST = [
+    'power',
+    'active_bright',
+    'ct',
+    'rgb',
+    'active_mode',
+    'color_mode',
+    'bright',
+    'hue',
+    'sat',
+    'flowing',
+    'main_power',
+    'bg_power',
+    'bg_color_mode',
+    'bg_bright',
+    'bg_hue',
+    'bg_sat',
+    'bg_rgb',
+    'bg_ct'
+];
+
 adapter.on('unload', function (callback) {
     sockets = null;
     yeelight.stopDiscovering();
@@ -98,7 +119,7 @@ adapter.on('message', function (obj) {
             return true;
             break;
         default:
-            adapter.log.warn('Unknown command: ' + obj.command);
+            adapter.log.debug('Unknown command: ' + obj.command);
             break;
     }
 });
@@ -309,7 +330,7 @@ function getPrps(sid, device) {
     YeelState.host = device.ip;
     YeelState.port = device.port;
 
-    YeelState.sendCommand('get_prop', ['power', 'active_bright', 'ct', 'rgb', 'active_mode', 'color_mode', 'bright', 'hue', 'sat','flowing','main_power','bg_power','bg_color_mode','bg_bright','bg_hue','bg_sat'], function (err, result) {
+    YeelState.sendCommand('get_prop', PARAMETERLIST, function (err, result) {
         adapter.log.debug('regest params from:'+ sid +" _params:_" + JSON.stringify(result));
         if (err) {
             adapter.log.error(err);
@@ -365,7 +386,17 @@ function getPrps(sid, device) {
                 }
                 if (!(result[8] === "")) {
                     addState(sid, 'sat', result[7], device);
-                } 
+                }
+                if (!(result[10] === "")) {
+                    switch (result[10]) {
+                        case 'on':
+                            addState(sid, 'main_power', true, device);
+                            break;
+                        case 'off':
+                            addState(sid, 'main_power', false, device);
+                            break;
+                    }
+                }
                 if (!(result[11] === "")) {
                     switch (result[11]) {
                         case 'on':
@@ -375,6 +406,9 @@ function getPrps(sid, device) {
                             addState(sid, 'bg_power', false, device);
                             break;
                     }
+                }
+                if (!(result[13] === "")) {
+                    addState(sid, 'bg_bright', result[13], device);
                 }
             } else {
                 adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
@@ -396,6 +430,7 @@ function uploadState(id, host,port, parameter, val) {
 
         case 'power':
         case 'bg_power':
+        case 'main_power':
             var powerState;
             switch (val) {
                 case true:
@@ -460,9 +495,16 @@ function uploadState(id, host,port, parameter, val) {
             break;
 
         case 'active_bright':
+        case 'bg_bright':
             // TODO 0 for Light off and power on brfore change!
-
-            device.sendCommand('set_bright', [val, 'smooth', 1000], function (err, result) {
+            var set_param 
+            if (parameter === 'active_bright') {
+                set_param = 'set_bright';
+            }
+            else if (parameter === 'bg_bright') {
+                set_param = 'set_bg_bright';
+            }
+            device.sendCommand(set_param, [val, 'smooth', 1000], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
@@ -472,7 +514,7 @@ function uploadState(id, host,port, parameter, val) {
                             adapter.setState(id + '.' + parameter, val, true)
                         }
                     } else {
-                        getProp(device.host, "active_bright", function (result) {
+                        getProp(device.host, parameter, function (result) {
                             adapter.log.debug("Wrong respons set_bright, ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
                             if (val == result[0]) {
                                 adapter.setState(id + '.' + parameter, result[0], true);

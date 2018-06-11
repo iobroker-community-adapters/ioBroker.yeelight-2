@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "news": {
       "0.3.0": {
         "en": "fix state update error",

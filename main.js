@@ -331,7 +331,8 @@ function getPrps(sid, device) {
     YeelState.port = device.port;
 
     YeelState.sendCommand('get_prop', PARAMETERLIST, function (err, result) {
-        adapter.log.debug('regest params from:'+ sid +" _params:_" + JSON.stringify(result));
+        adapter.log.debug('regest params from:' + sid + " _params:_" + JSON.stringify(result));
+        //result = ["off", "1", "4000", "", "0", "2", "1", "", "", "0", "off", "off", "", "40", "180", "100", "65535", "4000"];
         if (err) {
             adapter.log.error(err);
         } else {
@@ -410,6 +411,18 @@ function getPrps(sid, device) {
                 if (!(result[13] === "")) {
                     addState(sid, 'bg_bright', result[13], device);
                 }
+                if (!(result[14] === "")) {
+                    addState(sid, 'bg_hue', result[14], device);
+                }
+                if (!(result[15] === "")) {
+                    addState(sid, 'bg_sat', result[15], device);
+                }
+                if (!(result[16] === "")) {
+                    addState(sid, 'bg_rgb', result[16], device);
+                }
+                if (!(result[17] === "")) {
+                    addState(sid, 'bg_ct', result[17], device);
+                }
             } else {
                 adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
             }
@@ -440,7 +453,12 @@ function uploadState(id, host,port, parameter, val) {
                     powerState = 'off';
                     break;
             }
-            device.sendCommand('set_'+parameter, [powerState, 'smooth', 1000], function (err, result) {
+            var powName = "";
+            if (parameter === "power") powName = "set_power";
+            if (parameter === "bg_power") powName = "bg_set_power";
+            if (parameter === "main_power") powName = "main_set_power";
+
+            device.sendCommand(powName, [powerState, 'smooth', 1000], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
                 } else {
@@ -502,7 +520,7 @@ function uploadState(id, host,port, parameter, val) {
                 set_param = 'set_bright';
             }
             else if (parameter === 'bg_bright') {
-                set_param = 'set_bg_bright';
+                set_param = 'bg_set_bright';
             }
             device.sendCommand(set_param, [val, 'smooth', 1000], function (err, result) {
                 if (err) {
@@ -986,6 +1004,8 @@ function setStateDevice(ip, state) {
         adapter.log.debug(key);
         switch (key) {
             case 'power':
+            case 'main_power':
+            case 'bg_power':
                 switch (state[key]) {
                     case 'on':
                         adapter.setState(id + '.' + key, true, true);
@@ -998,12 +1018,19 @@ function setStateDevice(ip, state) {
             case 'bright':
             case 'active_bright':
             case 'ct':
+            case 'bg_bright':
+            case 'bg_ct':
+            case 'bg_hue':
+            case 'bg_sat':
+            case 'sat':
+            case 'hue':
                 if (key == 'bright') {
                     adapter.setState(id + '.active_bright', +state[key], true);
                 }
                 adapter.setState(id + '.' + key, state[key], true);
                 break;
             case 'rgb':
+            case 'bg_rgb':
                 var value = dec2hex(state[key]);
                 adapter.setState(id + '.' + key, value, true);
                 break;
@@ -1085,6 +1112,7 @@ function addState(id, state, val, device) {
     switch (state) {
         case 'power':
         case 'bg_power':
+        case 'main_power':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
@@ -1119,6 +1147,7 @@ function addState(id, state, val, device) {
             adapter.setState(id + '.' + state, val, true);
             break;
         case 'ct':
+        case 'bg_ct':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
@@ -1140,6 +1169,7 @@ function addState(id, state, val, device) {
             adapter.setState(id + '.' + state, val, true);
             break;
         case 'active_bright':
+        case 'bg_bright':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
@@ -1162,6 +1192,7 @@ function addState(id, state, val, device) {
             adapter.setState(id + '.' + state, val, true);
             break;
         case 'hue':
+        case 'bg_hue':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
@@ -1182,6 +1213,7 @@ function addState(id, state, val, device) {
             adapter.setState(id + '.' + state, val, true);
             break;
         case 'sat':
+        case 'bg_sat':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
@@ -1202,6 +1234,7 @@ function addState(id, state, val, device) {
             adapter.setState(id + '.' + state, val, true);
             break;
         case 'rgb':
+        case 'bg_rgb':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {

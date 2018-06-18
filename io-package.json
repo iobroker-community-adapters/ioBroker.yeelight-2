@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.3.3",
+    "version": "0.3.5",
     "news": {
+      "0.3.5": {
+        "en": "added yeelight650, fixed some bugs, power on when ct change",
+        "de": "yeelight650 hinzugefügt, einige Bugs behoben, Einschalten wenn ct ändert",
+        "ru": "добавил yeelight650, исправил некоторые ошибки, включил, когда ct change",
+        "pt": "adicionou yeelight650, corrigiu alguns bugs, ligou quando o ct mudou",
+        "nl": "yeelight650 toegevoegd, een aantal bugs opgelost, power on wanneer ct verandert",
+        "fr": "ajout de yeelight650, correction de quelques bugs, mise sous tension lors du changement de ct",
+        "it": "aggiunto yeelight650, corretto alcuni bug, acceso quando ct cambia",
+        "es": "se agregó yeelight650, se corrigieron algunos errores, se enciende cuando se cambia ct",
+        "pl": "dodano yeelight650, naprawiono kilka błędów, włączanie po zmianie ct"
+      },
       "0.3.0": {
         "en": "fix state update error",
         "de": "Update-Fehler behoben",

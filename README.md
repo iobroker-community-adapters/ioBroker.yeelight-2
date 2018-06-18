@@ -13,7 +13,7 @@ Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/Meister
 
 [Deutsche Beschreibung hier](README_de.md)
 
-This adapter control your Yeelight device
+This adapter control your Yeelight device. this adapter is only for admin3. Admin2 is not supported
 
 ## Installation
 for RGB Bulbs you have to enable the LAN in the settings of the yeelight app.
@@ -29,8 +29,8 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.3.0 (2018-06-08)
-* (MeisterTR) fix update states
+### 0.3.5 (2018-06-18)
+* (MeisterTR) added yeelight650, fixed some bugs, power on when ct change
 ### 0.2.9 (2018-06-07)
 * (MeisterTR) change name for repo and npm
 ### 0.2.8 (2018-06-01)

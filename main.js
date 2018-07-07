@@ -16,7 +16,7 @@ var devices = [];
 var sockets = {};
 var sel_devices = [];
 var ready = false;
-
+var modeVal = 0;
 var bright_selector;
 var bright_modi = ["active_bright", "bright"]
 
@@ -371,7 +371,7 @@ function getPrps(sid, device) {
                 }
                 if (!(result[5] === "")) {
                     if (true) {
-
+                        modeVal = result[5];
                         switch (+result[5]) {
                             case 1:
                                 addState(sid, 'color_mode', true, device);
@@ -592,11 +592,6 @@ function uploadState(id, host, port, parameter, val) {
                     if (result) {
                         if (result[0] == 'ok') {
                             adapter.setState(id + '.color_mode', false, true);
-
-                            getProp(device, parameter, function (result) {
-                                adapter.log.debug("Read ct because ct power" + result[0]);
-                                adapter.setState(id + "." + parameter, result[0], true);
-                            });
                         }
                     }
                 }
@@ -638,10 +633,7 @@ function uploadState(id, host, port, parameter, val) {
                                 if (result[0] == 'ok') {
                                     adapter.setState(id + '.' + parameter, val, true);
                                     adapter.setState(id + '.power', true, true);
-                                    getProp(device, "active_bright", function (result) {
-                                        adapter.log.debug("Read bright because moon_mode: " + result[0]);
-                                        adapter.setState(id + '.active_bright', result[0], true);
-                                    });
+
                                 }
 
                             } else {
@@ -673,10 +665,6 @@ function uploadState(id, host, port, parameter, val) {
                             if (result) {
                                 if (result[0] == 'ok') {
                                     adapter.setState(id + '.' + parameter, val, true);
-                                    getProp(device, "active_bright", function (result) {
-                                        adapter.log.debug("Read bright because moon_mode_off: " + result[0]);
-                                        adapter.setState(id + '.active_bright', result[0], true);
-                                    });
                                 }
                             } else {
                                 if (val == getProp(device, parameter)) {
@@ -736,11 +724,6 @@ function uploadState(id, host, port, parameter, val) {
                         if (result) {
                             if (result[0] == 'ok') {
                                 adapter.setState(id + '.color_mode', true, true);
-
-                                getProp(device, parameter, function (result) {
-                                    adapter.log.debug("Read rgb because color_mode_on: " + result[0]);
-                                    adapter.setState(id + "."+ parameter, dec2hex(result[0]), true);
-                                });
                             }
                         } else {
                             
@@ -827,11 +810,6 @@ function uploadState(id, host, port, parameter, val) {
                         adapter.log.debug(JSON.stringify(result));
                         if (result[0] == 'ok') {
                             adapter.setState(id + '.color_mode', true, true);
-
-                            getProp(device, parameter, function (result) {
-                                adapter.log.debug("Read hsv because color_mode_on: " + result[0]);
-                                adapter.setState(id + '.'+ parameter, (result[0]), true);
-                            });
                         }
                     } else {
                         getProp(device, 'color_mode', function (result) {
@@ -1158,6 +1136,7 @@ function setStateDevice(ip, state) {
                 }
                 break;
             case 'color_mode':
+                modeVal = state[key];
                 switch (+state[key]) {
                     case 1:
                         adapter.setState(id + '.color_mode', true, true);

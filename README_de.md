@@ -11,22 +11,22 @@
 Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
 
 
-[Deutsche Beschreibung hier](README_de.md)
-
-This adapter control your Yeelight device. this adapter is only for admin3. Admin2 is not supported
+Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt. Der Ada
 
 ## Installation
-for RGB Bulbs you have to enable the LAN in the settings of the yeelight app.
+Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
 ![](admin/lan.jpg)
 
 ## Config
-you can add manually devices or find devices in network. the basic port is 55443. if you want, you can change the name, ip, port and smartname
+Die Leuchten können manuell hinzugefügt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 
+
+Bitte Beachten, dass beim adapterstart alle Lampen eingeschaltet (mit Spannung versorgt sind).
 
 ### smartname
-if you type in a smartname, the device is add to the iobroker.cloud and can control by alexa. 
+Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cloud adapter hinzugefügt und kann über alexa gesteuert werden.
 
 ### Find device
-with this button you can scan your Network for devices, if something is found, the divices added to the table. It takes about 20 seconds to scan the network. if the devices not found, the Lan mode is not enabled or the bulbs are in a nother network.
+Über diese Funktion können die Lampen automatisch gesucht und hinzugefügt werden. die Suche dauert ca 20 Sekunden. Die gefundenen Geräte werden anschließend in der Tabelle aufgelistet.
 
 
 ## Changelog

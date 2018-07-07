@@ -186,9 +186,27 @@
                 }
                 setVal(obj, $this.attr('id'), val);
             });
+
+
             obj.devices = table2values('values');
+            var temp = obj.devices;
+
+            $.each(temp, function (i, val) {
+                console.log("key:_" + i + "  val:__" + JSON.stringify(val));
+                if (val.name.indexOf(' ') !== -1) {
+                    showToast(_('No spaces in device name'));
+                }
+                temp[i].name = temp[i].name.replace(/ /g, '_');
+
+                if (i + 1 === temp.length) {
+                    values2table('values', obj.devices, true);
+
+                }
+            }); 
+
             callback(obj);
         }
+
         function initDialog(callback) {
             var $editDialog = $('#dialog-name-edit');
             if (!$editDialog.data('inited')) {

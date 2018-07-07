@@ -91,5 +91,16 @@ systemDictionary = {
         "it": "genere",
         "es": "tipo",
         "pl": "rodzaj"
+    },
+    "No spaces in device name": {
+        "en": "No spaces in device name",
+        "de": "Keine Leerzeichen im Gerätenamen",
+        "ru": "Без пробелов в имени устройства",
+        "pt": "Nenhum espaço no nome do dispositivo",
+        "nl": "Geen spaties in apparaatnaam",
+        "fr": "Aucun espace dans le nom de l'appareil",
+        "it": "Nessuno spazio nel nome del dispositivo",
+        "es": "Sin espacios en el nombre del dispositivo",
+        "pl": "Brak spacji w nazwie urządzenia"
     }
 };

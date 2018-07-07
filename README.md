@@ -17,7 +17,7 @@ This adapter control your Yeelight device. this adapter is only for admin3. Admi
 
 ## Installation
 for RGB Bulbs you have to enable the LAN in the settings of the yeelight app.
-![](admin/lan.jpg)
+![](admin/lan.jpg=269x466)
 
 ## Config
 you can add manually devices or find devices in network. the basic port is 55443. if you want, you can change the name, ip, port and smartname

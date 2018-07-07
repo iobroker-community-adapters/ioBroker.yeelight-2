@@ -15,7 +15,7 @@ Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden dir
 
 ## Installation
 Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
-![](admin/lan.jpg)
+![](admin/lan.jpg =269x466)
 
 ## Config
 Die Leuchten können manuell hinzugefügt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 

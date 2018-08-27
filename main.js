@@ -555,7 +555,8 @@ function uploadState(id, host, port, parameter, val) {
                     if (result) {
                         adapter.log.debug("Answer from set_bright: " + JSON.stringify(result));
                         if (result[0] == 'ok') {
-                            adapter.setState(id + '.' + parameter, val, true)
+                            adapter.setState(id + '.' + parameter, val, true);
+                            adapter.setState(id + '.power', true, true);
                         }
                     } else {
                         getProp(device, parameter, function (result) {
@@ -724,6 +725,7 @@ function uploadState(id, host, port, parameter, val) {
                         if (result) {
                             if (result[0] == 'ok') {
                                 adapter.setState(id + '.color_mode', true, true);
+                                adapter.setState(id + '.power', true, true);
                             }
                         } else {
                             

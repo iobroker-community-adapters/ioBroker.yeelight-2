@@ -11,23 +11,23 @@
 Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
 
 
-Dieser Adapter steuert Yeelight Lampen. Status�derungen durch die App werden direkt erkannt. Der Ada
+Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt. Der Ada
 
 ## Installation
-Bei vielen Lampem muss �ber die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden k�nnen. 
+Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
 
 ![](admin/lan.jpg)
 
 ## Config
-Die Leuchten k�nnen manuell hinzugef�gt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 
+Die Leuchten können manuell hinzugefügt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 
 
 Bitte Beachten, dass beim adapterstart alle Lampen eingeschaltet (mit Spannung versorgt sind).
 
 ### smartname
-Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cloud adapter hinzugef�gt und kann �ber alexa gesteuert werden.
+Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cloud adapter hinzugefügt und kann über alexa gesteuert werden.
 
 ### Find device
-�ber diese Funktion k�nnen die Lampen automatisch gesucht und hinzugef�gt werden. die Suche dauert ca 20 Sekunden. Die gefundenen Ger�te werden anschlie�end in der Tabelle aufgelistet.
+über diese Funktion können die Lampen automatisch gesucht und hinzugefügt werden. die Suche dauert ca 20 Sekunden. Die gefundenen Geräte werden anschließend in der Tabelle aufgelistet.
 
 
 ## Changelog

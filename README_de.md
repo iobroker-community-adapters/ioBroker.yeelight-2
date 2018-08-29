@@ -11,26 +11,29 @@
 Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
 
 
-Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt. Der Ada
+Dieser Adapter steuert Yeelight Lampen. Statusï¿½derungen durch die App werden direkt erkannt. Der Ada
 
 ## Installation
-Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
+Bei vielen Lampem muss ï¿½ber die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden kï¿½nnen. 
 
 ![](admin/lan.jpg)
 
 ## Config
-Die Leuchten können manuell hinzugefügt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 
+Die Leuchten kï¿½nnen manuell hinzugefï¿½gt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 
 
 Bitte Beachten, dass beim adapterstart alle Lampen eingeschaltet (mit Spannung versorgt sind).
 
 ### smartname
-Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cloud adapter hinzugefügt und kann über alexa gesteuert werden.
+Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cloud adapter hinzugefï¿½gt und kann ï¿½ber alexa gesteuert werden.
 
 ### Find device
-Über diese Funktion können die Lampen automatisch gesucht und hinzugefügt werden. die Suche dauert ca 20 Sekunden. Die gefundenen Geräte werden anschließend in der Tabelle aufgelistet.
+ï¿½ber diese Funktion kï¿½nnen die Lampen automatisch gesucht und hinzugefï¿½gt werden. die Suche dauert ca 20 Sekunden. Die gefundenen Gerï¿½te werden anschlieï¿½end in der Tabelle aufgelistet.
 
 
 ## Changelog
+### 0.4.0 (2018-08-29)
+* (MeisterTR) fixed errors
+* (MeisterTR) added scenen
 ### 0.3.6 (2018-07-07)
 * (MeisterTR) catch spaces in config, small performance changes
 ### 0.3.5 (2018-06-18)

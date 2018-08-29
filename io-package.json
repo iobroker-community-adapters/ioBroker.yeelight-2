@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.3.6",
+    "version": "0.4.0",
     "news": {
+      "0.4.0":  {
+        "en": "fixed errors, added scenen",
+        "de": "Fehler behoben, Szenen hinzugefügt",
+        "ru": "исправлены ошибки, добавлены сценарии",
+        "pt": "erros fixos, adicionados",
+        "nl": "vaste fouten, scenen toegevoegd",
+        "fr": "erreurs fixes, ajout de scènes",
+        "it": "errori corretti, aggiunto scenen",
+        "es": "errores corregidos, escena añadida",
+        "pl": "naprawiono błędy, dodano scenen"
+      },
       "0.3.6": {
         "en": "added yeelight650, fixed some bugs, power on when ct change",
         "de": "yeelight650 hinzugefügt, einige Bugs behoben, Einschalten wenn ct ändert",

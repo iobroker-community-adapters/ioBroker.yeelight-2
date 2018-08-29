@@ -31,6 +31,9 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
+### 0.4.0 (2018-08-29)
+* (MeisterTR) fixed errors
+* (MeisterTR) added scenen
 ### 0.3.6 (2018-07-07)
 * (MeisterTR) catch spaces in config, small performance changes
 ### 0.3.5 (2018-06-18)

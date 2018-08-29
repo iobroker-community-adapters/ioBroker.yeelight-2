@@ -3,13 +3,14 @@
  * yeelight adapter
  *
  *
-  */
+ */
 'use strict';
 
 // you have to require the utils module and call adapter function
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 var net = require('net');
 var yeelight = require(__dirname + '/lib/yeelight');
+var scenen = require(__dirname + '/lib/scenen');
 var adapter = new utils.Adapter('yeelight-2');
 var objects = {};
 var devices = [];
@@ -57,14 +58,25 @@ adapter.on('stateChange', function (id, state) {
             if (err) {
                 adapter.log.error(err);
             } else {
-                if (changeState[3] != 'info') {
+                if (changeState[3] != 'info' && changeState[4] !== 'scenen') {
                     if (!state.ack) {
                         adapter.getState(sid + '.info.Port', function (err, data2) {
                             if (err) {
                                 adapter.log.error(err);
-                            }
-                            else {
+                            } else {
                                 uploadState(sid + '.' + changeState[3], data.val, data2.val, changeState[4], state.val);
+                            }
+                        });
+
+                    }
+                } else if (changeState[3] != 'info' && changeState[4] === 'scenen') {
+                    if (!state.ack) {
+                        adapter.getState(sid + '.info.Port', function (err, data2) {
+                            if (err) {
+                                adapter.log.error(err);
+                            } else {
+                                //uploadState(sid + '.' + changeState[3], data.val, data2.val, changeState[4], state.val);
+                                _sendscene(sid + '.' + changeState[3], data.val, data2.val, changeState[5], state.val)
                             }
                         });
 
@@ -172,6 +184,7 @@ function checkChanges(callback) {
             }
         }
     });
+
     function getastate(element, callback) {
         var info = adapter.getState(element + '.info.com', function (err, state) {
             adapter.log.debug("hier die ate cfg: " + state.val)
@@ -252,19 +265,17 @@ function createDevice() {
 
         if (!objects[sid]) {
 
-            adapter.createDevice(device,
-                {
-                    name: devC[i].type,
-                    icon: '/icons/' + devC[i].type + '.png',
-                },
-                {
-                    sid: devC[i].name,
-                    type: devC[i].type
-                }
-            );
+            adapter.createDevice(device, {
+                name: devC[i].type,
+                icon: '/icons/' + devC[i].type + '.png',
+            }, {
+                sid: devC[i].name,
+                type: devC[i].type
+            });
             adapter.createChannel(device, "info");
             adapter.createChannel(device, "control");
-
+            adapter.createChannel(device, "control.scenen");
+            _createscenen(sid);
             adapter.setObjectNotExists(sid + '.info.com', {
                 common: {
                     name: 'Command',
@@ -322,6 +333,22 @@ function createDevice() {
         getPrps(sid + ".control", devC[i]);
     };
 
+};
+
+function _createscenen(sid) {
+    for (var key in scenen) {
+        adapter.setObjectNotExists(sid + '.control.scenen.' + key, {
+            common: {
+                name: key,
+                role: 'button',
+                write: true,
+                read: false,
+                type: 'boolean'
+            },
+            type: 'state',
+            native: {}
+        });
+    }
 };
 
 function getPrps(sid, device) {
@@ -433,6 +460,25 @@ function getPrps(sid, device) {
 }
 
 
+function _sendscene(id, host, port, parameter, val) {
+    var device = new yeelight;
+    device.host = host;
+    device.port = port;
+    adapter.log.debug('scene:_' + parameter + " " + JSON.stringify(scenen[parameter]));
+    device.sendCommand("set_scene", scenen[parameter], function (err, result) {
+        if (err) {
+            adapter.log.error(err)
+        } else {
+            if (result) {
+                adapter.log.debug("Answer from set_power: " + JSON.stringify(result));
+                if (result[0] == 'ok') {
+                    //adapter.setState(id + '.' + parameter, val, true);
+                }
+            }
+        }
+    });
+
+}
 
 function uploadState(id, host, port, parameter, val) {
     var device = new yeelight;
@@ -529,7 +575,9 @@ function uploadState(id, host, port, parameter, val) {
                                         adapter.setState(id + '.bg_bright', result[0], true);
                                     });
                                 }
-                            } else { adapter.log.debug('Error verifying power_on command') }
+                            } else {
+                                adapter.log.debug('Error verifying power_on command')
+                            }
                         });
 
 
@@ -541,13 +589,26 @@ function uploadState(id, host, port, parameter, val) {
         case 'active_bright':
         case 'bg_bright':
             // TODO 0 for Light off and power on brfore change!
-            var set_param
+            var set_param;
+            var powName = "";
             if (parameter === 'active_bright') {
                 set_param = 'set_bright';
-            }
-            else if (parameter === 'bg_bright') {
+                powName = "set_power";
+            } else if (parameter === 'bg_bright') {
                 set_param = 'bg_set_bright';
+                powName = "bg_set_power";
             }
+            device.sendCommand(powName, ['on', 'smooth', 1000], function (err, result) {
+                if (err) {
+                    adapter.log.error(err)
+                } else {
+                    if (result) {
+                        if (result[0] == 'ok') {
+                            adapter.setState(id + '.'+ powName, true, true);
+                        }
+                    }
+                }
+            });
             device.sendCommand(set_param, [val, 'smooth', 1000], function (err, result) {
                 if (err) {
                     adapter.log.error(err)
@@ -580,8 +641,7 @@ function uploadState(id, host, port, parameter, val) {
             if (parameter === 'ct') {
                 set_param = 'set_ct_abx';
                 powName = "set_power";
-            }
-            else if (parameter === 'bg_ct') {
+            } else if (parameter === 'bg_ct') {
                 set_param = 'bg_set_ct_abx';
                 powName = "bg_set_power";
             }
@@ -671,7 +731,9 @@ function uploadState(id, host, port, parameter, val) {
                                 if (val == getProp(device, parameter)) {
                                     adapter.setState(id + '.' + parameter, val, true);
                                     adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                } else { adapter.log.warn('Error verifying the command') }
+                                } else {
+                                    adapter.log.warn('Error verifying the command')
+                                }
 
                                 getProp(device, "active_mode", function (result) {
                                     val = val ? 1 : 0;
@@ -728,26 +790,26 @@ function uploadState(id, host, port, parameter, val) {
                                 adapter.setState(id + '.power', true, true);
                             }
                         } else {
-                            
-                                getProp(device, 'color_mode', function (result) {
-                                    adapter.log.debug("No response, request color mode again: " + result[0]);
+
+                            getProp(device, 'color_mode', function (result) {
+                                adapter.log.debug("No response, request color mode again: " + result[0]);
 
 
-                                    switch (result[0]) {
-                                        case 1:
-                                            adapter.setState(id + '.color_mode', true, true);
+                                switch (result[0]) {
+                                    case 1:
+                                        adapter.setState(id + '.color_mode', true, true);
 
-                                            break;
-                                        case 2:
-                                            adapter.setState(id + '.color_mode', false, true);
+                                        break;
+                                    case 2:
+                                        adapter.setState(id + '.color_mode', false, true);
 
-                                            break;
-                                        default:
-                                            adapter.log.warn('Error verifying rgb command');
-                                            break;
-                                    }
-                                });
-                            
+                                        break;
+                                    default:
+                                        adapter.log.warn('Error verifying rgb command');
+                                        break;
+                                }
+                            });
+
 
                         }
                     }
@@ -774,8 +836,7 @@ function uploadState(id, host, port, parameter, val) {
                         }
                     }
                 })
-            }
-            else {
+            } else {
                 adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
             }
             break;
@@ -921,7 +982,7 @@ function uploadState(id, host, port, parameter, val) {
                 }
             });
 
-            adapter.getState(id + '.'+ hueName, function (err, state) {
+            adapter.getState(id + '.' + hueName, function (err, state) {
                 var huevalue = state.val;
                 adapter.log.debug("hue" + huevalue + " sat " + val);
                 device.sendCommand(set_param, [parseInt(huevalue), parseInt(val), 'smooth', 1000], function (err, result) {
@@ -1025,11 +1086,12 @@ function uploadState(id, host, port, parameter, val) {
 
 
 };
+
 function getProp(device, parameter, callback) {
     //var device = new yeelight;
-    adapter.log.debug("get_prob:_" + parameter + "__" + device.host +'__'+device.port);
-   // device.host = host;
-   // device.port = 55443;
+    adapter.log.debug("get_prob:_" + parameter + "__" + device.host + '__' + device.port);
+    // device.host = host;
+    // device.port = 55443;
     var param;
 
 
@@ -1055,12 +1117,15 @@ function getProp(device, parameter, callback) {
         }
     })
 }
+
 function dec2hex(dec) {
     return '#' + (+dec).toString(16);
 }
+
 function hex2dec(hex) {
     return parseInt(hex.substring(1), 16);
 }
+
 function listen(host, port, callback) {
     adapter.log.debug("listen to: " + host + ':' + port);
     var socket = net.connect(port, host);
@@ -1087,6 +1152,7 @@ function listen(host, port, callback) {
 
 
 }
+
 function setStateDevice(ip, state) {
     adapter.log.debug(ip);
     var id = sockets[ip] + ".control";
@@ -1152,6 +1218,7 @@ function setStateDevice(ip, state) {
     }
 
 }
+
 function updateConnect() {
     adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
         if (err) {
@@ -1196,10 +1263,14 @@ function addState(id, state, val, device) {
     var smartname = "";
 
     if (typeof device.type !== 'undefined') {
-        if (device.type === 'ceiling1') { ct_min = 2600 };
+        if (device.type === 'ceiling1') {
+            ct_min = 2600
+        };
     }
     if (typeof device.smart_name !== 'undefined') {
-        if (device.smart_name !== '') { smartname = device.smart_name };
+        if (device.smart_name !== '') {
+            smartname = device.smart_name
+        };
         //adapter.log.warn(device.smart_name);
     }
 
@@ -1346,6 +1417,7 @@ function addState(id, state, val, device) {
     }
 
 }
+
 function createSocketsList() {
     adapter.getStates(adapter.namespace + '.*.info.IPAdress', function (err, list) {
         if (err) {
@@ -1441,7 +1513,8 @@ function rgbToHsl(hex) {
     var b = parseInt(result[3], 16);
 
     r /= 255, g /= 255, b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
     var h, s, l = (max + min) / 2;
 
     if (max == min) {
@@ -1450,9 +1523,15 @@ function rgbToHsl(hex) {
         var d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+            case g:
+                h = (b - r) / d + 2;
+                break;
+            case b:
+                h = (r - g) / d + 4;
+                break;
         }
         h /= 6;
     }

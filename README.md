@@ -31,6 +31,8 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
+### 0.4.1 (2018-08-29)
+* (MeisterTR) fixed JSON error
 ### 0.4.0 (2018-08-29)
 * (MeisterTR) fixed errors
 * (MeisterTR) added scenen

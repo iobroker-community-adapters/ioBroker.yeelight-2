@@ -67,20 +67,6 @@ adapter.on('stateChange', function (id, state) {
                         uploadState(lightdata.id, changeState[4], state.val, sid);
 
                     }
-                    /*
-                } else if (changeState[3] != 'info' && changeState[4] === 'scenen') {
-                    if (!state.ack) {
-                        adapter.getState(sid + '.info.Port', function (err, data2) {
-                            if (err) {
-                                adapter.log.error(err);
-                            } else {
-                                //uploadState(sid + '.' + changeState[3], data.val, data2.val, changeState[4], state.val);
-                                _sendscene(sid + '.' + changeState[3], data.val, data2.val, changeState[5], state.val)
-                            }
-                        });
-
-                    }
-                    */
                 }
                 else if(changeState[3] != 'info' && changeState[4] === 'scenen') {
                     if (!state.ack) {
@@ -292,10 +278,6 @@ function checkChanges(callback) {
 
                 if (j === count - 1) {
                     setTimeout(function () {
-                        //createSocketsList();
-                        //updateConnect();
-                        //requestInterval = setInterval(sheduleProps, 30 * 1000);
-                        //newlisten();
                         adapter.subscribeStates('*');
                         callback && callback();
                     }, 2000);
@@ -307,10 +289,6 @@ function checkChanges(callback) {
 
             if (count === 0) {
                 setTimeout(function () {
-                    //createSocketsList();
-                    //updateConnect();
-                    //requestInterval = setInterval(sheduleProps, 30 * 1000);
-                    //newlisten();
                     adapter.subscribeStates('*');
                     callback && callback();
                 }, 2000);
@@ -459,14 +437,7 @@ function createDevice() {
 
             adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true);
             adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true);
-
-            //listen(devC[i].ip, devC[i].port, setStateDevice);
         };
-
-        //getPrps(sid, devC[i]);
-        //Yeelights = new YeelightSearch();
-        //Yeelights.refresh();
-        //adapter.log.info(JSON.stringify(Yeelights))
         listener();
     };
 
@@ -503,27 +474,6 @@ function listener() {
         ).then((resp) => {
             light['initinalid'] = 1;
         });
-        /*
-                light.on("connected", function () {
-                    adapter.log.debug('YEELIGHT CONNECTED: ' + light.hostname + ':' + light.port + '/ id: ' + light.id);
-                    setinfoStates(bulb, function () {
-
-                        light.getValues(
-                            "power",
-                            "bright",
-                            "rgb",
-                            "color_mode",
-                            "hue",
-                            "sat",
-                            "ct",
-                            "flowing",
-                            "delayoff",
-                            "flow_params",
-                            "music_on"
-                        );
-                    });
-                });
-        */
         light.on("notifcation", message => {
             adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message))
             adapter.log.debug(JSON.stringify(Yeelights))
@@ -544,42 +494,6 @@ function listener() {
                     adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
                     initObj(light, result);
                 }
-                /*
-                    //result:[on,100,,2,,,,0,0,,] for mono
-                    bulb["power"] = result[0];
-                    bulb["bright"] = result[1];
-                    bulb["rgb"] = result[2];
-                    bulb["color_mode"] = result[3];
-                    bulb["hue"] = result[4];
-                    bulb["sat"] = result[5];
-                    bulb["ct"] = result[6];
-                    bulb["flowing"] = result[7];
-                    bulb["delayoff"] = result[8];
-                    bulb["flow_params"] = result[9];
-                    bulb["music_on"] = result[10];
-
-                
-                     0 = "get_prop"
-                     1 = "set_default"
-                     2 = "set_power"
-                     3 = "toggle"
-                     4 = "set_bright"
-                     5 = "start_cf"
-                     6 = "stop_cf"
-                     7 = "set_scene"
-                     8 = "cron_add"
-                     9 = "cron_get"
-                     10 = "cron_del"
-                     11 = "set_ct_abx"
-                     12 = "set_rgb"
-                     13 = "set_hsv"
-                     14 = "set_adjust"
-                     15 = "adjust_bright"
-                     16 = "adjust_ct"
-                     17 = "adjust_color"
-                     18 = "set_music"
-                     19 = "set"
-                     */
             }
         });
     });
@@ -589,11 +503,6 @@ function listener() {
 function main() {
     checkChanges(createDevice);
     adapter.subscribeStates('*');
-
-    setTimeout(function () {
-        //adapter.log.info(JSON.stringify(Yeelights))
-    }, 10000);
-
 }
 
 function initObj(aktYeelight, result) {

@@ -64,7 +64,7 @@
                         var ip = arr[i].host;
                         var name = arr[i].id;
                         var type = arr[i].model;
-                        devices.push({ port: port, ip: ip, name: name, type: type });
+                        devices.push({ port: port, ip: ip, name: type+'-'+name, type: type,id:name});
                         values2table('values', devices, g_onChange);
                         g_onChange(true);
 
@@ -286,15 +286,16 @@
                     </div>
                     <div class="col s12 m12 l12">
                         <table class="table-values" style="width: 100%; margin-top: 8px">
-                            <thead>
-                                <tr>
+                            <thead> 
+                                <tr> 
                                     <th data-name="_index" style="width: 40px" class="translate"></th>
+                                    <th data-name="id" style="width: 100px" class="translate">ID</th>
                                     <th data-name="name" style="width: 30%" class="translate">Name</th>
                                     <th data-name="ip" class="translate">ip adress</th>
                                     <th data-name="port" class="translate">port</th>
                                     <th data-name="smart_name" class="translate">smartname</th>
-                                    <th data-name="type" class="translate" data-options="color;ceiling1;ceiling2;ceiling3/yeelight480;ceiling4/yeelight650;bslamp1;desklamp;mono;stripe" data-type="select">type</th>
-                                    <th data-buttons="delete" style="width: 40px"></th>                             
+                                    <th data-name="type" class="translate" data-options="color;ceiling1;ceiling2;ceiling3/yeelight480;ceiling4/yeelight650;bslamp1;desklamp;mono;stripe" data-type="select">type</th>  
+                                    <th data-buttons="delete" style="width: 40px"></th>                            
                                 </tr>
                             </thead>
                         </table>

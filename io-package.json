@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.4.1",
+    "version": "0.9.0",
     "news": {
+      "0.9.0": {
+        "en": "rebuild",
+        "de": "neu aufbauen",
+        "ru": "перестраивать",
+        "pt": "reconstruir",
+        "nl": "herbouwen",
+        "fr": "reconstruire",
+        "it": "ricostruire",
+        "es": "reconstruir",
+        "pl": "odbudować"
+      },
       "0.4.1": {
         "en": "fixed JSON error",
         "de": "JSON-Fehler behoben",

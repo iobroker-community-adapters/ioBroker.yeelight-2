@@ -29,7 +29,8 @@
     "url": "https://github.com/MeisterTR/ioBroker.yeelight-2"
   },
   "dependencies": {
-    "yeelight-wifi": "https://github.com/MeisterTR/yeelight-wifi/tarball/master/"
+    "yeelight-wifi": "https://github.com/MeisterTR/yeelight-wifi/tarball/master/",
+    "circular-json": "^0.5.9"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

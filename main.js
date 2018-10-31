@@ -67,8 +67,7 @@ adapter.on('stateChange', function (id, state) {
                         uploadState(lightdata.id, changeState[4], state.val, sid);
 
                     }
-                }
-                else if(changeState[3] != 'info' && changeState[4] === 'scenen') {
+                } else if (changeState[3] != 'info' && changeState[4] === 'scenen') {
                     if (!state.ack) {
                         _sendscene(lightdata.id, changeState[5], state.val, sid);
 
@@ -443,12 +442,36 @@ function createDevice() {
 
 };
 
+function checkOnline() {
+    let lights = Yeelights.yeelights;
+
+    if (lights.length !== 0) {
+        lights.forEach(element => {
+            let device = ConfigDevices.find(device => device.id === element.id);
+            if (device) {
+                let sid = device.name;
+
+                if (element.status !== 3) {
+                    //turn off
+                    adapter.setState(sid + '.info.connect', false, true);
+                    adapter.setState(sid + '.control.power', false, true);
+                    adapter.log.debug('YEELIGHT OFFLINE: ' + element.id);
+
+                } else {
+                    //turn on
+                    adapter.setState(sid + '.info.connect', true, true);
+                }
+            }
+        });
+    }
+}
+
 function listener() {
     Yeelights = new YeelightSearch();
     setInterval(() => {
         Yeelights.refresh();
-        adapter.log.debug('YEELIGHTS: '+ JSON.stringify(Yeelights));
-    }, 2*60*1000);
+        checkOnline();
+    }, 60 * 1000);
 
     Yeelights.on('found', light => {
         adapter.log.debug('YEELIGHT FOUND: ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
@@ -474,9 +497,14 @@ function listener() {
         ).then((resp) => {
             light['initinalid'] = 1;
         });
+
+        light.on("error", function (id, ex, err) {
+            adapter.log.warn('Error socket yeelight id: ' + id + ': ' + ex + ': ' + err);
+        });
+
         light.on("notifcation", message => {
             adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message))
-            adapter.log.debug(JSON.stringify(Yeelights))
+            //adapter.log.debug(JSON.stringify(Yeelights))
             if (message.method === "props" && message.params) {
 
                 setStateDevice(light, message.params);
@@ -494,16 +522,70 @@ function listener() {
                     adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
                     initObj(light, result);
                 }
+                else{
+                    setResponse(light, result);
+                }
             }
         });
     });
 
 };
 
+function setResponse(aktYeelight, result){
+    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
+
+    //result:[off,100,16711680,2,4000]};
+    if (device) {
+        let sid = device.name
+        adapter.setState(sid + '.info.connect', true, true);
+        sid = sid + '.control';
+        adapter.log.debug('DEVICE FOUND IN CONFIG: ' + JSON.stringify(device));
+        if (result) {
+            if (!(result[0] === "")) {
+                switch (result[0]) {
+                    case 'on':
+                    adapter.setState(sid + '.power', true, true);
+                        break;
+                    case 'off':
+                    adapter.setState(sid + '.power', false, true);
+                        break;
+                }
+            }
+            if (!(result[1] === "")) {
+                adapter.setState(sid + '.active_bright', result[1], true);
+            }
+            if (!(result[2] === "")) {
+                adapter.setState(sid+'.rgb', result[2], true);
+            }
+            if (!(result[3] === "")) {
+                if (true) {
+                    switch (+result[3]) {
+                        case 1:
+                        adapter.setState(sid + '.color_mode', true, true);
+                            break;
+                        case 2:
+                        adapter.setState(sid+ '.color_mode', false, true);
+                            break;
+                    }
+                }
+            }
+            if (!(result[4] === "")) {
+                adapter.setState(sid+ '.ct', result[4], true);
+            }
+        } else {
+            adapter.log.warn('EMPTY RESPONSE');
+        }
+
+    } else {
+        adapter.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+    }
+};
+
 function main() {
     checkChanges(createDevice);
     adapter.subscribeStates('*');
 }
+
 
 function initObj(aktYeelight, result) {
     //search light in Config

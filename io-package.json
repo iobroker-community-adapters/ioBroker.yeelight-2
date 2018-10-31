@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "news": {
-      "0.9.0": {
+      "0.9.1": {
         "en": "rebuild",
         "de": "neu aufbauen",
         "ru": "перестраивать",

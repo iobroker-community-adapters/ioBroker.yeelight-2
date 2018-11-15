@@ -437,7 +437,7 @@ function createDevice() {
             adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true);
             adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true);
         };
-        listener();
+        if(i === ConfigDevices.length-1)listener();
     };
 
 };
@@ -468,8 +468,9 @@ function checkOnline() {
 
 function listener() {
     Yeelights = new YeelightSearch();
+    ConfigDevices.forEach((element,index) =>setTimeout(()=> Yeelights.addInitLights(element),index*300));
     setInterval(() => {
-        Yeelights.refresh();
+        //Yeelights.refresh();
         checkOnline();
     }, 60 * 1000);
 
@@ -632,7 +633,6 @@ function initObj(aktYeelight, result) {
             }
             if (!(result[3] === "")) {
                 if (true) {
-                    //modeVal = result[3];
                     switch (+result[3]) {
                         case 1:
                             addState(sid, 'color_mode', true, device);

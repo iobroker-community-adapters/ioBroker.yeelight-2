@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <!-- these 4 files always have to be included -->
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
@@ -12,6 +13,7 @@
     <script type="text/javascript" src="words.js"></script>
     <script type="text/javascript">
         var devices = [];
+        var rawdevices = [];
         var active = false;
         var g_onChange;
 
@@ -38,6 +40,8 @@
                 console.log("we wqill send to: " + adapter + "." + instance);
 
                 var devices = [];
+                rawdevices = [];
+
                 var IPs = [];
                 devices = table2values('values');
 
@@ -50,7 +54,9 @@
 
                 console.log(JSON.stringify(devices));
 
-                sendTo(adapter + "." + instance, 'discovery', { "turnon": 1 }, function (result) {
+                sendTo(adapter + "." + instance, 'discovery', {
+                    "turnon": 1
+                }, function (result) {
 
                     console.log(JSON.stringify(result));
                     $find.removeClass('disabled');
@@ -58,13 +64,21 @@
 
 
                     var arr = JSON.parse(result);
-
+                    rawdevices = arr;
                     for (var i = 0; i < arr.length; i++) {
                         var port = arr[i].port;
                         var ip = arr[i].host;
                         var name = arr[i].id;
                         var type = arr[i].model;
-                        devices.push({ port: port, ip: ip, name: type+'-'+name, type: type,id:name});
+
+                        //check if in config
+                        let yeetable = devices.find(item => item.ip === ip)
+                        if (!yeetable) devices.push({
+                            port: port,
+                            ip: ip,
+                            name: type + '-' + name,
+                            type: type
+                        });
                         values2table('values', devices, g_onChange);
                         g_onChange(true);
 
@@ -72,32 +86,7 @@
                 });
 
             });
-            $('#values').on('click', function () {
-                //checkDevices();
-            });
-
-            function checkDevices() {
-                console.log("Ceck devices");
-                var oldDev = table2values('values');
-                var newDev = [];
-                var tmpIp = [];
-
-                for (var i = 0; i < oldDev.length; i++) {
-                    console.log(JSON.stringify(tmpIp));
-                    if (!tmpIp.includes(oldDev[i].ip)) {
-
-                        tmpIp.push(oldDev[i].ip);
-                        newDev.push(oldDev[i]);
-                        if (i === oldDev.length - 1) {
-                            console.log("safe");
-                            values2table('values', newDev, true);
-                        }
-                    }
-                }
-
-            };
-
-            //checkDevices();
+            $('#values').on('click', function () {});
 
             socket.emit('getState', 'system.adapter.' + adapter + '.' + instance + '.alive', function (err, state) {
                 active = /*common.enabled ||*/ (state && state.val);
@@ -105,6 +94,7 @@
 
             changed = true;
             g_onChange = onChange;
+
             function getVal(id) {
                 var ar = id.split(SEP);
                 var obj = settings;
@@ -114,6 +104,7 @@
                 }
                 return obj[ar[ar.length - 1]];
             }
+
             function forAllKeys(obj, s, cb) {
                 var sep = SEP; //'.';
                 if (typeof s === 'function') {
@@ -155,11 +146,13 @@
                 $('#language').val(settings.language).trigger('change');
             }
             devices = settings.devices; // || [ {name: '', ip: "", mac: ""} ];
+            rawdevices = settings.rawdevices;
             values2table('values', devices, onChange);
 
             //changed = true;
             onChange(false);
         }
+
         function setVal(obj, id, val) {
             var ar = id.split(SEP);
             for (var i = 0; i < ar.length - 1; i++) {
@@ -168,11 +161,13 @@
             }
             obj[ar[ar.length - 1]] = val;
         }
+
         function save(callback) {
             var obj = {};
             changed = true;
             $('.value').each(function () {
-                var $this = $(this), val;
+                var $this = $(this),
+                    val;
                 switch ($this.attr('type')) {
                     case 'checkbox':
                         val = $this.prop('checked');
@@ -187,22 +182,54 @@
                 setVal(obj, $this.attr('id'), val);
             });
 
-
-            obj.devices = table2values('values');
-            var temp = obj.devices;
-
+            obj.rawdevices = rawdevices;
+            //obj.devices = table2values('values');
+            //var temp = obj.devices;
+            var temp = table2values('values');
             $.each(temp, function (i, val) {
                 console.log("key:_" + i + "  val:__" + JSON.stringify(val));
+                let yeefind = obj.rawdevices.find(item => item.host === val.ip)
+
+                if (yeefind) {
+                    temp[i].id = yeefind.id
+                    temp[i].supports = yeefind.supports
+                } else {
+                    temp[i].id = "0x00000000000000" + i;
+                    //dummy support
+                    temp[i].supports = [
+                        "get_prop",
+                        "set_default",
+                        "set_power",
+                        "toggle",
+                        "set_bright",
+                        "start_cf",
+                        "stop_cf",
+                        "set_scene",
+                        "cron_add",
+                        "cron_get",
+                        "cron_del",
+                        "set_ct_abx",
+                        "set_rgb",
+                        "set_hsv",
+                        "set_adjust",
+                        "adjust_bright",
+                        "adjust_ct",
+                        "adjust_color",
+                        "set_music",
+                        "set_name"
+                    ]
+                }
+
                 if (val.name.indexOf(' ') !== -1) {
                     showToast(_('No spaces in device name'));
                 }
                 temp[i].name = temp[i].name.replace(/ /g, '_');
 
                 if (i + 1 === temp.length) {
-                    values2table('values', obj.devices, true);
-
+                    //values2table('values', temp, onChange);
+                    obj.devices = temp
                 }
-            }); 
+            });
 
             callback(obj);
         }
@@ -231,12 +258,13 @@
             $editDialog.data('callback', callback);
             $editDialog.modal('open');
         }
-
     </script>
     <style>
         .loader {
-            border: 4px solid #b8d1f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
+            border: 4px solid #b8d1f3;
+            /* Light grey */
+            border-top: 4px solid #3498db;
+            /* Blue */
             border-radius: 50%;
             width: 32px;
             height: 32px;
@@ -258,6 +286,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="m adapter-container">
         <div class="row">
@@ -275,7 +304,8 @@
                 </div>
                 <div class="row tab-smart-devices-toolbar  " id="values">
                     <div class="col s2 m1 l1 center">
-                        <button title="Add device" class="table-button-add btn-floating waves-effect waves-light btn-small"><i class=" material-icons">add</i></button>
+                        <button title="Add device" class="table-button-add btn-floating waves-effect waves-light btn-small"><i
+                                class=" material-icons">add</i></button>
                     </div>
 
                     <div class="col s2 m1 l1">
@@ -286,16 +316,17 @@
                     </div>
                     <div class="col s12 m12 l12">
                         <table class="table-values" style="width: 100%; margin-top: 8px">
-                            <thead> 
-                                <tr> 
+                            <thead>
+                                <tr>
                                     <th data-name="_index" style="width: 40px" class="translate"></th>
-                                    <th data-name="id" style="width: 100px" class="translate">ID</th>
+
                                     <th data-name="name" style="width: 30%" class="translate">Name</th>
                                     <th data-name="ip" class="translate">ip adress</th>
                                     <th data-name="port" class="translate">port</th>
                                     <th data-name="smart_name" class="translate">smartname</th>
-                                    <th data-name="type" class="translate" data-options="color;ceiling1;ceiling2;ceiling3/yeelight480;ceiling4/yeelight650;bslamp1;desklamp;mono;stripe" data-type="select">type</th>  
-                                    <th data-buttons="delete" style="width: 40px"></th>                            
+                                    <th data-name="type" class="translate" data-options="color;ceiling1;ceiling2;ceiling3/yeelight480;ceiling4/yeelight650;bslamp1;desklamp;mono;stripe"
+                                        data-type="select">type</th>
+                                    <th data-buttons="delete" style="width: 40px"></th>
                                 </tr>
                             </thead>
                         </table>
@@ -306,53 +337,4 @@
     </div>
 </body>
 
-</html>
-
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-<div id="tab-astro" class="col s12 page">
-    <div class="row top-padding">
-        <div class="col s12 m6">
-            <div class="row">
-                <div class="input-field col s12">
-                </div>
-            </div>
-
-
-        </div>
-        <div class="col s12 m6 map">
-        </div>
-    </div>
-</div>
-        </div>
-    </div>
-
-<div class="m material-dialogs">
-    <div id="dialog-name-edit" class="modal modal-fixed-footer">
-        <div class="modal-content">
-            <div class="row">
-                <div class="col s12">
-                    <h6 class="title"><span class="translate">Smart name:</span><span class="name"></span></h6>
-                </div>
-            </div>
-            <div class="row textarea">
-                <div class="input-field col s12">
-                    <input style="width: calc(100% - 10px)" type="text" id="edit_name" />
-                    <span class="translate" for="edit_name">(you can separate names with comma)</span>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Ok</span></a>
-            <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left">close</i><span class="translate">Cancel</span></a>
-        </div>
-    </div>
-
-</div>
-</body>
 </html>

@@ -15,8 +15,6 @@ Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/Meister
 
 This adapter control your Yeelight device. this adapter is only for admin3. Admin2 is not supported
 
-## ToDo
-- add not founded lights to listener
 
 ## Installation
 for RGB Bulbs you have to enable the LAN in the settings of the yeelight app.
@@ -34,6 +32,8 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
+### 0.9.2 (2018-11-15)
+* (MeisterTR) added manuell devices, fixed bugs
 ### 0.9.1 (2018-10-31)
 * (MeisterTR) added offline detection, poll sates, cleanup
 ### 0.9.0 (2018-08-29)

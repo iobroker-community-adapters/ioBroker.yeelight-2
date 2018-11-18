@@ -500,7 +500,7 @@ function listener() {
         });
 
         light.on("error", function (id, ex, err) {
-            adapter.log.warn('Error socket yeelight id: ' + id + ': ' + ex + ': ' + err);
+            adapter.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
         });
 
         light.on("notifcation", message => {

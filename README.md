@@ -1,14 +1,14 @@
+[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight-2.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight-2)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
+
+[![NPM](https://nodei.co/npm/iobroker.yeelight-2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight-2/)
+
 ![Logo](admin/yeelight.png)
 # ioBroker.yeelight-2
 =================
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
-
-[![NPM](https://nodei.co/npm/iobroker.yeelight-2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight-2/)
-
-**Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight-2.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight-2)
-Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
 
 
 [Deutsche Beschreibung hier](README_de.md)
@@ -32,8 +32,11 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.9.2 (2018-11-15)
-* (MeisterTR) added manuell devices, fixed bugs
+### 0.9.3 (2018-11-18)
+* (MeisterTR) fixed  bugs
+* (MeisterTR) add manuell light
+* (MeisterTR) better error handling
+* (MeisterTR) fixed reconnect at start
 ### 0.9.1 (2018-10-31)
 * (MeisterTR) added offline detection, poll sates, cleanup
 ### 0.9.0 (2018-08-29)

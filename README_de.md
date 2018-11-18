@@ -1,17 +1,15 @@
+[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
+[![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight-2.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight-2)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
+
+[![NPM](https://nodei.co/npm/iobroker.yeelight-2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight-2/)
+
 ![Logo](admin/yeelight.png)
 # ioBroker.yeelight-2
 =================
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
-
-[![NPM](https://nodei.co/npm/iobroker.yeelight-2.png?downloads=true)](https://nodei.co/npm/iobroker.yeelight-2/)
-
-**Tests:** Linux/Mac: [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight-2.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight-2)
-Windows: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/MeisterTR/ioBroker.yeelight-2?branch=master&svg=true)](https://ci.appveyor.com/project/MeisterTR/ioBroker-yeelight-2/)
-
-
-Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt. Der Ada
+Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt.
 
 ## Installation
 Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
@@ -31,6 +29,15 @@ Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cl
 
 
 ## Changelog
+### 0.9.3 (2018-11-18)
+* (MeisterTR) Fehler behoben
+* (MeisterTR) manuell hinzugefügte Lampen werden erlannt
+* (MeisterTR) Error handling optimiert
+* (MeisterTR) ausgeschaltete Lampen beim start werden überwacht bis sie online sind
+### 0.9.1 (2018-10-31)
+* (MeisterTR) Offline erkennung, daten werden gepollt
+### 0.9.0 (2018-08-29)
+* (MeisterTR) Neu aufgebaut
 ### 0.4.1 (2018-08-29)
 * (MeisterTR) fixed JSON error
 ### 0.4.0 (2018-08-29)

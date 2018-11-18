@@ -1,35 +1,29 @@
-/**
- * 
- * yeelight adapter
- *
- *
- */
+/* jshint -W097 */ // jshint strict:false
+/*jslint node: true */
 'use strict';
 
-// you have to require the utils module and call adapter function
-var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
-var net = require('net');
-var yeelight = require(__dirname + '/lib/yeelight');
-var scenen = require(__dirname + '/lib/scenen');
-var adapter = new utils.Adapter('yeelight-2');
-var objects = {};
-var devices = [];
-var sockets = {};
-var sel_devices = [];
-var ready = false;
-var modeVal = 0;
-var bright_selector;
-var bright_modi = ["active_bright", "bright"]
+const utils = require(__dirname + '/lib/utils');
+const adapter = new utils.Adapter('yeelight-2');
+const scenen = require(__dirname + '/lib/scenen');
+const YeelightSearch = require('yeelight-wifi');
+var Yeelights;
+
+//just for test
+const JSON = require('circular-json');
+
+let variable = 1234;
+let ConfigDevices = [];
+let ObjDecices = [];
 
 
-var PARAMETERLIST = [
+const PARAMETERLIST = [
     'power',
-    'active_bright',
-    'ct',
-    'rgb',
-    'active_mode',
-    'color_mode',
     'bright',
+    'rgb',
+    'color_mode',
+    'ct',
+    'active_bright',
+    'active_mode',
     'hue',
     'sat',
     'flowing',
@@ -44,41 +38,38 @@ var PARAMETERLIST = [
 ];
 
 adapter.on('unload', function (callback) {
-    sockets = null;
-    yeelight.stopDiscovering();
+    try {
+        adapter.log.info('cleaned everything up...');
+        callback();
+    } catch (e) {
+        callback();
+    }
+});
 
+// is called if a subscribed object changes
+adapter.on('objectChange', function (id, obj) {
+    // Warning, obj can be null if it was deleted
+    adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
 });
 
 adapter.on('stateChange', function (id, state) {
     if (state && !state.ack) {
         var changeState = id.split('.');
         var sid = adapter.namespace + '.' + changeState[2];
-        adapter.log.debug(JSON.stringify(changeState))
-        adapter.getState(sid + '.info.IPAdress', function (err, data) {
+
+        adapter.getState(sid + '.info.com', function (err, data) {
+            var lightdata = JSON.parse(data.val);
             if (err) {
                 adapter.log.error(err);
             } else {
                 if (changeState[3] != 'info' && changeState[4] !== 'scenen') {
                     if (!state.ack) {
-                        adapter.getState(sid + '.info.Port', function (err, data2) {
-                            if (err) {
-                                adapter.log.error(err);
-                            } else {
-                                uploadState(sid + '.' + changeState[3], data.val, data2.val, changeState[4], state.val);
-                            }
-                        });
+                        uploadState(lightdata.id, changeState[4], state.val, sid);
 
                     }
                 } else if (changeState[3] != 'info' && changeState[4] === 'scenen') {
                     if (!state.ack) {
-                        adapter.getState(sid + '.info.Port', function (err, data2) {
-                            if (err) {
-                                adapter.log.error(err);
-                            } else {
-                                //uploadState(sid + '.' + changeState[3], data.val, data2.val, changeState[4], state.val);
-                                _sendscene(sid + '.' + changeState[3], data.val, data2.val, changeState[5], state.val)
-                            }
-                        });
+                        _sendscene(lightdata.id, changeState[5], state.val, sid);
 
                     }
                 }
@@ -87,15 +78,7 @@ adapter.on('stateChange', function (id, state) {
     }
 });
 
-adapter.on('ready', function () {
-    main();
-    adapter.log.debug('from_conf: ' + JSON.stringify(adapter.config));
-    sel_devices = adapter.config.devices;
-});
-
 adapter.on('message', function (obj) {
-
-    //yeelight.stopDiscovering();
     adapter.log.debug('here is a Message' + JSON.stringify(obj));
 
     if (!obj) return;
@@ -106,27 +89,23 @@ adapter.on('message', function (obj) {
 
     switch (obj.command) {
         case 'discovery':
-            var onlyActive, reread;
-            var deviceDiscovered = [];
-            sockets = null;
-            yeelight.stopDiscovering();
+            let deviceDiscovered = [];
+            Yeelights = new YeelightSearch();
+            Yeelights.refresh();
 
-
-            if (typeof obj.message === 'object') {
-                //onlyActive = obj.message.onlyActive;
-                //reread = obj.message.reread;
-            }
-
-
-            yeelight.discover(function (device) {
-                adapter.log.debug('Device:' + JSON.stringify(device));
-                deviceDiscovered.push(device);
+            Yeelights.on('found', light => {
+                deviceDiscovered.push({
+                    'model': light.model,
+                    'host': light.hostname,
+                    'port': light.port,
+                    'id': light.getId()
+                });
+                adapter.log.debug('Found Light{ id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
             });
 
-            setTimeout(function () {
-                yeelight.stopDiscovering();
+            setTimeout(() => {
                 reply(deviceDiscovered);
-            }, 30000);
+            }, 5000);
 
             return true;
             break;
@@ -136,10 +115,144 @@ adapter.on('message', function (obj) {
     }
 });
 
-function main() {
-    checkChanges(createDevice);
-    adapter.subscribeStates('*');
 
+adapter.on('ready', function () {
+    main();
+    adapter.log.debug('DEVICES IN CONFIG: ' + JSON.stringify(adapter.config.devices));
+    ConfigDevices = adapter.config.devices;
+});
+
+function uploadState(id, parameter, value, sid) {
+    let checkHex = null;
+    adapter.log.debug('SEND STATE: id:' + id + ', state: ' + parameter + ', value: ' + value);
+
+    let aktYeelight = Yeelights.getYeelightById(id);
+    if (aktYeelight) {
+        switch (parameter) {
+
+            case 'power':
+                switch (value) {
+                    case true:
+                        aktYeelight.turnOn();
+                        break;
+                    case false:
+                        aktYeelight.turnOff();
+                        break;
+                }
+                break;
+            case 'bg_power':
+                switch (value) {
+                    case true:
+                        aktYeelight.turnOnBg();
+                        break;
+                    case false:
+                        aktYeelight.turnOffBg();
+                        break;
+                }
+                break;
+            case 'active_bright':
+                aktYeelight.setBrightness(value);
+                break;
+            case 'bg_bright':
+                aktYeelight.setBrightnessBg(value);
+                break;
+            case 'ct':
+                aktYeelight.setColorTemperature(value);
+                break;
+            case 'bg_ct':
+                aktYeelight.setColorTemperatureBg(value);
+                break;
+            case 'moon_mode':
+                if (value === true) {
+                    aktYeelight.moonMode();
+                } else {
+                    aktYeelight.defaultMode();
+                }
+                break;
+            case 'rgb':
+                checkHex = /^#[0-9A-F]{6}$/i.test(value);
+                if (checkHex) {
+                    aktYeelight.setRGB(value);
+                } else {
+                    adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
+                }
+                break;
+            case 'bg_rgb':
+                checkHex = /^#[0-9A-F]{6}$/i.test(value);
+                if (checkHex) {
+                    aktYeelight.setRGBBg(value);
+                } else {
+                    adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
+                }
+                break;
+            case 'hue':
+                // TODO catch NAN an 1-360;
+                adapter.getState(sid + '.control.sat', function (err, state) {
+                    let saturation = state.val;
+                    aktYeelight.setHSV(value.toString(), saturation.toString());
+                });
+                break;
+            case 'bg_hue':
+                adapter.getState(sid + '.control.bg_sat', function (err, state) {
+                    let saturation = state.val;
+                    aktYeelight.setHSVBg(value.toString(), saturation.toString());
+                });
+                break;
+            case 'sat':
+                // TODO catch NAN an 1-100;
+                adapter.getState(sid + '.control.hue', function (err, state) {
+                    let hue = state.val;
+                    aktYeelight.setHSV(hue.toString(), value.toString());
+                });
+                break;
+            case 'bg_sat':
+                adapter.getState(sid + '.control.bg_hue', function (err, state) {
+                    let hue = state.val;
+                    aktYeelight.setHSVBg(hue.toString(), value.toString());
+                });
+                break;
+            case 'color_mode':
+                if (value === true) {
+                    aktYeelight.colorMode();
+                } else {
+                    aktYeelight.defaultMode();
+                }
+                break;
+            default:
+                adapter.log.warn('State not found');
+        }
+    } else {
+
+    }
+
+
+
+};
+
+function _sendscene(id, parameter, value, sid) {
+    adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
+
+    let aktYeelight = Yeelights.getYeelightById(id);
+    if (aktYeelight) {
+        aktYeelight.setScene(scenen[parameter])
+    }
+
+}
+
+function _createscenen(sid) {
+    for (var key in scenen) {
+        adapter.setObjectNotExists(sid + '.control.scenen.' + key, {
+            common: {
+                name: key,
+                role: 'button.scenen',
+                write: true,
+                read: false,
+                type: 'boolean'
+            },
+            type: 'state',
+            native: {}
+        });
+    }
 };
 
 function checkChanges(callback) {
@@ -147,25 +260,23 @@ function checkChanges(callback) {
         if (err) {
             adapter.log.error(err);
         } else {
-            objects = list;
+            ObjDecices = list;
 
-            adapter.log.debug("found Devices:_" + JSON.stringify(objects));
+            adapter.log.debug("DEVICES IN OBJECTS: " + JSON.stringify(ObjDecices));
 
-            var count = Object.keys(objects).length;
-            adapter.log.debug("count Devices:_" + count);
+            var count = Object.keys(ObjDecices).length;
+            adapter.log.debug("DEVICES IN OBJECTS FOUND: " + count);
             //check every device
             for (var j = 0; j < count; j++) {
-                var element = Object.keys(objects)[j];
-                adapter.log.debug("Element:_" + element);
+                let element = Object.keys(ObjDecices)[j];
+                adapter.log.debug("OBJ_ELEMENT: " + element);
 
-                var sid = objects[element].native.sid;
-                var type = objects[element].native.type;
+                var sid = ObjDecices[element].native.sid;
+                var type = ObjDecices[element].native.type;
                 getastate(element, ifinConfig);
 
                 if (j === count - 1) {
                     setTimeout(function () {
-                        createSocketsList();
-                        updateConnect();
                         adapter.subscribeStates('*');
                         callback && callback();
                     }, 2000);
@@ -174,20 +285,22 @@ function checkChanges(callback) {
                 }
 
             }
+
             if (count === 0) {
                 setTimeout(function () {
-                    createSocketsList();
-                    updateConnect();
                     adapter.subscribeStates('*');
                     callback && callback();
                 }, 2000);
             }
+
+
         }
+
     });
 
     function getastate(element, callback) {
         var info = adapter.getState(element + '.info.com', function (err, state) {
-            adapter.log.debug("hier die ate cfg: " + state.val)
+            adapter.log.debug("OLD CONF. FROM OBJ: " + state.val)
             if (callback && typeof (callback) === "function") callback(element, JSON.parse(state.val));
         });
 
@@ -195,36 +308,36 @@ function checkChanges(callback) {
 
     function ifinConfig(element, oldConfig) {
 
-        var sid = objects[element].native.sid;
-        var type = objects[element].native.type;
+        var sid = ObjDecices[element].native.sid;
+        var type = ObjDecices[element].native.type;
 
         var isThere = false;
-        for (var i = 0; i < sel_devices.length; i++) {
-            if (sel_devices[i].name == sid && sel_devices[i].type == type) {
+        for (var i = 0; i < ConfigDevices.length; i++) {
+            if (ConfigDevices[i].name == sid && ConfigDevices[i].type == type) {
                 isThere = true;
-                adapter.log.debug("der sm: " + sel_devices[i].smart_name)
-                if (sel_devices[i].ip !== oldConfig.ip) {
-                    adapter.setState(element + ".info.IPAdress", sel_devices[i].ip, true)
-                    adapter.setState(element + ".info.com", JSON.stringify(sel_devices[i]), true)
+                adapter.log.debug("SMARTNAME: " + ConfigDevices[i].smart_name)
+                if (ConfigDevices[i].ip !== oldConfig.ip) {
+                    adapter.setState(element + ".info.IPAdress", ConfigDevices[i].ip, true)
+                    adapter.setState(element + ".info.com", JSON.stringify(ConfigDevices[i]), true)
                 }
-                if (sel_devices[i].port !== oldConfig.port) {
-                    adapter.setState(element + ".info.Port", sel_devices[i].port, true)
-                    adapter.setState(element + ".info.com", JSON.stringify(sel_devices[i]), true)
+                if (ConfigDevices[i].port !== oldConfig.port) {
+                    adapter.setState(element + ".info.Port", ConfigDevices[i].port, true)
+                    adapter.setState(element + ".info.com", JSON.stringify(ConfigDevices[i]), true)
                 }
-                if (sel_devices[i].smart_name !== oldConfig.smart_name) {
-                    changeSmartName(element, sel_devices[i].smart_name)
-                    adapter.setState(element + ".info.com", JSON.stringify(sel_devices[i]), true)
+                if (ConfigDevices[i].smart_name !== oldConfig.smart_name) {
+                    changeSmartName(element, ConfigDevices[i].smart_name)
+                    adapter.setState(element + ".info.com", JSON.stringify(ConfigDevices[i]), true)
                 }
 
             }
 
-            if (i === sel_devices.length - 1 && isThere === false) {
+            if (i === ConfigDevices.length - 1 && isThere === false) {
                 delDev(element.split(".")[2]);
 
-                adapter.log.debug('object: ' + objects[element]._id + ' deleded');
+                adapter.log.debug('object: ' + ObjDecices[element]._id + ' deleded');
             }
         }
-    };
+    }
 
     function changeSmartName(element, newSm) {
         var Names = ["power", "ct", "active_bright", "hue", "sat"];
@@ -239,8 +352,6 @@ function checkChanges(callback) {
                 }
             });
         }
-
-
     }
 
     function delDev(id) {
@@ -252,29 +363,28 @@ function checkChanges(callback) {
 }
 
 function createDevice() {
-    var devC = adapter.config.devices;
 
-    if (typeof devC === "undefined") return
+    if (typeof ConfigDevices === "undefined") return
 
-    for (var i = 0; i < devC.length; i++) {
+    for (var i = 0; i < ConfigDevices.length; i++) {
 
-        var sid = adapter.namespace + '.' + devC[i].type + '-' + devC[i].name;
-        var device = devC[i].type + '-' + devC[i].name;
+        var sid = adapter.namespace + '.' + ConfigDevices[i].name;
+        var device = ConfigDevices[i].name;
 
-        adapter.log.debug("Create Device: " + sid);
+        //adapter.log.debug("Create Device: " + sid);
+        //adapter.log.debug("onj Device: " + ObjDecices[sid]);
 
-        if (!objects[sid]) {
-
+        if (!ObjDecices[sid]) {
+            adapter.log.debug("CREATE DEVICE: " + sid);
             adapter.createDevice(device, {
-                name: devC[i].type,
-                icon: '/icons/' + devC[i].type + '.png',
+                name: ConfigDevices[i].type,
+                icon: '/icons/' + ConfigDevices[i].type + '.png',
             }, {
-                sid: devC[i].name,
-                type: devC[i].type
+                sid: ConfigDevices[i].name,
+                type: ConfigDevices[i].type
             });
             adapter.createChannel(device, "info");
             adapter.createChannel(device, "control");
-            adapter.createChannel(device, "control.scenen");
             _createscenen(sid);
             adapter.setObjectNotExists(sid + '.info.com', {
                 common: {
@@ -288,7 +398,7 @@ function createDevice() {
                 native: {}
             });
 
-            adapter.setState(sid + '.info.com', JSON.stringify(devC[i]), true);
+            adapter.setState(sid + '.info.com', JSON.stringify(ConfigDevices[i]), true);
 
             adapter.setObjectNotExists(sid + '.info.connect', {
                 common: {
@@ -324,936 +434,263 @@ function createDevice() {
                 native: {}
             });
 
-            adapter.setState(sid + '.info.IPAdress', devC[i].ip, true);
-            adapter.setState(sid + '.info.Port', devC[i].port, true);
-
-            listen(devC[i].ip, devC[i].port, setStateDevice);
+            adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true);
+            adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true);
         };
-
-        getPrps(sid + ".control", devC[i]);
+        if(i === ConfigDevices.length-1)listener();
     };
 
 };
 
-function _createscenen(sid) {
-    for (var key in scenen) {
-        adapter.setObjectNotExists(sid + '.control.scenen.' + key, {
-            common: {
-                name: key,
-                role: 'button',
-                write: true,
-                read: false,
-                type: 'boolean'
-            },
-            type: 'state',
-            native: {}
+function checkOnline() {
+    let lights = Yeelights.yeelights;
+
+    if (lights.length !== 0) {
+        lights.forEach(element => {
+            let device = ConfigDevices.find(device => device.id === element.id);
+            if (device) {
+                let sid = device.name;
+
+                if (element.status !== 3) {
+                    //turn off
+                    adapter.setState(sid + '.info.connect', false, true);
+                    adapter.setState(sid + '.control.power', false, true);
+                    adapter.log.debug('YEELIGHT OFFLINE: ' + element.id);
+
+                } else {
+                    //turn on
+                    adapter.setState(sid + '.info.connect', true, true);
+                }
+            }
         });
     }
-};
-
-function getPrps(sid, device) {
-
-    var YeelState = new yeelight;
-    YeelState.host = device.ip;
-    YeelState.port = device.port;
-
-    YeelState.sendCommand('get_prop', PARAMETERLIST, function (err, result) {
-        adapter.log.debug('regest params from:' + sid + " _params:_" + JSON.stringify(result));
-        //result = ["off", "1", "4000", "", "0", "2", "1", "", "", "0", "off", "off", "", "40", "180", "100", "65535", "4000"];
-        if (err) {
-            adapter.log.error(err);
-        } else {
-            adapter.setState(sid + '.info.connect', true, true);
-            if (result) {
-                if (!(result[0] === "")) {
-                    switch (result[0]) {
-                        case 'on':
-                            addState(sid, 'power', true, device);
-                            break;
-                        case 'off':
-                            addState(sid, 'power', false, device);
-                            break;
-                    }
-                }
-                if (!(result[1] === "")) {
-                    addState(sid, 'active_bright', result[1], device);
-                } else {
-                    addState(sid, 'active_bright', result[6], device);
-                }
-                if (!(result[2] === "")) {
-                    addState(sid, 'ct', result[2], device);
-                }
-                if (!(result[3] === "")) {
-                    addState(sid, 'rgb', result[3], device);
-                }
-                if (!(result[4] === "")) {
-                    switch (+result[4]) {
-                        case 0:
-                            addState(sid, 'moon_mode', false, device);
-                            break;
-                        case 1:
-                            addState(sid, 'moon_mode', true, device);
-                            break;
-                    }
-                }
-                if (!(result[5] === "")) {
-                    if (true) {
-                        modeVal = result[5];
-                        switch (+result[5]) {
-                            case 1:
-                                addState(sid, 'color_mode', true, device);
-                                break;
-                            case 2:
-                                addState(sid, 'color_mode', false, device);
-                                break;
-                        }
-                    }
-                }
-                if (!(result[7] === "")) {
-                    addState(sid, 'hue', result[7], device);
-                }
-                if (!(result[8] === "")) {
-                    addState(sid, 'sat', result[7], device);
-                }
-                if (!(result[10] === "")) {
-                    switch (result[10]) {
-                        case 'on':
-                            addState(sid, 'main_power', true, device);
-                            break;
-                        case 'off':
-                            addState(sid, 'main_power', false, device);
-                            break;
-                    }
-                }
-                if (!(result[11] === "")) {
-                    switch (result[11]) {
-                        case 'on':
-                            addState(sid, 'bg_power', true, device);
-                            break;
-                        case 'off':
-                            addState(sid, 'bg_power', false, device);
-                            break;
-                    }
-                }
-                if (!(result[13] === "")) {
-                    addState(sid, 'bg_bright', result[13], device);
-                }
-                if (!(result[14] === "")) {
-                    addState(sid, 'bg_hue', result[14], device);
-                }
-                if (!(result[15] === "")) {
-                    addState(sid, 'bg_sat', result[15], device);
-                }
-                if (!(result[16] === "")) {
-                    addState(sid, 'bg_rgb', result[16], device);
-                }
-                if (!(result[17] === "")) {
-                    addState(sid, 'bg_ct', result[17], device);
-                }
-            } else {
-                adapter.log.warn('No response from the device at: ' + YeelState.host + ':' + YeelState.port);
-            }
-        }
-    })
-
-
 }
 
+function listener() {
+    Yeelights = new YeelightSearch();
+    ConfigDevices.forEach((element,index) =>setTimeout(()=> Yeelights.addInitLights(element),index*300));
+    setInterval(() => {
+        //Yeelights.refresh();
+        checkOnline();
+    }, 60 * 1000);
 
-function _sendscene(id, host, port, parameter, val) {
-    var device = new yeelight;
-    device.host = host;
-    device.port = port;
-    adapter.log.debug('scene:_' + parameter + " " + JSON.stringify(scenen[parameter]));
-    device.sendCommand("set_scene", scenen[parameter], function (err, result) {
-        if (err) {
-            adapter.log.error(err)
-        } else {
-            if (result) {
-                adapter.log.debug("Answer from set_power: " + JSON.stringify(result));
-                if (result[0] == 'ok') {
-                    //adapter.setState(id + '.' + parameter, val, true);
+    Yeelights.on('found', light => {
+        adapter.log.debug('YEELIGHT FOUND: ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
+        light.getValues(
+            'power',
+            'bright',
+            'rgb',
+            'color_mode',
+            'ct',
+            'active_bright',
+            'active_mode',
+            'hue',
+            'sat',
+            'flowing',
+            'main_power',
+            'bg_power',
+            'bg_color_mode',
+            'bg_bright',
+            'bg_hue',
+            'bg_sat',
+            'bg_rgb',
+            'bg_ct'
+        ).then((resp) => {
+            light['initinalid'] = 1;
+        });
+
+        light.on("error", function (id, ex, err) {
+            adapter.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
+        });
+
+        light.on("notifcation", message => {
+            adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message))
+            //adapter.log.debug(JSON.stringify(Yeelights))
+            if (message.method === "props" && message.params) {
+
+                setStateDevice(light, message.params);
+            }
+
+        });
+
+        light.on("response", (id, result) => {
+            adapter.log.debug('RESPONSE MESSAGE: from: ' + light.getId() + ', id: ' + id + ', result:[' + result + ']}');
+            //adapter.log.debug(JSON.stringify(light))
+            if (result && result[0] !== 'ok') {
+
+                var model = light.model;
+                if (id === light.initinalid) {
+                    adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
+                    initObj(light, result);
+                }
+                else{
+                    setResponse(light, result);
                 }
             }
-        }
+        });
     });
-
-}
-
-function uploadState(id, host, port, parameter, val) {
-    var device = new yeelight;
-    device.host = host;
-    device.port = port;
-    adapter.log.debug("Upload State " + parameter + " host: " + host + " Port: " + port + " Value: " + val);
-    switch (parameter) {
-
-        case 'power':
-        case 'bg_power':
-        case 'main_power':
-            var powerState;
-            switch (val) {
-                case true:
-                    powerState = 'on';
-                    break;
-                case false:
-                    powerState = 'off';
-                    break;
-            }
-            var powName = "";
-            var bg = false;
-
-            if (parameter === "power") powName = "set_power";
-
-            if (parameter === "bg_power") {
-                powName = "bg_set_power";
-                bg = true;
-            }
-
-            // Maybe wrong ... testing
-            if (parameter === "main_power") powName = "main_set_power";
-
-            device.sendCommand(powName, [powerState, 'smooth', 1000], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    if (result) {
-                        adapter.log.debug("Answer from set_power: " + JSON.stringify(result));
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.' + parameter, val, true);
-
-                            // when main Light set color value
-                            if (!bg) {
-                                adapter.getState(id + '.color_mode', function (err, state) {
-                                    if (err) {
-                                        adapter.log.error(err)
-                                    } else {
-                                        if (state) {
-                                            adapter.setState(id + '.' + '.color_mode', false, true);
-                                        }
-                                    }
-                                });
-                            }
-                            if (val && !bg) {
-                                getProp(device, "bright", function (result) {
-                                    adapter.log.debug("Read bright because poweron: " + result[0]);
-                                    adapter.setState(id + '.active_bright', result[0], true);
-                                });
-                            }
-                            if (val && bg) {
-                                getProp(device, "bg_bright", function (result) {
-                                    adapter.log.debug("Read bright because poweron: " + result[0]);
-                                    adapter.setState(id + '.bg_bright', result[0], true);
-                                });
-                            }
-                        }
-                    } else {
-                        getProp(device, parameter, function (result) {
-                            adapter.log.debug("Wrong respons at power on, ckeck again --> " + powerState + "  <<--soll ist-->> " + result[0]);
-
-                            if (powerState == result[0]) {
-                                adapter.setState(id + '.' + parameter, val, true);
-                                if (!bg) {
-                                    adapter.getState(id + '.color_mode', function (err, state) {
-                                        if (err) {
-                                            adapter.log.error(err)
-                                        } else {
-                                            if (state) {
-                                                adapter.setState(id + '.' + '.color_mode', false, true);
-                                            }
-                                        }
-                                    });
-                                }
-                                if (val && !bg) {
-                                    getProp(device, "bright", function (result) {
-                                        adapter.log.debug("Read bright because poweron: " + result[0]);
-                                        adapter.setState(id + '.active_bright', result[0], true);
-                                    });
-                                }
-                                if (val && bg) {
-                                    getProp(device, "bg_bright", function (result) {
-                                        adapter.log.debug("Read bright because poweron: " + result[0]);
-                                        adapter.setState(id + '.bg_bright', result[0], true);
-                                    });
-                                }
-                            } else {
-                                adapter.log.debug('Error verifying power_on command')
-                            }
-                        });
-
-
-                    }
-                }
-            })
-            break;
-
-        case 'active_bright':
-        case 'bg_bright':
-            // TODO 0 for Light off and power on brfore change!
-            var set_param;
-            var powName = "";
-            if (parameter === 'active_bright') {
-                set_param = 'set_bright';
-                powName = "set_power";
-            } else if (parameter === 'bg_bright') {
-                set_param = 'bg_set_bright';
-                powName = "bg_set_power";
-            }
-            device.sendCommand(powName, ['on', 'smooth', 1000], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    if (result) {
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.'+ powName, true, true);
-                        }
-                    }
-                }
-            });
-            device.sendCommand(set_param, [val, 'smooth', 1000], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    if (result) {
-                        adapter.log.debug("Answer from set_bright: " + JSON.stringify(result));
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.' + parameter, val, true);
-                            adapter.setState(id + '.power', true, true);
-                        }
-                    } else {
-                        getProp(device, parameter, function (result) {
-                            adapter.log.debug("Wrong respons set_bright, ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
-                            if (val == result[0]) {
-                                adapter.setState(id + '.' + parameter, result[0], true);
-                            } else {
-                                adapter.log.debug('Error verifying active_bright command');
-                            }
-                        });
-                    }
-                }
-            });
-            break;
-
-        case 'ct':
-        case 'bg_ct':
-            var set_param
-            var powName = "";
-
-            if (parameter === 'ct') {
-                set_param = 'set_ct_abx';
-                powName = "set_power";
-            } else if (parameter === 'bg_ct') {
-                set_param = 'bg_set_ct_abx';
-                powName = "bg_set_power";
-            }
-            device.sendCommand(powName, ['on', 'smooth', 1000, 1], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    adapter.log.debug("Answer from rgb _power on an color mode before set: " + JSON.stringify(result));
-                    if (result) {
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.color_mode', false, true);
-                        }
-                    }
-                }
-            });
-            device.sendCommand(set_param, [val, 'smooth', 1000], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    if (result) {
-                        adapter.log.debug("Answer from set_ct: " + JSON.stringify(result));
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.' + parameter, val, true);
-
-                        }
-                    } else {
-                        getProp(device, parameter, function (result) {
-                            adapter.log.debug("Wrong respons set_ct, ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
-                            if (val == result[0]) {
-                                adapter.setState(id + '.' + parameter, val, true);
-                            } else {
-                                adapter.log.warn('Error verifying set_ct command');
-                            }
-                        });
-                    }
-                }
-            });
-            break;
-
-        case 'moon_mode':
-            switch (val) {
-                case true:
-                    device.sendCommand('set_power', ['on', 'smooth', 1000, 5], function (err, result) {
-                        if (err) {
-                            adapter.log.error(err)
-                        } else {
-                            adapter.log.debug("Answer from moon_mode: " + JSON.stringify(result));
-                            if (result) {
-                                adapter.log.debug(JSON.stringify(result));
-                                if (result[0] == 'ok') {
-                                    adapter.setState(id + '.' + parameter, val, true);
-                                    adapter.setState(id + '.power', true, true);
-
-                                }
-
-                            } else {
-                                getProp(device, "active_mode", function (result) {
-                                    val = val ? 1 : 0;
-                                    adapter.log.debug("Wrong respons for moon_mode , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
-                                    if (val == result[0]) {
-                                        adapter.setState(id + '.' + parameter, true, true);
-                                        adapter.setState(id + '.power', true, true);
-                                        getProp(device, "active_bright", function (result) {
-                                            adapter.log.debug("Read bright because moon_mode: " + result[0]);
-                                            adapter.setState(id + '.active_bright', result[0], true);
-                                        });
-                                    } else {
-                                        adapter.log.warn('Error verifying set_moon_mode command');
-                                    }
-                                });
-                            }
-                        }
-                    })
-                    break;
-
-                case false:
-                    device.sendCommand('set_power', ['on', 'smooth', 1000, 1], function (err, result) {
-                        if (err) {
-                            adapter.log.error(err)
-                        } else {
-                            adapter.log.debug("Answer from moon_mode: " + JSON.stringify(result));
-                            if (result) {
-                                if (result[0] == 'ok') {
-                                    adapter.setState(id + '.' + parameter, val, true);
-                                }
-                            } else {
-                                if (val == getProp(device, parameter)) {
-                                    adapter.setState(id + '.' + parameter, val, true);
-                                    adapter.setState(id + '.active_bright', getProp(device.host, parameter));
-                                } else {
-                                    adapter.log.warn('Error verifying the command')
-                                }
-
-                                getProp(device, "active_mode", function (result) {
-                                    val = val ? 1 : 0;
-                                    adapter.log.debug("Wrong respons for moon_mode , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
-                                    if (val == result[0]) {
-                                        adapter.setState(id + '.' + parameter, false, true);
-                                        getProp(device, "active_bright", function (result) {
-                                            adapter.log.debug("Read bright because moon_mode_off: " + result[0]);
-                                            adapter.setState(id + '.active_bright', result[0], true);
-                                        });
-                                    } else {
-                                        adapter.log.warn('Error verifying set_moon_mode_off command');
-                                    }
-                                });
-                            }
-                        }
-                    })
-                    break;
-            }
-
-            break;
-
-        case 'rgb':
-        case 'bg_rgb':
-
-            var powName = "";
-            var bg = false;
-            var set_param;
-
-            if (parameter === "rgb") {
-                powName = "set_power";
-                set_param = 'set_rgb';
-            }
-
-            if (parameter === "bg_rgb") {
-                powName = "bg_set_power";
-                bg = true;
-                set_param = 'bg_set_rgb';
-            }
-
-            var isOk = /^#[0-9A-F]{6}$/i.test(val);
-            // ckeck if it is a Hex Format
-            if (isOk) {
-                var rgb = hex2dec(val);
-                adapter.log.debug("rgb to hs: " + JSON.stringify(rgbToHsl(val)));
-                device.sendCommand(powName, ['on', 'smooth', 1000, 2], function (err, result) {
-                    if (err) {
-                        adapter.log.error(err)
-                    } else {
-                        adapter.log.debug("Answer from rgb _power on an color mode before set: " + JSON.stringify(result));
-                        if (result) {
-                            if (result[0] == 'ok') {
-                                adapter.setState(id + '.color_mode', true, true);
-                                adapter.setState(id + '.power', true, true);
-                            }
-                        } else {
-
-                            getProp(device, 'color_mode', function (result) {
-                                adapter.log.debug("No response, request color mode again: " + result[0]);
-
-
-                                switch (result[0]) {
-                                    case 1:
-                                        adapter.setState(id + '.color_mode', true, true);
-
-                                        break;
-                                    case 2:
-                                        adapter.setState(id + '.color_mode', false, true);
-
-                                        break;
-                                    default:
-                                        adapter.log.warn('Error verifying rgb command');
-                                        break;
-                                }
-                            });
-
-
-                        }
-                    }
-                });
-                device.sendCommand(set_param, [+rgb, 'smooth', 1000], function (err, result) {
-                    if (err) {
-                        adapter.log.error(err)
-                    } else {
-                        if (result) {
-                            //adapter.log.debug(JSON.stringify(result));
-                            if (result[0] == 'ok') {
-                                adapter.setState(id + '.' + parameter, val, true)
-                            }
-                        } else {
-                            getProp(device, parameter, function (result) {
-                                adapter.log.debug("Wrong respons for set_rgb , ckeck again --> " + rgb + "  <<--soll ist-->> " + result[0]);
-                                if (rgb == result[0]) {
-                                    adapter.setState(id + '.' + parameter, val, true);
-                                } else {
-                                    adapter.log.warn('Error verifying set_rgb command');
-                                }
-                            });
-
-                        }
-                    }
-                })
-            } else {
-                adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
-            }
-            break;
-
-        case 'hue':
-        case 'bg_hue':
-            // TODO catch NAN an 1-360;
-
-            var powName = "";
-            var bg = false;
-            var set_param;
-            var satName;
-
-            if (parameter === "hue") {
-                powName = "set_power";
-                set_param = 'set_hsv';
-                satName = 'sat';
-            }
-
-            if (parameter === "bg_hue") {
-                powName = "bg_set_power";
-                bg = true;
-                set_param = 'bg_set_hsv';
-                satName = 'bg_sat';
-            }
-
-
-            device.sendCommand(powName, ['on', 'smooth', 1000, 3], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    adapter.log.debug("Answer from rgb _power on an color mode 3 before set: " + JSON.stringify(result));
-                    if (result) {
-                        adapter.log.debug(JSON.stringify(result));
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.color_mode', true, true);
-                        }
-                    } else {
-                        getProp(device, 'color_mode', function (result) {
-                            adapter.log.debug("No response, request color mode again: " + result[0]);
-
-
-                            switch (result[0]) {
-                                case 1:
-                                    adapter.setState(id + '.color_mode', true, true);
-
-                                    break;
-                                case 2:
-                                    adapter.setState(id + '.color_mode', false, true);
-
-                                    break;
-                                default:
-                                    adapter.log.warn('Error verifying rgb command');
-                                    break;
-                            }
-                        });
-                    }
-                }
-            });
-
-            adapter.getState(id + '.' + satName, function (err, state) {
-                var saturation = state.val;
-
-                adapter.log.debug("Answer from rgb _power on an color mode 3 beforesat_val: " + saturation);
-
-                device.sendCommand(set_param, [val, saturation, 'smooth', 1000], function (err, result) {
-                    if (err) {
-                        adapter.log.error(err)
-                    } else {
-                        if (result) {
-                            //adapter.log.debug(JSON.stringify(result));
-                            if (result[0] == 'ok') {
-                                adapter.setState(id + '.' + parameter, val, true)
-                            }
-                        } else {
-                            getProp(device, parameter, function (result) {
-                                adapter.log.debug("Wrong respons for set_hue , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
-                                if (val == result[0]) {
-                                    adapter.setState(id + '.' + parameter, result[0], true);
-                                } else {
-                                    adapter.log.warn('Error verifying set_hue command');
-                                }
-                            });
-                        }
-                    }
-                });
-            });
-            break;
-
-
-        case 'sat':
-        case 'bg_sat':
-            // TODO catch NAN an 1-100;
-
-            var powName = "";
-            var bg = false;
-            var set_param;
-            var hueName;
-
-            if (parameter === "sat") {
-                powName = "set_power";
-                set_param = 'set_hsv';
-                hueName = 'hue';
-            }
-
-            if (parameter === "bg_hue") {
-                powName = "bg_set_power";
-                bg = true;
-                set_param = 'bg_set_hsv';
-                hueName = 'bg_hue';
-            }
-
-            device.sendCommand(powName, ['on', 'smooth', 1000, 3], function (err, result) {
-                if (err) {
-                    adapter.log.error(err)
-                } else {
-                    adapter.log.debug("Answer from rgb _power on an color mode 3 before set: " + JSON.stringify(result));
-                    if (result) {
-                        adapter.log.debug(JSON.stringify(result));
-                        if (result[0] == 'ok') {
-                            adapter.setState(id + '.color_mode', true, true);
-                        }
-                    } else {
-                        getProp(device, 'color_mode', function (result) {
-                            adapter.log.debug("No response, request color mode again: " + result[0]);
-
-
-                            switch (result[0]) {
-                                case 1:
-                                    adapter.setState(id + '.color_mode', true, true);
-
-                                    break;
-                                case 2:
-                                    adapter.setState(id + '.color_mode', false, true);
-
-                                    break;
-                                default:
-                                    adapter.log.warn('Error verifying sat command');
-                                    break;
-                            }
-                        });
-                    }
-                }
-            });
-
-            adapter.getState(id + '.' + hueName, function (err, state) {
-                var huevalue = state.val;
-                adapter.log.debug("hue" + huevalue + " sat " + val);
-                device.sendCommand(set_param, [parseInt(huevalue), parseInt(val), 'smooth', 1000], function (err, result) {
-                    if (err) {
-                        adapter.log.error(err)
-                    } else {
-                        if (result) {
-                            //adapter.log.debug(JSON.stringify(result));
-                            if (result[0] == 'ok') {
-                                adapter.setState(id + '.' + parameter, val, true)
-                            }
-                        } else {
-                            getProp(device, parameter, function (result) {
-                                adapter.log.debug("Wrong respons for set_hue , ckeck again --> " + val + "  <<--soll ist-->> " + result[0]);
-                                if (val == result[0]) {
-                                    adapter.setState(id + '.' + parameter, result[0], true);
-                                } else {
-                                    adapter.log.warn('Error verifying set_sat command');
-                                }
-                            });
-                        }
-                    }
-                });
-            });
-            break;
-
-
-        case 'color_mode':
-            switch (val) {
-                case true:
-                    device.sendCommand('set_power', ['on', 'smooth', 1000, 2], function (err, result) {
-                        if (err) {
-                            adapter.log.error(err)
-                        } else {
-                            if (result) {
-                                //adapter.log.debug(JSON.stringify(result));
-                                if (result[0] == 'ok') {
-                                    adapter.setState(id + '.' + parameter, val, true)
-                                }
-                            } else {
-                                getProp(device, 'color_mode', function (result) {
-                                    adapter.log.debug("No response, request color mode again: " + result[0]);
-
-
-                                    switch (result[0]) {
-                                        case 1:
-                                            adapter.setState(id + '.color_mode', true, true);
-
-                                            break;
-                                        case 2:
-                                            adapter.setState(id + '.color_mode', false, true);
-
-                                            break;
-                                        default:
-                                            adapter.log.warn('Error verifying color_mode command');
-                                            break;
-                                    }
-                                });
-                            }
-                        }
-                    })
-                    break;
-                case false:
-                    device.sendCommand('set_power', ['on', 'smooth', 1000, 1], function (err, result) {
-                        if (err) {
-                            adapter.log.error(err)
-                        } else {
-                            if (result) {
-                                adapter.log.debug(JSON.stringify(result));
-                                if (result[0] == 'ok') {
-                                    adapter.setState(id + '.' + parameter, val, true);
-                                }
-                            } else {
-                                getProp(device, 'color_mode', function (result) {
-                                    adapter.log.debug("No response, request color mode again: " + result[0]);
-
-
-                                    switch (result[0]) {
-                                        case 1:
-                                            adapter.setState(id + '.color_mode', true, true);
-
-                                            break;
-                                        case 2:
-                                            adapter.setState(id + '.color_mode', false, true);
-
-                                            break;
-                                        default:
-                                            adapter.log.warn('Error verifying color_mode command');
-                                            break;
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    break;
-            }
-            break;
-        default:
-            adapter.log.warn('State not found');
-    }
-
 
 };
 
-function getProp(device, parameter, callback) {
-    //var device = new yeelight;
-    adapter.log.debug("get_prob:_" + parameter + "__" + device.host + '__' + device.port);
-    // device.host = host;
-    // device.port = 55443;
-    var param;
+function setResponse(aktYeelight, result){
+    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
 
-
-    switch (parameter) {
-
-        case 'moon_mode':
-            param = 'active_mode';
-            break;
-        default:
-            param = parameter;
-            break;
-    }
-
-    device.sendCommand('get_prop', [param], function (err, result) {
-        if (err) {
-            adapter.log.error(err)
-
-        } else {
-            if (result) {
-                if (callback && typeof (callback) === "function") callback(result);
-                return result[0];
-            }
-        }
-    })
-}
-
-function dec2hex(dec) {
-    return '#' + (+dec).toString(16);
-}
-
-function hex2dec(hex) {
-    return parseInt(hex.substring(1), 16);
-}
-
-function listen(host, port, callback) {
-    adapter.log.debug("listen to: " + host + ':' + port);
-    var socket = net.connect(port, host);
-    socket.on('data', function (data) {
-        if (callback) {
-            try {
-                data = JSON.parse(data);
-            } catch (e) {
-                callback(e);
-                return;
-            }
-            if (data['error']) {
-                callback(new Error(data['error']['message']));
-            } else {
-                callback(socket.remoteAddress, data['params']);
-            }
-        }
-        // socket.destroy();
-    });
-    socket.on('error', function (err) {
-        socket.destroy();
-        adapter.log.error(err);
-    });
-
-
-}
-
-function setStateDevice(ip, state) {
-    adapter.log.debug(ip);
-    var id = sockets[ip] + ".control";
-    adapter.log.debug("This id:_" + id);
-    adapter.log.debug(JSON.stringify(state));
-    adapter.log.debug(JSON.stringify(sockets));
-    for (var key in state) {
-        adapter.log.debug(key);
-        switch (key) {
-            case 'power':
-            case 'main_power':
-            case 'bg_power':
-                switch (state[key]) {
+    //result:[off,100,16711680,2,4000]};
+    if (device) {
+        let sid = device.name
+        adapter.setState(sid + '.info.connect', true, true);
+        sid = sid + '.control';
+        adapter.log.debug('DEVICE FOUND IN CONFIG: ' + JSON.stringify(device));
+        if (result) {
+            if (!(result[0] === "")) {
+                switch (result[0]) {
                     case 'on':
-                        adapter.setState(id + '.' + key, true, true);
+                    adapter.setState(sid + '.power', true, true);
                         break;
                     case 'off':
-                        adapter.setState(id + '.' + key, false, true);
+                    adapter.setState(sid + '.power', false, true);
                         break;
                 }
-                break;
-            case 'bright':
-            case 'active_bright':
-            case 'ct':
-            case 'bg_bright':
-            case 'bg_ct':
-            case 'bg_hue':
-            case 'bg_sat':
-            case 'sat':
-            case 'hue':
-                if (key == 'bright') {
-                    adapter.setState(id + '.active_bright', +state[key], true);
+            }
+            if (!(result[1] === "")) {
+                adapter.setState(sid + '.active_bright', result[1], true);
+            }
+            if (!(result[2] === "")) {
+                adapter.setState(sid+'.rgb', result[2], true);
+            }
+            if (!(result[3] === "")) {
+                if (true) {
+                    switch (+result[3]) {
+                        case 1:
+                        adapter.setState(sid + '.color_mode', true, true);
+                            break;
+                        case 2:
+                        adapter.setState(sid+ '.color_mode', false, true);
+                            break;
+                    }
                 }
-                adapter.setState(id + '.' + key, state[key], true);
-                break;
-            case 'rgb':
-            case 'bg_rgb':
-                var value = dec2hex(state[key]);
-                adapter.setState(id + '.' + key, value, true);
-                break;
-            case 'active_mode':
-                switch (+state[key]) {
-                    case 0:
-                        adapter.setState(id + '.moon_mode', false, true);
-                        break;
-                    case 1:
-                        adapter.setState(id + '.moon_mode', true, true);
-                        break;
-                }
-                break;
-            case 'color_mode':
-                modeVal = state[key];
-                switch (+state[key]) {
-                    case 1:
-                        adapter.setState(id + '.color_mode', true, true);
-                        break;
-                    case 2:
-                        adapter.setState(id + '.color_mode', false, true);
-                        break;
-                }
-                break;
+            }
+            if (!(result[4] === "")) {
+                adapter.setState(sid+ '.ct', result[4], true);
+            }
+        } else {
+            adapter.log.warn('EMPTY RESPONSE');
         }
-    }
 
+    } else {
+        adapter.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+    }
+};
+
+function main() {
+    checkChanges(createDevice);
+    adapter.subscribeStates('*');
 }
 
-function updateConnect() {
-    adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
-        if (err) {
-            adapter.log.error(err);
-        } else {
-            objects = list;
-            for (var key in objects) {
-                var id = key;
-                adapter.log.debug("Update connection for:_" + id);
-                adapter.getState(id + '.info.IPAdress', function (err, Ip) {
-                    if (err) {
-                        adapter.log.error(err);
-                    } else {
-                        var device = new yeelight;
-                        device.host = Ip.val;
-                        device.port = 55443;
-                        device.sendCommand('get_prop', ['power'], function (err, result) {
-                            if (err) {
-                                adapter.log.error(err);
-                            } else {
-                                if (result) {
-                                    adapter.setState(id + '.info.connect', true, true);
-                                } else {
-                                    adapter.setState(id + '.info.connect', false, true);
-                                }
-                            }
-                        })
-                        listen(Ip.val, 55443, setStateDevice);
-                    }
-                })
+
+function initObj(aktYeelight, result) {
+    //search light in Config
+    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
+
+    //result = ["off", "1", "4000", "", "0", "2", "1", "", "", "0", "off", "off", "", "40", "180", "100", "65535", "4000"];
+    if (device) {
+        let sid = device.name
+        adapter.setState(sid + '.info.connect', true, true);
+        sid = sid + '.control';
+        adapter.log.debug('DEVICE FOUND IN AND CONFIG: ' + JSON.stringify(device));
+
+        if (result) {
+            if (!(result[0] === "")) {
+                switch (result[0]) {
+                    case 'on':
+                        addState(sid, 'power', true, device);
+                        break;
+                    case 'off':
+                        addState(sid, 'power', false, device);
+                        break;
+                }
             }
+            if (!(result[5] === "")) {
+                addState(sid, 'active_bright', result[5], device);
+            } else {
+                addState(sid, 'active_bright', result[1], device);
+            }
+            if (!(result[4] === "")) {
+                addState(sid, 'ct', result[4], device);
+            }
+            if (!(result[2] === "")) {
+                addState(sid, 'rgb', result[2], device);
+            }
+            if (!(result[6] === "")) {
+                switch (+result[6]) {
+                    case 0:
+                        addState(sid, 'moon_mode', false, device);
+                        break;
+                    case 1:
+                        addState(sid, 'moon_mode', true, device);
+                        break;
+                }
+            }
+            if (!(result[3] === "")) {
+                if (true) {
+                    switch (+result[3]) {
+                        case 1:
+                            addState(sid, 'color_mode', true, device);
+                            break;
+                        case 2:
+                            addState(sid, 'color_mode', false, device);
+                            break;
+                    }
+                }
+            }
+            if (!(result[7] === "")) {
+                addState(sid, 'hue', result[7], device);
+            }
+            if (!(result[8] === "")) {
+                addState(sid, 'sat', result[8], device);
+            }
+            if (!(result[10] === "")) {
+                switch (result[10]) {
+                    case 'on':
+                        addState(sid, 'main_power', true, device);
+                        break;
+                    case 'off':
+                        addState(sid, 'main_power', false, device);
+                        break;
+                }
+            }
+            if (!(result[11] === "")) {
+                switch (result[11]) {
+                    case 'on':
+                        addState(sid, 'bg_power', true, device);
+                        break;
+                    case 'off':
+                        addState(sid, 'bg_power', false, device);
+                        break;
+                }
+            }
+            if (!(result[13] === "")) {
+                addState(sid, 'bg_bright', result[13], device);
+            }
+            if (!(result[14] === "")) {
+                addState(sid, 'bg_hue', result[14], device);
+            }
+            if (!(result[15] === "")) {
+                addState(sid, 'bg_sat', result[15], device);
+            }
+            if (!(result[16] === "")) {
+                addState(sid, 'bg_rgb', result[16], device);
+            }
+            if (!(result[17] === "")) {
+                addState(sid, 'bg_ct', result[17], device);
+            }
+        } else {
+            adapter.log.warn('EMPTY INITINAL RESPONSE');
         }
 
-    });
-
+    } else {
+        adapter.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+    }
 }
 
 function addState(id, state, val, device) {
@@ -1296,13 +733,27 @@ function addState(id, state, val, device) {
             adapter.setState(id + '.' + state, val, true);
             break;
 
-        case 'moon_mode':
         case 'color_mode':
             adapter.setObjectNotExists(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
-                    role: 'switch',
+                    role: 'switch.mode.color',
+                    write: true,
+                    read: true,
+                    type: 'boolean'
+                },
+                native: {}
+            });
+            adapter.setState(id + '.' + state, val, true);
+            break;
+
+        case 'moon_mode':
+            adapter.setObjectNotExists(id + '.' + state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    role: 'switch.mode.moon',
                     write: true,
                     read: true,
                     type: 'boolean'
@@ -1418,43 +869,85 @@ function addState(id, state, val, device) {
 
 }
 
-function createSocketsList() {
-    adapter.getStates(adapter.namespace + '.*.info.IPAdress', function (err, list) {
-        if (err) {
-            adapter.log.error(err);
-        } else {
-            var temp = {};
-            temp = list;
-            for (var key in temp) {
-                if (~key.indexOf('IPAdress')) {
-                    var id = key;
-                    var ip = temp[key].val;
-                    var sid = id.split('.');
-                    adapter.log.debug("sid by socket:_" + JSON.stringify(sid));
-                    id = sid[0] + '.' + sid[1] + '.' + sid[2];
-                    sockets[ip] = id;
-                    //adapter.log.warn(JSON.stringify(sockets));
-                }
+function setStateDevice(aktYeelight, state) {
+    //search light in Config
+    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
+
+    if (device) {
+        let sid = device.name
+        adapter.setState(sid + '.info.connect', true, true);
+        sid = sid + '.control';
+        adapter.log.debug('DEVICE FOUND SET NOTIFY STATE: ' + JSON.stringify(device));
+
+        for (var key in state) {
+            switch (key) {
+                case 'power':
+                case 'main_power':
+                case 'bg_power':
+                    switch (state[key]) {
+                        case 'on':
+                            adapter.setState(sid + '.' + key, true, true);
+                            break;
+                        case 'off':
+                            adapter.setState(sid + '.' + key, false, true);
+                            break;
+                    }
+                    break;
+                case 'bright':
+                case 'active_bright':
+                case 'ct':
+                case 'bg_bright':
+                case 'bg_ct':
+                case 'bg_hue':
+                case 'bg_sat':
+                case 'sat':
+                case 'hue':
+                    if (key == 'bright') {
+                        adapter.setState(sid + '.active_bright', +state[key], true);
+                    }
+                    adapter.setState(sid + '.' + key, state[key], true);
+                    break;
+                case 'rgb':
+                case 'bg_rgb':
+                    var value = dec2hex(state[key]);
+                    adapter.setState(sid + '.' + key, value, true);
+                    break;
+                case 'active_mode':
+                    switch (+state[key]) {
+                        case 0:
+                            adapter.setState(sid + '.moon_mode', false, true);
+                            break;
+                        case 1:
+                            adapter.setState(sid + '.moon_mode', true, true);
+                            break;
+                    }
+                    break;
+                case 'color_mode':
+                    //modeVal = state[key];
+                    switch (+state[key]) {
+                        case 1:
+                            adapter.setState(sid + '.color_mode', true, true);
+                            break;
+                        case 2:
+                            adapter.setState(sid + '.color_mode', false, true);
+                            break;
+                    }
+                    break;
             }
         }
-    });
+    } else {
+        adapter.log.debug('NEW DEVICE FOUND IN NOTIFY, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+    }
 
-    /*  for (var key in objects) {
-  
-  
-        if (key) {
-  
-              adapter.getState(key + '.info.IPAdress', function (err, Ip) {
-                  if (err) {
-                      adapter.log.error(err);
-                  } else {
-                      sockets[Ip.val] = key;
-                  }
-              })
-          }
-  
-      }
-    */
+
+}
+
+function dec2hex(dec) {
+    return '#' + (+dec).toString(16);
+}
+
+function hex2dec(hex) {
+    return parseInt(hex.substring(1), 16);
 }
 
 /**

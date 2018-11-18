@@ -1,8 +1,30 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.4.1",
+    "version": "0.9.3",
     "news": {
+      "0.9.3":{
+        "en": "fixed  bugs, add manuell light, error handling, fixed reconnect at start",
+        "de": "Fehler behoben, manuelles Licht hinzugefügt, Fehlerbehandlung behoben, reconnect beim Start behoben",
+        "ru": "исправлены ошибки, добавлена ​​подсветка мануала, обработка ошибок, фиксированное повторное подключение при запуске",
+        "pt": "erros fixos, adicionar luz manuell, manipulação de erros, reconectar fixo no início",
+        "nl": "bugs gerepareerd, manuell light toegevoegd, foutafhandeling, vast opnieuw verbinden bij start",
+        "fr": "correction de bugs, ajout de lumière manuell, traitement des erreurs, correction de la reconnexion au démarrage",
+        "it": "bug corretti, aggiungi manuell light, gestione degli errori, riparazioni fisse all'avvio",
+        "es": "Se corrigieron errores, se agregó manuell light, manejo de errores, se volvió a conectar al inicio",
+        "pl": "naprawione błędy, dodawanie światła manuell, obsługa błędów, naprawione ponowne połączenie na starcie"
+      },
+      "0.9.1": {
+        "en": "rebuild",
+        "de": "neu aufbauen",
+        "ru": "перестраивать",
+        "pt": "reconstruir",
+        "nl": "herbouwen",
+        "fr": "reconstruire",
+        "it": "ricostruire",
+        "es": "reconstruir",
+        "pl": "odbudować"
+      },
       "0.4.1": {
         "en": "fixed JSON error",
         "de": "JSON-Fehler behoben",

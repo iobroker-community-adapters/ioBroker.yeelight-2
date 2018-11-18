@@ -15,6 +15,8 @@
 
 This adapter control your Yeelight device. this adapter is only for admin3. Admin2 is not supported
 
+## Jump Version
+When changing from the 0.4.X to the 0.9.X or higher, the objects must be deleted manually so they can be recreated.
 
 ## Installation
 for RGB Bulbs you have to enable the LAN in the settings of the yeelight app.

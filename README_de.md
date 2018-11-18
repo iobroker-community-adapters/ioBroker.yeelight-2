@@ -10,8 +10,11 @@
 =================
 
 Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt.
+## Versionsprung
+Beim wechsel von der 0.4.X zur 0.9.X oder höher müssen die objekte manuell alle gelöscht werden, damit sie neu erzeugt werden können.
 
 ## Installation
+
 Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
 
 ![](admin/lan.jpg)

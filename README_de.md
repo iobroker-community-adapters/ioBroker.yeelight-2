@@ -32,11 +32,12 @@ Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cl
 
 
 ## Changelog
-### 0.9.3 (2018-11-18)
+### 0.9.4 (2018-11-18)
 * (MeisterTR) Fehler behoben
 * (MeisterTR) manuell hinzugefügte Lampen werden erlannt
 * (MeisterTR) Error handling optimiert
 * (MeisterTR) ausgeschaltete Lampen beim start werden überwacht bis sie online sind
+* (MeisterTR) Fehler beim Löschen von Objekten und Smartname bug behoben
 ### 0.9.1 (2018-10-31)
 * (MeisterTR) Offline erkennung, daten werden gepollt
 ### 0.9.0 (2018-08-29)

@@ -34,11 +34,12 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.9.3 (2018-11-18)
+### 0.9.4 (2018-11-18)
 * (MeisterTR) fixed  bugs
 * (MeisterTR) add manuell light
 * (MeisterTR) better error handling
 * (MeisterTR) fixed reconnect at start
+* (MeisterTR) delete object and smartname bug fixed
 ### 0.9.1 (2018-10-31)
 * (MeisterTR) added offline detection, poll sates, cleanup
 ### 0.9.0 (2018-08-29)

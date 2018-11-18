@@ -241,7 +241,7 @@ function _sendscene(id, parameter, value, sid) {
 
 function _createscenen(sid) {
     for (var key in scenen) {
-        adapter.setObjectNotExists(sid + '.control.scenen.' + key, {
+        adapter.setObjectNotExists(sid + '.scenen.' + key, {
             common: {
                 name: key,
                 role: 'button.scenen',
@@ -341,20 +341,29 @@ function checkChanges(callback) {
 
     function changeSmartName(element, newSm) {
         var Names = ["power", "ct", "active_bright", "hue", "sat"];
-        adapter.log.debug("canged " + Names.length + " smartname to : " + newSm)
+        adapter.getForeignObjects(element + ".*", function (err, list) {
+            
+            if(err) return
 
-        for (var i = 0; i < Names.length; i++) {
-            adapter.extendObject(element + ".control." + Names[i], {
-                common: {
-                    smartName: {
-                        de: newSm
-                    }
+            for (var i = 0; i < Names.length; i++) {
+                if (typeof (list[element + ".control." + Names[i]]) !== 'undefined') {
+                    adapter.extendObject(element + ".control." + Names[i], {
+                        common: {
+                            smartName: {
+                                de: newSm
+                            }
+                        }
+                    });
                 }
-            });
-        }
+            }
+
+        });
+
+        adapter.log.debug("canged " + Names.length + " smartname to : " + newSm)
     }
 
     function delDev(id) {
+        adapter.log.warn('DEL: ' + id)
         adapter.deleteDevice(id, function (err, dat) {
             if (err) adapter.log.warn(err);
             //adapter.log.debug(dat);
@@ -385,6 +394,7 @@ function createDevice() {
             });
             adapter.createChannel(device, "info");
             adapter.createChannel(device, "control");
+            adapter.createChannel(device, "scenen");
             _createscenen(sid);
             adapter.setObjectNotExists(sid + '.info.com', {
                 common: {
@@ -437,7 +447,7 @@ function createDevice() {
             adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true);
             adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true);
         };
-        if(i === ConfigDevices.length-1)listener();
+        if (i === ConfigDevices.length - 1) listener();
     };
 
 };
@@ -468,7 +478,7 @@ function checkOnline() {
 
 function listener() {
     Yeelights = new YeelightSearch();
-    ConfigDevices.forEach((element,index) =>setTimeout(()=> Yeelights.addInitLights(element),index*300));
+    ConfigDevices.forEach((element, index) => setTimeout(() => Yeelights.addInitLights(element), index * 300));
     setInterval(() => {
         //Yeelights.refresh();
         checkOnline();
@@ -522,8 +532,7 @@ function listener() {
                 if (id === light.initinalid) {
                     adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
                     initObj(light, result);
-                }
-                else{
+                } else {
                     setResponse(light, result);
                 }
             }
@@ -532,7 +541,7 @@ function listener() {
 
 };
 
-function setResponse(aktYeelight, result){
+function setResponse(aktYeelight, result) {
     let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
 
     //result:[off,100,16711680,2,4000]};
@@ -545,10 +554,10 @@ function setResponse(aktYeelight, result){
             if (!(result[0] === "")) {
                 switch (result[0]) {
                     case 'on':
-                    adapter.setState(sid + '.power', true, true);
+                        adapter.setState(sid + '.power', true, true);
                         break;
                     case 'off':
-                    adapter.setState(sid + '.power', false, true);
+                        adapter.setState(sid + '.power', false, true);
                         break;
                 }
             }
@@ -556,22 +565,22 @@ function setResponse(aktYeelight, result){
                 adapter.setState(sid + '.active_bright', result[1], true);
             }
             if (!(result[2] === "")) {
-                adapter.setState(sid+'.rgb', result[2], true);
+                adapter.setState(sid + '.rgb', result[2], true);
             }
             if (!(result[3] === "")) {
                 if (true) {
                     switch (+result[3]) {
                         case 1:
-                        adapter.setState(sid + '.color_mode', true, true);
+                            adapter.setState(sid + '.color_mode', true, true);
                             break;
                         case 2:
-                        adapter.setState(sid+ '.color_mode', false, true);
+                            adapter.setState(sid + '.color_mode', false, true);
                             break;
                     }
                 }
             }
             if (!(result[4] === "")) {
-                adapter.setState(sid+ '.ct', result[4], true);
+                adapter.setState(sid + '.ct', result[4], true);
             }
         } else {
             adapter.log.warn('EMPTY RESPONSE');

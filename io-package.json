@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.9.3",
+    "version": "0.9.4",
     "news": {
+      "0.9.4":{
+        "en": "delete object and smartname bug fixed  ",
+        "de": "Lösche Objekt und Smartname Fehler behoben",
+        "ru": "удалить объект и исправить ошибку",
+        "pt": "excluir bug de objeto e nome inteligente corrigido",
+        "nl": "verwijder object en smartname bug opgelost",
+        "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
+        "it": "eliminato bug di oggetti e smartname risolti",
+        "es": "error de eliminar objeto y nombre inteligente solucionado",
+        "pl": "usunięto błąd obiektu i nazwy smartname"
+      },
       "0.9.3":{
         "en": "fixed  bugs, add manuell light, error handling, fixed reconnect at start",
         "de": "Fehler behoben, manuelles Licht hinzugefügt, Fehlerbehandlung behoben, reconnect beim Start behoben",

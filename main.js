@@ -57,24 +57,24 @@ adapter.on('stateChange', function (id, state) {
         var changeState = id.split('.');
         var sid = adapter.namespace + '.' + changeState[2];
 
-        adapter.getState(sid + '.info.com', function (err, data) {
-            var lightdata = JSON.parse(data.val);
-            if (err) {
-                adapter.log.error(err);
-            } else {
-                if (changeState[3] != 'info' && changeState[4] !== 'scenen') {
-                    if (!state.ack) {
-                        uploadState(lightdata.id, changeState[4], state.val, sid);
+        // search id in config
+        let findlight = ConfigDevices.find(device => device.name === changeState[2]);
 
-                    }
-                } else if (changeState[3] != 'info' && changeState[4] === 'scenen') {
-                    if (!state.ack) {
-                        _sendscene(lightdata.id, changeState[5], state.val, sid);
+        if (findlight) {
+            if (changeState[3] != 'info' && changeState[3] !== 'scenen') {
+                if (!state.ack) {
+                    uploadState(findlight.id, changeState[4], state.val, sid);
 
-                    }
+                }
+            } else if (changeState[3] === 'scenen') {
+                if (!state.ack) {
+                    _sendscene(findlight.id, changeState[4], state.val, sid);
+
                 }
             }
-        })
+        } else {
+            adapter.log.error("LIGHT: " + changeState[2] + ' NOT FOUND IN CONFIG!');
+        }
     }
 });
 
@@ -172,7 +172,7 @@ function uploadState(id, parameter, value, sid) {
             case 'rgb':
                 checkHex = /^#[0-9A-F]{6}$/i.test(value);
                 if (checkHex) {
-                    aktYeelight.setRGB(value);
+                    aktYeelight.setRGB(value, 'sudden', 400);
                 } else {
                     adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
                 }
@@ -342,8 +342,8 @@ function checkChanges(callback) {
     function changeSmartName(element, newSm) {
         var Names = ["power", "ct", "active_bright", "hue", "sat"];
         adapter.getForeignObjects(element + ".*", function (err, list) {
-            
-            if(err) return
+
+            if (err) return
 
             for (var i = 0; i < Names.length; i++) {
                 if (typeof (list[element + ".control." + Names[i]]) !== 'undefined') {
@@ -565,7 +565,7 @@ function setResponse(aktYeelight, result) {
                 adapter.setState(sid + '.active_bright', result[1], true);
             }
             if (!(result[2] === "")) {
-                adapter.setState(sid + '.rgb', result[2], true);
+                adapter.setState(sid + '.rgb', dec2hex(result[2]), true);
             }
             if (!(result[3] === "")) {
                 if (true) {

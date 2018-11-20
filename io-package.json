@@ -1,10 +1,10 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "news": {
-      "0.9.4":{
-        "en": "delete object and smartname bug fixed  ",
+      "0.9.5":{
+        "en": "delete object and smartname bugs fixed  ",
         "de": "Lösche Objekt und Smartname Fehler behoben",
         "ru": "удалить объект и исправить ошибку",
         "pt": "excluir bug de objeto e nome inteligente corrigido",

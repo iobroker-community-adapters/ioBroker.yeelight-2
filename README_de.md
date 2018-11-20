@@ -32,7 +32,7 @@ Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cl
 
 
 ## Changelog
-### 0.9.4 (2018-11-18)
+### 0.9.5 (2018-11-20)
 * (MeisterTR) Fehler behoben
 * (MeisterTR) manuell hinzugefügte Lampen werden erlannt
 * (MeisterTR) Error handling optimiert

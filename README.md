@@ -34,7 +34,7 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.9.4 (2018-11-18)
+### 0.9.5 (2018-11-20)
 * (MeisterTR) fixed  bugs
 * (MeisterTR) add manuell light
 * (MeisterTR) better error handling

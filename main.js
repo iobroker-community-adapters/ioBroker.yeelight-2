@@ -5,7 +5,7 @@
 const utils = require(__dirname + '/lib/utils');
 const adapter = new utils.Adapter('yeelight-2');
 const scenen = require(__dirname + '/lib/scenen');
-const YeelightSearch = require('yeelight-wifi');
+const YeelightSearch = require(__dirname + '/build/index');
 var Yeelights;
 
 //just for test

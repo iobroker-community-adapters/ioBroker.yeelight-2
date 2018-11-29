@@ -42,7 +42,7 @@
   },
   "main": "main.js",
   "scripts": {
-    "build": "node_modules/.bin/babel src/ -d build/",
+    "build": "node_modules/.bin/babel yeelight-wifi/src/ -d yeelight-wifi/build/",
     "test": "node node_modules/mocha/bin/mocha --exit"
   },
   "bugs": {

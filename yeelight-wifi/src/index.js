@@ -5,6 +5,7 @@ import Yeelight from './Yeelight';
 import { YeelightStatus } from './Yeelight';
 
 /**
+ * 
  * Create a new instance of the YeelightSearch class
  * and start searching for new Yeelights
  * once a Yeelight has been found it will create an Yeelight instance

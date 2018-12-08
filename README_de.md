@@ -32,7 +32,8 @@ Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cl
 
 
 ## Changelog
-### 0.9.5 (2018-11-20)
+### 0.9.6 (2018-12-08)
+* (MeisterTR) yeelight-wifi hinzugefügt
 * (MeisterTR) Fehler behoben
 * (MeisterTR) manuell hinzugefügte Lampen werden erlannt
 * (MeisterTR) Error handling optimiert

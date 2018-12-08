@@ -5,7 +5,7 @@
 const utils = require(__dirname + '/lib/utils');
 const adapter = new utils.Adapter('yeelight-2');
 const scenen = require(__dirname + '/lib/scenen');
-const YeelightSearch = require('yeelight-wifi');
+const YeelightSearch = require(__dirname + '/yeelight-wifi/build/index');
 var Yeelights;
 
 //just for test
@@ -14,28 +14,6 @@ const JSON = require('circular-json');
 let variable = 1234;
 let ConfigDevices = [];
 let ObjDecices = [];
-
-
-const PARAMETERLIST = [
-    'power',
-    'bright',
-    'rgb',
-    'color_mode',
-    'ct',
-    'active_bright',
-    'active_mode',
-    'hue',
-    'sat',
-    'flowing',
-    'main_power',
-    'bg_power',
-    'bg_color_mode',
-    'bg_bright',
-    'bg_hue',
-    'bg_sat',
-    'bg_rgb',
-    'bg_ct'
-];
 
 adapter.on('unload', function (callback) {
     try {

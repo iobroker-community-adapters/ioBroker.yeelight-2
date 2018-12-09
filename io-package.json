@@ -1,8 +1,19 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "0.9.6",
+    "version": "1.0.0",
     "news": {
+      "1.0.0":{
+        "en": "push version",
+        "de": "Push-Version",
+        "ru": "толчок версия",
+        "pt": "versão push",
+        "nl": "push versie",
+        "fr": "version push",
+        "it": "versione push",
+        "es": "versión push",
+        "pl": "wypchnij wersję"
+      },
       "0.9.6":{
         "en": "delete object and smartname bugs fixed  ",
         "de": "Lösche Objekt und Smartname Fehler behoben",

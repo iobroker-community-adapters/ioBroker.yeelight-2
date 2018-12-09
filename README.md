@@ -34,7 +34,9 @@ with this button you can scan your Network for devices, if something is found, t
 
 
 ## Changelog
-### 0.9.5 (2018-12-08)
+### 1.0.0 (2018-12-08)
+* (MeisterTR) push version
+### 0.9.6 (2018-12-08)
 * (MeisterTR) yeelight-wifi added
 * (MeisterTR) fixed  bugs
 * (MeisterTR) add manuell light

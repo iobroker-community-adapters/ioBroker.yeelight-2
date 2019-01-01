@@ -107,7 +107,9 @@ function uploadState(id, parameter, value, sid) {
     let aktYeelight = Yeelights.getYeelightById(id);
     if (aktYeelight) {
         switch (parameter) {
-
+            case 'set_scene':
+            aktYeelight.setScene(JSON.parse(value));
+                break;
             case 'power':
                 switch (value) {
                     case true:
@@ -206,6 +208,7 @@ function uploadState(id, parameter, value, sid) {
 
 
 };
+
 
 function _sendscene(id, parameter, value, sid) {
     adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
@@ -588,6 +591,7 @@ function initObj(aktYeelight, result) {
 
         if (result) {
             if (!(result[0] === "")) {
+                addState(sid, 'set_scene', '', device);
                 switch (result[0]) {
                     case 'on':
                         addState(sid, 'power', true, device);
@@ -714,6 +718,22 @@ function addState(id, state, val, device) {
                         de: smartname,
                         smartType: "LIGHT"
                     }
+                },
+                native: {}
+            });
+            adapter.setState(id + '.' + state, val, true);
+            break;
+
+        case 'set_scene':
+            adapter.setObjectNotExists(id + '.' + state, {
+                type: 'state',
+                common: {
+                    name: state,
+                    role: 'JSON.text',
+                    write: true,
+                    read: true,
+                    type: 'string',
+
                 },
                 native: {}
             });

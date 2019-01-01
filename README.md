@@ -32,10 +32,46 @@ if you type in a smartname, the device is add to the iobroker.cloud and can cont
 ### Find device
 with this button you can scan your Network for devices, if something is found, the divices added to the table. It takes about 20 seconds to scan the network. if the devices not found, the Lan mode is not enabled or the bulbs are in a nother network.
 
+## set_scene
+Usage: This method is used to set the smart LED directly to specified state. If
+the smart LED is off, then it will turn on the smart LED firstly and then apply the specified
+command.
+
+Parameters: 3 ~ 4.
+
+ "class" can be "color", "hsv", "ct", "cf", "auto_dealy_off".
+
+- "color" means change the smart LED to specified color and
+brightness.
+- "hsv" means change the smart LED to specified color and brightness.
+- "ct" means change the smart LED to specified ct and brightness.
+- "cf" means start a color flow in specified fashion.
+- "auto_delay_off" means turn on the smart LED to specified
+brightness and start a sleep timer to turn off the light after the specified minutes.
+
+ "val1", "val2", "val3" are class specific.
+
+Request Example: 
+- ``["color", 65280, 70]``
+- ``["hsv", 300, 70, 100]``
+- ``["ct", 5400, 100]``
+- ``["cf",0,0,"500,1,255,100,1000,1,16776960,70"]``
+- ``["auto_delay_off", 50, 5]``
+
+NOTE: Accepted on both "on" and "off" state.
+
+ For above examples:
+
+ - The first is to set color to "652280" and 70% brightness.
+ - The second is to set color to Hue:300, Saturation:70 and max brightness.
+ - The third is set CT to 500K and 100% brightness.
+ - The forth one is to start a infinite color flow on two flow tuples.
+ - The fifth one is turn on the light to 50% brightness and then turn off
+after 5 minutes.
 
 ## Changelog
-### 1.0.0 (2018-12-08)
-* (MeisterTR) push version
+### 1.0.1 (2018-12-08)
+* (MeisterTR) push version, added set_scene
 ### 0.9.6 (2018-12-08)
 * (MeisterTR) yeelight-wifi added
 * (MeisterTR) fixed  bugs

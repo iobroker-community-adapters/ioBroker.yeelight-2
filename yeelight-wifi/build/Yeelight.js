@@ -102,6 +102,7 @@ var Yeelight = function (_EventEmitter) {
     _this.socket.on('close', function () {
       _this.log('closed connection to ' + _this.name + ' id ' + _this.id + ' on ' + _this.hostname + ':' + _this.port);
       _this.status = YeelightStatus.OFFLINE;
+      setTimeout(_this.reconnect2.bind(_this), _this.config.refresh * 1000);
     });
 
     _this.socket.on('timeout', _this.refresh.bind(_this));

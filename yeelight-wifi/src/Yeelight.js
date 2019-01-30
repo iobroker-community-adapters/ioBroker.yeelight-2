@@ -67,6 +67,7 @@ export default class Yeelight extends EventEmitter {
     this.socket.on('close', () => {
       this.log(`closed connection to ${this.name} id ${this.id} on ${this.hostname}:${this.port}`);
       this.status = YeelightStatus.OFFLINE;
+      setTimeout(this.reconnect2.bind(this), this.config.refresh * 1000);
     });
 
     this.socket.on('timeout', this.refresh.bind(this));

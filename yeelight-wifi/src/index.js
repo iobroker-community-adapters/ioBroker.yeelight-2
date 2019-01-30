@@ -64,7 +64,7 @@ class YeelightSearch extends EventEmitter {
       'LOCATION': 'yeelight://'+lightarray.ip+':'+lightarray.port,
       'ID': lightarray.id,
       'SUPPORT': 'get_prop set_default set_power toggle set_bright start_cf stop_cf set_scene cron_add cron_get cron_del set_ct_abx set_rgb set_hsv set_adjust set_music set_name',
-      'NAME': 'Living Room',
+      'NAME': lightarray.name || lightarray.ip,
       'MODEL': lightarray.type,
       'SUPPORT_OBJ': lightarray.supports
     }); 

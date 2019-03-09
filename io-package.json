@@ -138,6 +138,7 @@
     "docs": {
 
     },
+    "license": "MIT",
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "icon": "yeelight.png",

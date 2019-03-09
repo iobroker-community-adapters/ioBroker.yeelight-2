@@ -2,7 +2,7 @@
 /*jslint node: true */
 'use strict';
 
-const utils = require(__dirname + '/lib/utils');
+const utils = require('@iobroker/adapter-core');
 const adapter = new utils.Adapter('yeelight-2');
 const scenen = require(__dirname + '/lib/scenen');
 const YeelightSearch = require(__dirname + '/yeelight-wifi/build/index');

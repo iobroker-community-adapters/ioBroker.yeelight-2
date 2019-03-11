@@ -108,28 +108,30 @@
       }
 
     },
-    "title": "Yeelight adapter",
+    "title": "Yeelight controller",
     "titleLang": {
-      "en": "Yeelight adapter",
-      "de": "Yeelight Adapter",
-      "ru": "Драйвер для Yeelight",
-      "pt": "Adaptador Yeelight",
-      "nl": "Yeelight-adapter",
-      "fr": "Yeelight adaptateur",
-      "it": "Adattatore Yeelight",
-      "es": "Adaptador Yeelight",
-      "pl": "Adapter światła"
+      "en": "Yeelight controller",
+      "de": "Yeelight-Controller",
+      "ru": "Yeelight контроллер",
+      "pt": "Controlador Yeelight",
+      "nl": "Yeelight controller",
+      "fr": "Contrôleur Yeelight",
+      "it": "Controller Yeelight",
+      "es": "Controlador Yeelight",
+      "pl": "Sterownik Yeelight",
+      "zh-cn": "Yeelight控制器"
     },
-    "desc": {
-      "en": "ioBroker Yeelight Adapter",
-      "de": "iobroker Yeelight Adapter",
-      "ru": "ioBroker драйвер для Yeelight",
-      "pt": "iobroker Adaptador Yeelight",
-      "nl": "iobroker Yeelight-adapter",
-      "fr": "iobroker Yeelight adaptateur",
-      "it": "adattatore iobroker Yeelight",
-      "es": "adaptador Yeelight iobroker",
-      "pl": "Adapter iobroker Yeelight"
+    "desc":  {
+      "en": "control your Yeelights",
+      "de": "steuere deine Yeelights",
+      "ru": "контролировать свои Yeelights",
+      "pt": "controle seus Yeelights",
+      "nl": "controle over je Yeelights",
+      "fr": "contrôler vos Yeelights",
+      "it": "controlla i tuoi Yeelights",
+      "es": "controla tus luces laterales",
+      "pl": "kontroluj swoje Yeelights",
+      "zh-cn": "控制你的Yeelights"
     },
     "authors": [
       "<MeisterTR <meistertr.smarthome@gmail.com>",

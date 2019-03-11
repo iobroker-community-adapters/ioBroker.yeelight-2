@@ -1,3 +1,6 @@
+![Number of Installations](http://iobroker.live/badges/yeelight-2-installed.svg) ![version](http://iobroker.live/badges/yeelight-2-stable.svg) 
+<!-- -->
+
 [![NPM version](http://img.shields.io/npm/v/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.yeelight-2.svg)](https://www.npmjs.com/package/iobroker.yeelight-2)
 [![Travis-CI](https://api.travis-ci.org/MeisterTR/ioBroker.yeelight-2.svg?branch=master)](https://travis-ci.org/MeisterTR/ioBroker.yeelight-2)

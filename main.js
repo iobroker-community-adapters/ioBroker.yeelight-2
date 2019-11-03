@@ -694,7 +694,7 @@ function addState(id, state, val, device) {
         if (device.type === 'ceiling1') {
             ct_min = 2600
         };
-        if (device.type === 'ceiling10' and not state.substring(0, 3) == "bg_") {
+        if (device.type === 'ceiling10' and not state.substring(0, 2) == "bg_") {
             ct_min = 2600
         };
     }

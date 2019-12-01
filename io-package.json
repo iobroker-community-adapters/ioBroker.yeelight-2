@@ -1,18 +1,11 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "news": {
-      "1.0.1": {
-        "en": "added set_scene",
-        "de": "set_scene hinzugefügt",
-        "ru": "добавлен set_scene",
-        "pt": "adicionado set_scene",
-        "nl": "heeft set_scene toegevoegd",
-        "fr": "ajouté set_scene",
-        "it": "aggiunto set_scene",
-        "es": "añadido set_scene",
-        "pl": "dodano set_scene"
+      "1.0.2": {
+        "en": "add Pedant",
+        "de": "Leuchte Pedant hinzugefügt"
       },
       "0.9.6":{
         "en": "delete object and smartname bugs fixed  ",

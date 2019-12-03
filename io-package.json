@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "news": {
-      "1.0.2": {
+      "1.0.3": {
         "en": "add Pedant",
         "de": "Leuchte Pedant hinzugefügt"
       },
@@ -127,8 +127,7 @@
       "zh-cn": "控制你的Yeelights"
     },
     "authors": [
-      "<MeisterTR <meistertr.smarthome@gmail.com>",
-      "cahek2202 <cahek2202@mail.ru>"
+      "<MeisterTR <meistertr.smarthome@gmail.com>"
     ],
     "docs": {
 
@@ -140,9 +139,9 @@
     "materialize": true,
     "enabled": true,
     "messagebox": true,
-    "extIcon": "https://raw.githubusercontent.com/MeisterTR/ioBroker.yeelight-2/master/admin/yeelight.png",
+    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
     "keywords": ["xiaomi", "yeelight", "mihome"],
-    "readme": "https://github.com/MeisterTR/ioBroker.yeelight-2/blob/master/README.md",
+    "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
     "loglevel": "info",
     "type": "lighting"
   },

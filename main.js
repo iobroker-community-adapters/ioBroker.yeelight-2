@@ -958,7 +958,9 @@ function setStateDevice(aktYeelight, state) {
 }
 
 function dec2hex(dec) {
-    return '#' + (+dec).toString(16);
+    const template = "#000000";
+    let hexstring = dec.toString(16)
+    return  template.substring(0,7 - hexstring.length) + hexstring;
 }
 
 function hex2dec(hex) {

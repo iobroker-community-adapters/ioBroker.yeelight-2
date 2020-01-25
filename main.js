@@ -113,9 +113,11 @@ function uploadState(id, parameter, value, sid) {
             case 'power':
                 switch (value) {
                     case true:
+                    case 1:
                         aktYeelight.turnOn();
                         break;
                     case false:
+                    case 0:
                         aktYeelight.turnOff();
                         break;
                 }
@@ -123,9 +125,11 @@ function uploadState(id, parameter, value, sid) {
             case 'bg_power':
                 switch (value) {
                     case true:
+                    case 1:
                         aktYeelight.turnOnBg();
                         break;
                     case false:
+                    case 0:
                         aktYeelight.turnOffBg();
                         break;
                 }
@@ -143,7 +147,7 @@ function uploadState(id, parameter, value, sid) {
                 aktYeelight.setColorTemperatureBg(value);
                 break;
             case 'moon_mode':
-                if (value === true) {
+                if (value === true || value === 1) {
                     aktYeelight.moonMode();
                 } else {
                     aktYeelight.defaultMode();
@@ -192,7 +196,7 @@ function uploadState(id, parameter, value, sid) {
                 });
                 break;
             case 'color_mode':
-                if (value === true) {
+                if (value === true || value === 1) {
                     aktYeelight.colorMode();
                 } else {
                     aktYeelight.defaultMode();

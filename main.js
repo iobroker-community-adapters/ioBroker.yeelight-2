@@ -156,7 +156,7 @@ function uploadState(id, parameter, value, sid) {
             case 'rgb':
                 checkHex = /^#[0-9A-F]{6}$/i.test(value);
                 if (checkHex) {
-                    aktYeelight.setRGB(value, 'sudden', 400);
+                    aktYeelight.setRGB(value, 'smooth', 1000);
                 } else {
                     adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
                 }

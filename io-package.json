@@ -1,158 +1,170 @@
 {
-  "common": {
-    "name": "yeelight-2",
-    "version": "1.0.4",
-    "news": {
-      "1.0.4": {
-        "en": "fixed data types",
-        "de": "Datentypen korrigiert"
-      },
-      "1.0.3": {
-        "en": "add Pedant",
-        "de": "Leuchte Pedant hinzugefügt"
-      },
-      "0.9.6": {
-        "en": "delete object and smartname bugs fixed  ",
-        "de": "Lösche Objekt und Smartname Fehler behoben",
-        "ru": "удалить объект и исправить ошибку",
-        "pt": "excluir bug de objeto e nome inteligente corrigido",
-        "nl": "verwijder object en smartname bug opgelost",
-        "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
-        "it": "eliminato bug di oggetti e smartname risolti",
-        "es": "error de eliminar objeto y nombre inteligente solucionado",
-        "pl": "usunięto błąd obiektu i nazwy smartname"
-      },
-      "0.9.3": {
-        "en": "fixed  bugs, add manuell light, error handling, fixed reconnect at start",
-        "de": "Fehler behoben, manuelles Licht hinzugefügt, Fehlerbehandlung behoben, reconnect beim Start behoben",
-        "ru": "исправлены ошибки, добавлена ​​подсветка мануала, обработка ошибок, фиксированное повторное подключение при запуске",
-        "pt": "erros fixos, adicionar luz manuell, manipulação de erros, reconectar fixo no início",
-        "nl": "bugs gerepareerd, manuell light toegevoegd, foutafhandeling, vast opnieuw verbinden bij start",
-        "fr": "correction de bugs, ajout de lumière manuell, traitement des erreurs, correction de la reconnexion au démarrage",
-        "it": "bug corretti, aggiungi manuell light, gestione degli errori, riparazioni fisse all'avvio",
-        "es": "Se corrigieron errores, se agregó manuell light, manejo de errores, se volvió a conectar al inicio",
-        "pl": "naprawione błędy, dodawanie światła manuell, obsługa błędów, naprawione ponowne połączenie na starcie"
-      },
-      "0.9.1": {
-        "en": "rebuild",
-        "de": "neu aufbauen",
-        "ru": "перестраивать",
-        "pt": "reconstruir",
-        "nl": "herbouwen",
-        "fr": "reconstruire",
-        "it": "ricostruire",
-        "es": "reconstruir",
-        "pl": "odbudować"
-      },
-      "0.4.1": {
-        "en": "fixed JSON error",
-        "de": "JSON-Fehler behoben",
-        "ru": "исправлена ​​ошибка JSON",
-        "pt": "erro JSON fixo",
-        "nl": "vaste JSON-fout",
-        "fr": "erreur JSON fixe",
-        "it": "errore JSON corretto",
-        "es": "error JSON corregido",
-        "pl": "naprawiono błąd JSON"
-      },
-      "0.4.0": {
-        "en": "fixed errors, added scenen",
-        "de": "Fehler behoben, Szenen hinzugefügt",
-        "ru": "исправлены ошибки, добавлены сценарии",
-        "pt": "erros fixos, adicionados",
-        "nl": "vaste fouten, scenen toegevoegd",
-        "fr": "erreurs fixes, ajout de scènes",
-        "it": "errori corretti, aggiunto scenen",
-        "es": "errores corregidos, escena añadida",
-        "pl": "naprawiono błędy, dodano scenen"
-      },
-      "0.3.0": {
-        "en": "fix state update error",
-        "de": "Update-Fehler behoben",
-        "ru": "исправить ошибку обновления состояния",
-        "pt": "corrigir erro de atualização de estado",
-        "nl": "fix state update error",
-        "fr": "correction d'une erreur de mise à jour",
-        "it": "correggere l'errore di aggiornamento dello stato",
-        "es": "corregir el error de actualización del estado",
-        "pl": "napraw błąd stanu aktualizacji"
-      },
-      "0.2.0": {
-        "en": "many changes add smartname option. add manual devices. many fixes",
-        "de": "Viele Änderungen fügen die Smartname-Option hinzu. Fügen Sie manuelle Geräte hinzu. viele Korrekturen",
-        "ru": "многие изменения добавляют опцию smartname. добавьте ручные устройства. многие исправления",
-        "pt": "muitas alterações adicionam a opção smartname. adicione dispositivos manuais. muitas correções",
-        "nl": "veel wijzigingen toevoegen de optie smartname. handmatige apparaten toevoegen. veel oplossingen",
-        "fr": "de nombreux changements ajoutent l'option smartname. ajouter des appareils manuels. beaucoup de corrections",
-        "it": "molte modifiche aggiungono l'opzione smartname. aggiungi dispositivi manuali. molte correzioni",
-        "es": "muchos cambios agregan la opción de nombre inteligente. agregar dispositivos manuales. muchas correcciones",
-        "pl": "wiele zmian dodaje opcję smartname. dodaj urządzenia ręczne. wiele poprawek"
-      },
-      "0.1.0": {
-        "en": "many changes, add hue and sat for alexa control",
-        "de": "Viele Änderungen,  hue und sat für alexa control hinzugefügt",
-        "ru": "много изменений, добавить оттенок и сидеть для контроля alexa",
-        "pt": "muitas mudanças, adicionar matiz e sentou-se para controle alexa",
-        "nl": "veel veranderingen, tint toevoegen en sat voor alexa controle",
-        "fr": "de nombreux changements, ajouter de la teinte et assis pour le contrôle alexa",
-        "it": "molti cambiamenti, aggiungere tonalità e sab per il controllo di alexa",
-        "es": "muchos cambios, agregue matiz y sat para el control alexa",
-        "pl": "wiele zmian, dodaj hue i sat dla kontroli alexa"
-      },
-      "0.0.3": {
-        "en": "objects not overwirte after restart",
-        "de": "Objekte werden nach neustart nicht mehr überschrieben"
-      }
+    "common": {
+        "name": "yeelight-2",
+        "version": "1.1.0",
+        "news": {
+            "1.1.0": {
+                "en": "add release-script update testing and dependencies\nfixed data types",
+                "de": "Hinzufügen von Release-Skript-Update-Tests und -Abhängigkeiten\nfeste Datentypen",
+                "ru": "добавить тестирование обновления релиз-скрипта и зависимости\nфиксированные типы данных",
+                "pt": "adicionar teste de atualização de script de lançamento e dependências\ntipos de dados fixos",
+                "nl": "release-script update testen en afhankelijkheden toevoegen\nvaste gegevenstypen",
+                "fr": "ajouter des tests et des dépendances de mise à jour du script de publication\ntypes de données fixes",
+                "it": "aggiungi test e dipendenze per l'aggiornamento dello script di rilascio\ntipi di dati fissi",
+                "es": "agregar pruebas y dependencias de actualización del script de lanzamiento\ntipos de datos fijos",
+                "pl": "dodaj testowanie aktualizacji i zależności wersji skryptu\nstałe typy danych",
+                "zh-cn": "添加发布脚本更新测试和依赖项\n固定数据类型"
+            },
+            "1.0.4": {
+                "en": "fixed data types",
+                "de": "Datentypen korrigiert"
+            },
+            "1.0.3": {
+                "en": "add Pedant",
+                "de": "Leuchte Pedant hinzugefügt"
+            },
+            "0.9.6": {
+                "en": "delete object and smartname bugs fixed  ",
+                "de": "Lösche Objekt und Smartname Fehler behoben",
+                "ru": "удалить объект и исправить ошибку",
+                "pt": "excluir bug de objeto e nome inteligente corrigido",
+                "nl": "verwijder object en smartname bug opgelost",
+                "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
+                "it": "eliminato bug di oggetti e smartname risolti",
+                "es": "error de eliminar objeto y nombre inteligente solucionado",
+                "pl": "usunięto błąd obiektu i nazwy smartname"
+            },
+            "0.9.3": {
+                "en": "fixed  bugs, add manuell light, error handling, fixed reconnect at start",
+                "de": "Fehler behoben, manuelles Licht hinzugefügt, Fehlerbehandlung behoben, reconnect beim Start behoben",
+                "ru": "исправлены ошибки, добавлена ​​подсветка мануала, обработка ошибок, фиксированное повторное подключение при запуске",
+                "pt": "erros fixos, adicionar luz manuell, manipulação de erros, reconectar fixo no início",
+                "nl": "bugs gerepareerd, manuell light toegevoegd, foutafhandeling, vast opnieuw verbinden bij start",
+                "fr": "correction de bugs, ajout de lumière manuell, traitement des erreurs, correction de la reconnexion au démarrage",
+                "it": "bug corretti, aggiungi manuell light, gestione degli errori, riparazioni fisse all'avvio",
+                "es": "Se corrigieron errores, se agregó manuell light, manejo de errores, se volvió a conectar al inicio",
+                "pl": "naprawione błędy, dodawanie światła manuell, obsługa błędów, naprawione ponowne połączenie na starcie"
+            },
+            "0.9.1": {
+                "en": "rebuild",
+                "de": "neu aufbauen",
+                "ru": "перестраивать",
+                "pt": "reconstruir",
+                "nl": "herbouwen",
+                "fr": "reconstruire",
+                "it": "ricostruire",
+                "es": "reconstruir",
+                "pl": "odbudować"
+            },
+            "0.4.1": {
+                "en": "fixed JSON error",
+                "de": "JSON-Fehler behoben",
+                "ru": "исправлена ​​ошибка JSON",
+                "pt": "erro JSON fixo",
+                "nl": "vaste JSON-fout",
+                "fr": "erreur JSON fixe",
+                "it": "errore JSON corretto",
+                "es": "error JSON corregido",
+                "pl": "naprawiono błąd JSON"
+            },
+            "0.4.0": {
+                "en": "fixed errors, added scenen",
+                "de": "Fehler behoben, Szenen hinzugefügt",
+                "ru": "исправлены ошибки, добавлены сценарии",
+                "pt": "erros fixos, adicionados",
+                "nl": "vaste fouten, scenen toegevoegd",
+                "fr": "erreurs fixes, ajout de scènes",
+                "it": "errori corretti, aggiunto scenen",
+                "es": "errores corregidos, escena añadida",
+                "pl": "naprawiono błędy, dodano scenen"
+            },
+            "0.3.0": {
+                "en": "fix state update error",
+                "de": "Update-Fehler behoben",
+                "ru": "исправить ошибку обновления состояния",
+                "pt": "corrigir erro de atualização de estado",
+                "nl": "fix state update error",
+                "fr": "correction d'une erreur de mise à jour",
+                "it": "correggere l'errore di aggiornamento dello stato",
+                "es": "corregir el error de actualización del estado",
+                "pl": "napraw błąd stanu aktualizacji"
+            },
+            "0.2.0": {
+                "en": "many changes add smartname option. add manual devices. many fixes",
+                "de": "Viele Änderungen fügen die Smartname-Option hinzu. Fügen Sie manuelle Geräte hinzu. viele Korrekturen",
+                "ru": "многие изменения добавляют опцию smartname. добавьте ручные устройства. многие исправления",
+                "pt": "muitas alterações adicionam a opção smartname. adicione dispositivos manuais. muitas correções",
+                "nl": "veel wijzigingen toevoegen de optie smartname. handmatige apparaten toevoegen. veel oplossingen",
+                "fr": "de nombreux changements ajoutent l'option smartname. ajouter des appareils manuels. beaucoup de corrections",
+                "it": "molte modifiche aggiungono l'opzione smartname. aggiungi dispositivi manuali. molte correzioni",
+                "es": "muchos cambios agregan la opción de nombre inteligente. agregar dispositivos manuales. muchas correcciones",
+                "pl": "wiele zmian dodaje opcję smartname. dodaj urządzenia ręczne. wiele poprawek"
+            },
+            "0.1.0": {
+                "en": "many changes, add hue and sat for alexa control",
+                "de": "Viele Änderungen,  hue und sat für alexa control hinzugefügt",
+                "ru": "много изменений, добавить оттенок и сидеть для контроля alexa",
+                "pt": "muitas mudanças, adicionar matiz e sentou-se para controle alexa",
+                "nl": "veel veranderingen, tint toevoegen en sat voor alexa controle",
+                "fr": "de nombreux changements, ajouter de la teinte et assis pour le contrôle alexa",
+                "it": "molti cambiamenti, aggiungere tonalità e sab per il controllo di alexa",
+                "es": "muchos cambios, agregue matiz y sat para el control alexa",
+                "pl": "wiele zmian, dodaj hue i sat dla kontroli alexa"
+            },
+            "0.0.3": {
+                "en": "objects not overwirte after restart",
+                "de": "Objekte werden nach neustart nicht mehr überschrieben"
+            }
+        },
+        "title": "Yeelight controller",
+        "titleLang": {
+            "en": "Yeelight controller",
+            "de": "Yeelight-Controller",
+            "ru": "Yeelight контроллер",
+            "pt": "Controlador Yeelight",
+            "nl": "Yeelight controller",
+            "fr": "Contrôleur Yeelight",
+            "it": "Controller Yeelight",
+            "es": "Controlador Yeelight",
+            "pl": "Sterownik Yeelight",
+            "zh-cn": "Yeelight控制器"
+        },
+        "desc": {
+            "en": "control your Yeelights",
+            "de": "steuere deine Yeelights",
+            "ru": "контролировать свои Yeelights",
+            "pt": "controle seus Yeelights",
+            "nl": "controle over je Yeelights",
+            "fr": "contrôler vos Yeelights",
+            "it": "controlla i tuoi Yeelights",
+            "es": "controla tus luces laterales",
+            "pl": "kontroluj swoje Yeelights",
+            "zh-cn": "控制你的Yeelights"
+        },
+        "authors": [
+            "<MeisterTR <meistertr.smarthome@gmail.com>"
+        ],
+        "docs": {},
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "icon": "yeelight.png",
+        "materialize": true,
+        "enabled": true,
+        "messagebox": true,
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
+        "keywords": [
+            "xiaomi",
+            "yeelight",
+            "mihome"
+        ],
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
+        "loglevel": "info",
+        "type": "lighting",
+        "installedFrom": "iobroker-community-adapters/ioBroker.yeelight-2#master"
     },
-    "title": "Yeelight controller",
-    "titleLang": {
-      "en": "Yeelight controller",
-      "de": "Yeelight-Controller",
-      "ru": "Yeelight контроллер",
-      "pt": "Controlador Yeelight",
-      "nl": "Yeelight controller",
-      "fr": "Contrôleur Yeelight",
-      "it": "Controller Yeelight",
-      "es": "Controlador Yeelight",
-      "pl": "Sterownik Yeelight",
-      "zh-cn": "Yeelight控制器"
+    "native": {
+        "devices": []
     },
-    "desc": {
-      "en": "control your Yeelights",
-      "de": "steuere deine Yeelights",
-      "ru": "контролировать свои Yeelights",
-      "pt": "controle seus Yeelights",
-      "nl": "controle over je Yeelights",
-      "fr": "contrôler vos Yeelights",
-      "it": "controlla i tuoi Yeelights",
-      "es": "controla tus luces laterales",
-      "pl": "kontroluj swoje Yeelights",
-      "zh-cn": "控制你的Yeelights"
-    },
-    "authors": [
-      "<MeisterTR <meistertr.smarthome@gmail.com>"
-    ],
-    "docs": {},
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "icon": "yeelight.png",
-    "materialize": true,
-    "enabled": true,
-    "messagebox": true,
-    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
-    "keywords": [
-      "xiaomi",
-      "yeelight",
-      "mihome"
-    ],
-    "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
-    "loglevel": "info",
-    "type": "lighting",
-    "installedFrom": "iobroker-community-adapters/ioBroker.yeelight-2#master"
-  },
-  "native": {
-    "devices": []
-  },
-  "objects": []
+    "objects": []
 }

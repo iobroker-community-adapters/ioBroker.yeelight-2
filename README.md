@@ -69,6 +69,7 @@ after 5 minutes.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (MeisterTR) add release-script update testing and dependencies
+* (Diginix) fixed data types
 ### 1.0.3 (2019-12-01)
 * (MeisterTR) add Pedant
 * (MeisterTR) transfer to community

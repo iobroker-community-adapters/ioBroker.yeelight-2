@@ -451,7 +451,6 @@ function checkOnline() {
                 if (element.status !== 3) {
                     //turn off
                     adapter.setState(sid + '.info.connect', false, true);
-                    adapter.setState(sid + '.control.power', false, true);
                     adapter.log.debug('YEELIGHT OFFLINE: ' + element.id);
 
                 } else {

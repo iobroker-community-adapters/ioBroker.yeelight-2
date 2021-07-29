@@ -6,7 +6,7 @@ const utils = require('@iobroker/adapter-core');
 const adapter = new utils.Adapter('yeelight-2');
 const scenen = require(__dirname + '/lib/scenen');
 const YeelightSearch = require(__dirname + '/yeelight-wifi/build/index');
-var Yeelights;
+let Yeelights;
 
 //just for test
 const JSON = require('circular-json');
@@ -32,14 +32,14 @@ adapter.on('objectChange', function (id, obj) {
 
 adapter.on('stateChange', function (id, state) {
     if (state && !state.ack) {
-        var changeState = id.split('.');
-        var sid = adapter.namespace + '.' + changeState[2];
+        const changeState = id.split('.');
+        const sid = adapter.namespace + '.' + changeState[2];
 
         // search id in config
         let findlight = ConfigDevices.find(device => device.name === changeState[2]);
 
         if (findlight) {
-            if (changeState[3] != 'info' && changeState[3] !== 'scenen') {
+            if (changeState[3] !== 'info' && changeState[3] !== 'scenen') {
                 if (!state.ack) {
                     uploadState(findlight.id, changeState[4], state.val, sid);
 
@@ -86,7 +86,6 @@ adapter.on('message', function (obj) {
             }, 5000);
 
             return true;
-            break;
         default:
             adapter.log.debug('Unknown command: ' + obj.command);
             break;
@@ -108,55 +107,57 @@ function uploadState(id, parameter, value, sid) {
     if (aktYeelight) {
         switch (parameter) {
             case 'set_scene':
-            aktYeelight.setScene(JSON.parse(value));
+                aktYeelight.setScene(JSON.parse(value))
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'power':
-                switch (value) {
-                    case true:
-                    case 1:
-                        aktYeelight.turnOn();
-                        break;
-                    case false:
-                    case 0:
-                        aktYeelight.turnOff();
-                        break;
+                if (value) {
+                    aktYeelight.turnOn()
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
+                    break;
                 }
+                aktYeelight.turnOff()
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'bg_power':
-                switch (value) {
-                    case true:
-                    case 1:
-                        aktYeelight.turnOnBg();
-                        break;
-                    case false:
-                    case 0:
-                        aktYeelight.turnOffBg();
-                        break;
+                if (value) {
+                    aktYeelight.turnOnBg()
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
+                    break;
                 }
+                aktYeelight.turnOffBg()
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'active_bright':
-                aktYeelight.setBrightness(value);
+                aktYeelight.setBrightness(value)
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'bg_bright':
-                aktYeelight.setBrightnessBg(value);
+                aktYeelight.setBrightnessBg(value)
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'ct':
-                aktYeelight.setColorTemperature(value);
+                aktYeelight.setColorTemperature(value)
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'bg_ct':
-                aktYeelight.setColorTemperatureBg(value);
+                aktYeelight.setColorTemperatureBg(value)
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'moon_mode':
-                if (value === true || value === 1) {
-                    aktYeelight.moonMode();
-                } else {
-                    aktYeelight.defaultMode();
+                if (value) {
+                    aktYeelight.moonMode()
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
+                    break;
                 }
+                aktYeelight.defaultMode()
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             case 'rgb':
                 checkHex = /^#[0-9A-F]{6}$/i.test(value);
                 if (checkHex) {
-                    aktYeelight.setRGB(value, 'sudden', 400);
+                    aktYeelight.setRGB(value, 'sudden', 400)
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 } else {
                     adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
                 }
@@ -164,7 +165,8 @@ function uploadState(id, parameter, value, sid) {
             case 'bg_rgb':
                 checkHex = /^#[0-9A-F]{6}$/i.test(value);
                 if (checkHex) {
-                    aktYeelight.setRGBBg(value);
+                    aktYeelight.setRGBBg(value)
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 } else {
                     adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
                 }
@@ -173,46 +175,46 @@ function uploadState(id, parameter, value, sid) {
                 // TODO catch NAN an 1-360;
                 adapter.getState(sid + '.control.sat', function (err, state) {
                     let saturation = state.val;
-                    aktYeelight.setHSV(value.toString(), saturation.toString());
+                    aktYeelight.setHSV(value.toString(), saturation.toString())
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'bg_hue':
                 adapter.getState(sid + '.control.bg_sat', function (err, state) {
                     let saturation = state.val;
-                    aktYeelight.setHSVBg(value.toString(), saturation.toString());
+                    aktYeelight.setHSVBg(value.toString(), saturation.toString())
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'sat':
                 // TODO catch NAN an 1-100;
                 adapter.getState(sid + '.control.hue', function (err, state) {
                     let hue = state.val;
-                    aktYeelight.setHSV(hue.toString(), value.toString());
+                    aktYeelight.setHSV(hue.toString(), value.toString())
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'bg_sat':
                 adapter.getState(sid + '.control.bg_hue', function (err, state) {
                     let hue = state.val;
-                    aktYeelight.setHSVBg(hue.toString(), value.toString());
+                    aktYeelight.setHSVBg(hue.toString(), value.toString())
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'color_mode':
-                if (value === true || value === 1) {
-                    aktYeelight.colorMode();
-                } else {
-                    aktYeelight.defaultMode();
+                if (value) {
+                    aktYeelight.colorMode()
+                        .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
+                    break;
                 }
+                aktYeelight.defaultMode()
+                    .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             default:
                 adapter.log.warn('State not found');
         }
-    } else {
-
     }
-
-
-
-};
-
+}
 
 function _sendscene(id, parameter, value, sid) {
     adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
@@ -220,12 +222,13 @@ function _sendscene(id, parameter, value, sid) {
     let aktYeelight = Yeelights.getYeelightById(id);
     if (aktYeelight) {
         aktYeelight.setScene(scenen[parameter])
+            .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
     }
 
 }
 
 function _createscenen(sid) {
-    for (var key in scenen) {
+    for (let key in scenen) {
         adapter.setObjectNotExists(sid + '.scenen.' + key, {
             common: {
                 name: key,
@@ -238,7 +241,7 @@ function _createscenen(sid) {
             native: {}
         });
     }
-};
+}
 
 function checkChanges(callback) {
     adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
@@ -249,15 +252,15 @@ function checkChanges(callback) {
 
             adapter.log.debug("DEVICES IN OBJECTS: " + JSON.stringify(ObjDecices));
 
-            var count = Object.keys(ObjDecices).length;
+            const count = Object.keys(ObjDecices).length;
             adapter.log.debug("DEVICES IN OBJECTS FOUND: " + count);
             //check every device
-            for (var j = 0; j < count; j++) {
+            for (let j = 0; j < count; j++) {
                 let element = Object.keys(ObjDecices)[j];
                 adapter.log.debug("OBJ_ELEMENT: " + element);
 
-                var sid = ObjDecices[element].native.sid;
-                var type = ObjDecices[element].native.type;
+                const sid = ObjDecices[element].native.sid;
+                const type = ObjDecices[element].native.type;
                 getastate(element, ifinConfig);
 
                 if (j === count - 1) {
@@ -284,20 +287,20 @@ function checkChanges(callback) {
     });
 
     function getastate(element, callback) {
-        var info = adapter.getState(element + '.info.com', function (err, state) {
-            adapter.log.debug("OLD CONF. FROM OBJ: " + state.val)
-            if (callback && typeof (callback) === "function") callback(element, JSON.parse(state.val));
+        const info = adapter.getState(element + '.info.com', function (err, state) {
+            adapter.log.debug('OLD CONF. FROM OBJ: ' + state.val);
+            if (callback && typeof (callback) === 'function') callback(element, JSON.parse(state.val));
         });
 
     }
 
     function ifinConfig(element, oldConfig) {
 
-        var sid = ObjDecices[element].native.sid;
-        var type = ObjDecices[element].native.type;
+        const sid = ObjDecices[element].native.sid;
+        const type = ObjDecices[element].native.type;
 
-        var isThere = false;
-        for (var i = 0; i < ConfigDevices.length; i++) {
+        let isThere = false;
+        for (let i = 0; i < ConfigDevices.length; i++) {
             if (ConfigDevices[i].name == sid && ConfigDevices[i].type == type) {
                 isThere = true;
                 adapter.log.debug("SMARTNAME: " + ConfigDevices[i].smart_name)
@@ -325,12 +328,12 @@ function checkChanges(callback) {
     }
 
     function changeSmartName(element, newSm) {
-        var Names = ["power", "ct", "active_bright", "hue", "sat"];
+        const Names = ['power', 'ct', 'active_bright', 'hue', 'sat'];
         adapter.getForeignObjects(element + ".*", function (err, list) {
 
             if (err) return
 
-            for (var i = 0; i < Names.length; i++) {
+            for (let i = 0; i < Names.length; i++) {
                 if (typeof (list[element + ".control." + Names[i]]) !== 'undefined') {
                     adapter.extendObject(element + ".control." + Names[i], {
                         common: {
@@ -360,10 +363,10 @@ function createDevice() {
 
     if (typeof ConfigDevices === "undefined") return
 
-    for (var i = 0; i < ConfigDevices.length; i++) {
+    for (let i = 0; i < ConfigDevices.length; i++) {
 
-        var sid = adapter.namespace + '.' + ConfigDevices[i].name;
-        var device = ConfigDevices[i].name;
+        const sid = adapter.namespace + '.' + ConfigDevices[i].name;
+        const device = ConfigDevices[i].name;
 
         //adapter.log.debug("Create Device: " + sid);
         //adapter.log.debug("onj Device: " + ObjDecices[sid]);
@@ -431,11 +434,10 @@ function createDevice() {
 
             adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true);
             adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true);
-        };
+        }
         if (i === ConfigDevices.length - 1) listener();
-    };
-
-};
+    }
+}
 
 function checkOnline() {
     let lights = Yeelights.yeelights;
@@ -449,7 +451,6 @@ function checkOnline() {
                 if (element.status !== 3) {
                     //turn off
                     adapter.setState(sid + '.info.connect', false, true);
-                    adapter.setState(sid + '.control.power', false, true);
                     adapter.log.debug('YEELIGHT OFFLINE: ' + element.id);
 
                 } else {
@@ -513,7 +514,7 @@ function listener() {
             //adapter.log.debug(JSON.stringify(light))
             if (result && result[0] !== 'ok') {
 
-                var model = light.model;
+                const model = light.model;
                 if (id === light.initinalid) {
                     adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
                     initObj(light, result);
@@ -523,8 +524,7 @@ function listener() {
             }
         });
     });
-
-};
+}
 
 function setResponse(aktYeelight, result) {
     let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
@@ -553,15 +553,13 @@ function setResponse(aktYeelight, result) {
                 adapter.setState(sid + '.rgb', dec2hex(result[2]), true);
             }
             if (!(result[3] === "")) {
-                if (true) {
-                    switch (+result[3]) {
-                        case 1:
-                            adapter.setState(sid + '.color_mode', true, true);
-                            break;
-                        case 2:
-                            adapter.setState(sid + '.color_mode', false, true);
-                            break;
-                    }
+                switch (+result[3]) {
+                    case 1:
+                        adapter.setState(sid + '.color_mode', true, true);
+                        break;
+                    case 2:
+                        adapter.setState(sid + '.color_mode', false, true);
+                        break;
                 }
             }
             if (!(result[4] === "")) {
@@ -574,13 +572,12 @@ function setResponse(aktYeelight, result) {
     } else {
         adapter.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
     }
-};
+}
 
 function main() {
     checkChanges(createDevice);
     adapter.subscribeStates('*');
 }
-
 
 function initObj(aktYeelight, result) {
     //search light in Config
@@ -690,23 +687,23 @@ function initObj(aktYeelight, result) {
 
 function addState(id, state, val, device) {
 
-    var ct_min = 1700;
-    var ct_max = 6500;
-    var smartname = "";
+    let ct_min = 1700;
+    const ct_max = 6500;
+    let smartname = '';
 
     if (typeof device.type !== 'undefined') {
         if (device.type === 'ceiling1' ) {
             ct_min = 2600
-        };
+        }
         // change ct for pedant
         if (device.type === 'ceiling10' && (state.substring(0, 2) !== "bg_")) {
             ct_min = 2600
-        };
+        }
     }
     if (typeof device.smart_name !== 'undefined') {
         if (device.smart_name !== '') {
             smartname = device.smart_name
-        };
+        }
         //adapter.log.warn(device.smart_name);
     }
 
@@ -894,7 +891,7 @@ function setStateDevice(aktYeelight, state) {
         sid = sid + '.control';
         adapter.log.debug('DEVICE FOUND SET NOTIFY STATE: ' + JSON.stringify(device));
 
-        for (var key in state) {
+        for (let key in state) {
             switch (key) {
                 case 'power':
                 case 'main_power':
@@ -924,7 +921,7 @@ function setStateDevice(aktYeelight, state) {
                     break;
                 case 'rgb':
                 case 'bg_rgb':
-                    var value = dec2hex(state[key]);
+                    const value = dec2hex(state[key]);
                     adapter.setState(sid + '.' + key, value, true);
                     break;
                 case 'active_mode':
@@ -979,19 +976,19 @@ function hex2dec(hex) {
  * @return  {Array}           The RGB representation
  */
 function hslToRgb(h, s, l) {
-    var r, g, b;
+    let r, g, b;
 
     if (s == 0) {
         r = g = b = l; // achromatic
     } else {
-        var hue2rgb = function hue2rgb(p, q, t) {
+        const hue2rgb = function hue2rgb(p, q, t) {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
             if (t < 1 / 6) return p + (q - p) * 6 * t;
             if (t < 1 / 2) return q;
             if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
             return p;
-        }
+        };
 
         var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
         var p = 2 * l - q;
@@ -1002,7 +999,6 @@ function hslToRgb(h, s, l) {
 
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
-
 
 /**
  * Converts an RGB color value to HSL. Conversion formula
@@ -1016,21 +1012,22 @@ function hslToRgb(h, s, l) {
  * @return  {Array}           The HSL representation
  */
 function rgbToHsl(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
-    var r = parseInt(result[1], 16);
-    var g = parseInt(result[2], 16);
-    var b = parseInt(result[3], 16);
+    let r = parseInt(result[1], 16);
+    let g = parseInt(result[2], 16);
+    let b = parseInt(result[3], 16);
 
     r /= 255, g /= 255, b /= 255;
-    var max = Math.max(r, g, b),
+    const max = Math.max(r, g, b),
         min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
+    let h, s;
+    const l = (max + min) / 2;
 
     if (max == min) {
         h = s = 0; // achromatic
     } else {
-        var d = max - min;
+        const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
             case r:
@@ -1047,4 +1044,8 @@ function rgbToHsl(hex) {
     }
 
     return [Math.round(h * 360), Math.round(s * 100)];
+}
+
+function generateWarnMessageForUploadState(parameter, value, id, err) {
+    adapter.log.warn(`Could not set state (${parameter}) to value (${value}) for device: ${id}. Error: ${err}`);
 }

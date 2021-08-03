@@ -145,6 +145,8 @@
             "<MeisterTR <meistertr.smarthome@gmail.com>"
         ],
         "docs": {},
+        "connectionType": "local",
+        "dataSource":"poll",
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "mode": "daemon",

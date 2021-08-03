@@ -126,6 +126,7 @@ after 5 minutes.
 
 base from: adb backup https://github.com/cahek2202/ioBroker.yeelight
 
+## License
 The MIT License (MIT)
 
 Copyright (c) 2018-2021 MeisterTR <meistertr.smarthome@gmail.com>, cahek2202 <cahek2202@mail.ru>

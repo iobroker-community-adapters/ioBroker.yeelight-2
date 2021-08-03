@@ -10,14 +10,14 @@ let Yeelights;
 
 //just for test
 const JSON = require('circular-json');
-
-const variable = 1234;
+let timeOutVar
 let ConfigDevices = [];
 let ObjDecices = [];
 
 adapter.on('unload', function (callback) {
     try {
         adapter.log.info('cleaned everything up...');
+        clearTimeout(timeOutVar);
         callback();
     } catch (e) {
         callback();
@@ -465,7 +465,7 @@ function checkOnline() {
 function listener() {
     Yeelights = new YeelightSearch();
     ConfigDevices.forEach((element, index) => setTimeout(() => Yeelights.addInitLights(element), index * 300));
-    setInterval(() => {
+    timeOutVar = setInterval(() => {
         //Yeelights.refresh();
         checkOnline();
     }, 60 * 1000);

@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "yeelight-2",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "news": {
+            "1.1.1": {
+                "en": "js-controller 3.3 fixes\nfixed unhandled promise rejection causing the adapter to stop\nadapter won't set power of offline devices to off anymore",
+                "de": "js-Controller 3.3 Korrekturen\nDie Ablehnung von nicht behandelten Zusagen wurde behoben, die dazu führte, dass der Adapter stoppte\nAdapter schaltet Offline-Geräte nicht mehr aus",
+                "ru": "js-controller 3.3 исправления\nисправлено необработанное отклонение обещания, приводящее к остановке адаптера\nадаптер больше не отключает питание автономных устройств",
+                "pt": "Correções do js-controller 3.3\nrejeição de promessa não tratada corrigida, fazendo com que o adaptador parasse\no adaptador não desligará mais os dispositivos off-line",
+                "nl": "js-controller 3.3-correcties\nonverwerkte belofte afwijzing opgelost waardoor de adapter stopte\nadapter zet de stroom van offline apparaten niet meer uit",
+                "fr": "js-controller 3.3 correctifs\ncorrection du rejet de la promesse non gérée provoquant l'arrêt de l'adaptateur\nl'adaptateur ne coupe plus l'alimentation des appareils hors ligne",
+                "it": "js-controller 3.3 correzioni\nrisolto il problema del rifiuto della promessa non gestita che causava l'arresto dell'adattatore\nl'adattatore non disattiverà più l'alimentazione dei dispositivi offline",
+                "es": "js-controller 3.3 arreglos\nRechazo de promesa no manejado fijo que hace que el adaptador se detenga\nEl adaptador ya no desactivará la alimentación de los dispositivos fuera de línea",
+                "pl": "js-controller 3.3 poprawki\nnaprawiono nieobsłużone odrzucanie obietnicy powodujące zatrzymanie adaptera;\nadapter nie będzie już wyłączał zasilania urządzeń offline",
+                "zh-cn": "js 控制器 3.3 修复\n修复了未处理的承诺拒绝导致适配器停止\n适配器不会再将离线设备的电源设置为关闭"
+            },
             "1.1.0": {
                 "en": "add release-script update testing and dependencies\nfixed data types",
                 "de": "Hinzufügen von Release-Skript-Update-Tests und -Abhängigkeiten\nfeste Datentypen",
@@ -146,7 +158,7 @@
         ],
         "docs": {},
         "connectionType": "local",
-        "dataSource":"poll",
+        "dataSource": "poll",
         "license": "MIT",
         "platform": "Javascript/Node.js",
         "mode": "daemon",

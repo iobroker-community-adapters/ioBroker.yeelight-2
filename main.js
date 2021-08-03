@@ -11,7 +11,7 @@ let Yeelights;
 //just for test
 const JSON = require('circular-json');
 
-let variable = 1234;
+const variable = 1234;
 let ConfigDevices = [];
 let ObjDecices = [];
 
@@ -36,7 +36,7 @@ adapter.on('stateChange', function (id, state) {
         const sid = adapter.namespace + '.' + changeState[2];
 
         // search id in config
-        let findlight = ConfigDevices.find(device => device.name === changeState[2]);
+        const findlight = ConfigDevices.find(device => device.name === changeState[2]);
 
         if (findlight) {
             if (changeState[3] !== 'info' && changeState[3] !== 'scenen') {
@@ -51,7 +51,7 @@ adapter.on('stateChange', function (id, state) {
                 }
             }
         } else {
-            adapter.log.error("LIGHT: " + changeState[2] + ' NOT FOUND IN CONFIG!');
+            adapter.log.error('LIGHT: ' + changeState[2] + ' NOT FOUND IN CONFIG!');
         }
     }
 });
@@ -67,7 +67,7 @@ adapter.on('message', function (obj) {
 
     switch (obj.command) {
         case 'discovery':
-            let deviceDiscovered = [];
+            const deviceDiscovered = [];
             Yeelights = new YeelightSearch();
             Yeelights.refresh();
 
@@ -103,7 +103,7 @@ function uploadState(id, parameter, value, sid) {
     let checkHex = null;
     adapter.log.debug('SEND STATE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
-    let aktYeelight = Yeelights.getYeelightById(id);
+    const aktYeelight = Yeelights.getYeelightById(id);
     if (aktYeelight) {
         switch (parameter) {
             case 'set_scene':
@@ -174,14 +174,14 @@ function uploadState(id, parameter, value, sid) {
             case 'hue':
                 // TODO catch NAN an 1-360;
                 adapter.getState(sid + '.control.sat', function (err, state) {
-                    let saturation = state.val;
+                    const saturation = state.val;
                     aktYeelight.setHSV(value.toString(), saturation.toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'bg_hue':
                 adapter.getState(sid + '.control.bg_sat', function (err, state) {
-                    let saturation = state.val;
+                    const saturation = state.val;
                     aktYeelight.setHSVBg(value.toString(), saturation.toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
@@ -189,14 +189,14 @@ function uploadState(id, parameter, value, sid) {
             case 'sat':
                 // TODO catch NAN an 1-100;
                 adapter.getState(sid + '.control.hue', function (err, state) {
-                    let hue = state.val;
+                    const hue = state.val;
                     aktYeelight.setHSV(hue.toString(), value.toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'bg_sat':
                 adapter.getState(sid + '.control.bg_hue', function (err, state) {
-                    let hue = state.val;
+                    const hue = state.val;
                     aktYeelight.setHSVBg(hue.toString(), value.toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
@@ -219,7 +219,7 @@ function uploadState(id, parameter, value, sid) {
 function _sendscene(id, parameter, value, sid) {
     adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
-    let aktYeelight = Yeelights.getYeelightById(id);
+    const aktYeelight = Yeelights.getYeelightById(id);
     if (aktYeelight) {
         aktYeelight.setScene(scenen[parameter])
             .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
@@ -228,7 +228,7 @@ function _sendscene(id, parameter, value, sid) {
 }
 
 function _createscenen(sid) {
-    for (let key in scenen) {
+    for (const key in scenen) {
         adapter.setObjectNotExists(sid + '.scenen.' + key, {
             common: {
                 name: key,
@@ -244,20 +244,20 @@ function _createscenen(sid) {
 }
 
 function checkChanges(callback) {
-    adapter.getForeignObjects(adapter.namespace + ".*", 'device', function (err, list) {
+    adapter.getForeignObjects(adapter.namespace + '.*', 'device', function (err, list) {
         if (err) {
             adapter.log.error(err);
         } else {
             ObjDecices = list;
 
-            adapter.log.debug("DEVICES IN OBJECTS: " + JSON.stringify(ObjDecices));
+            adapter.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDecices));
 
             const count = Object.keys(ObjDecices).length;
-            adapter.log.debug("DEVICES IN OBJECTS FOUND: " + count);
+            adapter.log.debug('DEVICES IN OBJECTS FOUND: ' + count);
             //check every device
             for (let j = 0; j < count; j++) {
-                let element = Object.keys(ObjDecices)[j];
-                adapter.log.debug("OBJ_ELEMENT: " + element);
+                const element = Object.keys(ObjDecices)[j];
+                adapter.log.debug('OBJ_ELEMENT: ' + element);
 
                 const sid = ObjDecices[element].native.sid;
                 const type = ObjDecices[element].native.type;
@@ -303,24 +303,24 @@ function checkChanges(callback) {
         for (let i = 0; i < ConfigDevices.length; i++) {
             if (ConfigDevices[i].name == sid && ConfigDevices[i].type == type) {
                 isThere = true;
-                adapter.log.debug("SMARTNAME: " + ConfigDevices[i].smart_name)
+                adapter.log.debug('SMARTNAME: ' + ConfigDevices[i].smart_name);
                 if (ConfigDevices[i].ip !== oldConfig.ip) {
-                    adapter.setState(element + ".info.IPAdress", ConfigDevices[i].ip, true)
-                    adapter.setState(element + ".info.com", JSON.stringify(ConfigDevices[i]), true)
+                    adapter.setState(element + '.info.IPAdress', ConfigDevices[i].ip, true);
+                    adapter.setState(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
                 if (ConfigDevices[i].port !== oldConfig.port) {
-                    adapter.setState(element + ".info.Port", ConfigDevices[i].port, true)
-                    adapter.setState(element + ".info.com", JSON.stringify(ConfigDevices[i]), true)
+                    adapter.setState(element + '.info.Port', ConfigDevices[i].port, true);
+                    adapter.setState(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
                 if (ConfigDevices[i].smart_name !== oldConfig.smart_name) {
-                    changeSmartName(element, ConfigDevices[i].smart_name)
-                    adapter.setState(element + ".info.com", JSON.stringify(ConfigDevices[i]), true)
+                    changeSmartName(element, ConfigDevices[i].smart_name);
+                    adapter.setState(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
 
             }
 
             if (i === ConfigDevices.length - 1 && isThere === false) {
-                delDev(element.split(".")[2]);
+                delDev(element.split('.')[2]);
 
                 adapter.log.debug('object: ' + ObjDecices[element]._id + ' deleded');
             }
@@ -329,13 +329,13 @@ function checkChanges(callback) {
 
     function changeSmartName(element, newSm) {
         const Names = ['power', 'ct', 'active_bright', 'hue', 'sat'];
-        adapter.getForeignObjects(element + ".*", function (err, list) {
+        adapter.getForeignObjects(element + '.*', function (err, list) {
 
-            if (err) return
+            if (err) return;
 
             for (let i = 0; i < Names.length; i++) {
-                if (typeof (list[element + ".control." + Names[i]]) !== 'undefined') {
-                    adapter.extendObject(element + ".control." + Names[i], {
+                if (typeof (list[element + '.control.' + Names[i]]) !== 'undefined') {
+                    adapter.extendObject(element + '.control.' + Names[i], {
                         common: {
                             smartName: {
                                 de: newSm
@@ -347,11 +347,11 @@ function checkChanges(callback) {
 
         });
 
-        adapter.log.debug("canged " + Names.length + " smartname to : " + newSm)
+        adapter.log.debug('canged ' + Names.length + ' smartname to : ' + newSm);
     }
 
     function delDev(id) {
-        adapter.log.warn('DEL: ' + id)
+        adapter.log.warn('DEL: ' + id);
         adapter.deleteDevice(id, function (err, dat) {
             if (err) adapter.log.warn(err);
             //adapter.log.debug(dat);
@@ -361,7 +361,7 @@ function checkChanges(callback) {
 
 function createDevice() {
 
-    if (typeof ConfigDevices === "undefined") return
+    if (typeof ConfigDevices === 'undefined') return;
 
     for (let i = 0; i < ConfigDevices.length; i++) {
 
@@ -372,7 +372,7 @@ function createDevice() {
         //adapter.log.debug("onj Device: " + ObjDecices[sid]);
 
         if (!ObjDecices[sid]) {
-            adapter.log.debug("CREATE DEVICE: " + sid);
+            adapter.log.debug('CREATE DEVICE: ' + sid);
             adapter.createDevice(device, {
                 name: ConfigDevices[i].type,
                 icon: '/icons/' + ConfigDevices[i].type + '.png',
@@ -380,9 +380,9 @@ function createDevice() {
                 sid: ConfigDevices[i].name,
                 type: ConfigDevices[i].type
             });
-            adapter.createChannel(device, "info");
-            adapter.createChannel(device, "control");
-            adapter.createChannel(device, "scenen");
+            adapter.createChannel(device, 'info');
+            adapter.createChannel(device, 'control');
+            adapter.createChannel(device, 'scenen');
             _createscenen(sid);
             adapter.setObjectNotExists(sid + '.info.com', {
                 common: {
@@ -440,13 +440,13 @@ function createDevice() {
 }
 
 function checkOnline() {
-    let lights = Yeelights.yeelights;
+    const lights = Yeelights.yeelights;
 
     if (lights.length !== 0) {
         lights.forEach(element => {
-            let device = ConfigDevices.find(device => device.id === element.id);
+            const device = ConfigDevices.find(device => device.id === element.id);
             if (device) {
-                let sid = device.name;
+                const sid = device.name;
 
                 if (element.status !== 3) {
                     //turn off
@@ -495,21 +495,21 @@ function listener() {
             light['initinalid'] = 1;
         });
 
-        light.on("error", function (id, ex, err) {
+        light.on('error', function (id, ex, err) {
             adapter.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
         });
 
-        light.on("notifcation", message => {
-            adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message))
+        light.on('notifcation', message => {
+            adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message));
             //adapter.log.debug(JSON.stringify(Yeelights))
-            if (message.method === "props" && message.params) {
+            if (message.method === 'props' && message.params) {
 
                 setStateDevice(light, message.params);
             }
 
         });
 
-        light.on("response", (id, result) => {
+        light.on('response', (id, result) => {
             adapter.log.debug('RESPONSE MESSAGE: from: ' + light.getId() + ', id: ' + id + ', result:[' + result + ']}');
             //adapter.log.debug(JSON.stringify(light))
             if (result && result[0] !== 'ok') {
@@ -527,16 +527,16 @@ function listener() {
 }
 
 function setResponse(aktYeelight, result) {
-    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
+    const device = ConfigDevices.find(device => device.id === aktYeelight.getId());
 
     //result:[off,100,16711680,2,4000]};
     if (device) {
-        let sid = device.name
+        let sid = device.name;
         adapter.setState(sid + '.info.connect', true, true);
         sid = sid + '.control';
         adapter.log.debug('DEVICE FOUND IN CONFIG: ' + JSON.stringify(device));
         if (result) {
-            if (!(result[0] === "")) {
+            if (!(result[0] === '')) {
                 switch (result[0]) {
                     case 'on':
                         adapter.setState(sid + '.power', true, true);
@@ -546,13 +546,13 @@ function setResponse(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[1] === "")) {
+            if (!(result[1] === '')) {
                 adapter.setState(sid + '.active_bright', Number(result[1]), true);
             }
-            if (!(result[2] === "")) {
+            if (!(result[2] === '')) {
                 adapter.setState(sid + '.rgb', dec2hex(result[2]), true);
             }
-            if (!(result[3] === "")) {
+            if (!(result[3] === '')) {
                 switch (+result[3]) {
                     case 1:
                         adapter.setState(sid + '.color_mode', true, true);
@@ -562,7 +562,7 @@ function setResponse(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[4] === "")) {
+            if (!(result[4] === '')) {
                 adapter.setState(sid + '.ct', Number(result[4]), true);
             }
         } else {
@@ -581,17 +581,17 @@ function main() {
 
 function initObj(aktYeelight, result) {
     //search light in Config
-    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
+    const device = ConfigDevices.find(device => device.id === aktYeelight.getId());
 
     //result = ["off", "1", "4000", "", "0", "2", "1", "", "", "0", "off", "off", "", "40", "180", "100", "65535", "4000"];
     if (device) {
-        let sid = device.name
+        let sid = device.name;
         adapter.setState(sid + '.info.connect', true, true);
         sid = sid + '.control';
         adapter.log.debug('DEVICE FOUND IN AND CONFIG: ' + JSON.stringify(device));
 
         if (result) {
-            if (!(result[0] === "")) {
+            if (!(result[0] === '')) {
                 addState(sid, 'set_scene', '', device);
                 switch (result[0]) {
                     case 'on':
@@ -602,18 +602,18 @@ function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[5] === "")) {
+            if (!(result[5] === '')) {
                 addState(sid, 'active_bright', Number(result[5]), device);
             } else {
                 addState(sid, 'active_bright', Number(result[1]), device);
             }
-            if (!(result[4] === "")) {
+            if (!(result[4] === '')) {
                 addState(sid, 'ct', Number(result[4]), device);
             }
-            if (!(result[2] === "")) {
+            if (!(result[2] === '')) {
                 addState(sid, 'rgb', result[2], device);
             }
-            if (!(result[6] === "")) {
+            if (!(result[6] === '')) {
                 switch (+result[6]) {
                     case 0:
                         addState(sid, 'moon_mode', false, device);
@@ -623,7 +623,7 @@ function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[3] === "")) {
+            if (!(result[3] === '')) {
                 if (true) {
                     switch (+result[3]) {
                         case 1:
@@ -635,13 +635,13 @@ function initObj(aktYeelight, result) {
                     }
                 }
             }
-            if (!(result[7] === "")) {
+            if (!(result[7] === '')) {
                 addState(sid, 'hue', Number(result[7]), device);
             }
-            if (!(result[8] === "")) {
+            if (!(result[8] === '')) {
                 addState(sid, 'sat', Number(result[8]), device);
             }
-            if (!(result[10] === "")) {
+            if (!(result[10] === '')) {
                 switch (result[10]) {
                     case 'on':
                         addState(sid, 'main_power', true, device);
@@ -651,7 +651,7 @@ function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[11] === "")) {
+            if (!(result[11] === '')) {
                 switch (result[11]) {
                     case 'on':
                         addState(sid, 'bg_power', true, device);
@@ -661,19 +661,19 @@ function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[13] === "")) {
+            if (!(result[13] === '')) {
                 addState(sid, 'bg_bright', result[13], device);
             }
-            if (!(result[14] === "")) {
+            if (!(result[14] === '')) {
                 addState(sid, 'bg_hue', result[14], device);
             }
-            if (!(result[15] === "")) {
+            if (!(result[15] === '')) {
                 addState(sid, 'bg_sat', result[15], device);
             }
-            if (!(result[16] === "")) {
+            if (!(result[16] === '')) {
                 addState(sid, 'bg_rgb', result[16], device);
             }
-            if (!(result[17] === "")) {
+            if (!(result[17] === '')) {
                 addState(sid, 'bg_ct', result[17], device);
             }
         } else {
@@ -693,16 +693,16 @@ function addState(id, state, val, device) {
 
     if (typeof device.type !== 'undefined') {
         if (device.type === 'ceiling1' ) {
-            ct_min = 2600
+            ct_min = 2600;
         }
         // change ct for pedant
-        if (device.type === 'ceiling10' && (state.substring(0, 2) !== "bg_")) {
-            ct_min = 2600
+        if (device.type === 'ceiling10' && (state.substring(0, 2) !== 'bg_')) {
+            ct_min = 2600;
         }
     }
     if (typeof device.smart_name !== 'undefined') {
         if (device.smart_name !== '') {
-            smartname = device.smart_name
+            smartname = device.smart_name;
         }
         //adapter.log.warn(device.smart_name);
     }
@@ -721,7 +721,7 @@ function addState(id, state, val, device) {
                     type: 'boolean',
                     smartName: {
                         de: smartname,
-                        smartType: "LIGHT"
+                        smartType: 'LIGHT'
                     }
                 },
                 native: {}
@@ -789,7 +789,7 @@ function addState(id, state, val, device) {
                     unit: 'K',
                     smartName: {
                         de: smartname,
-                        smartType: "LIGHT"
+                        smartType: 'LIGHT'
                     }
                 },
                 native: {}
@@ -808,11 +808,11 @@ function addState(id, state, val, device) {
                     type: 'number',
                     min: 0,
                     max: 100,
-                    unit: "%",
+                    unit: '%',
                     smartName: {
                         de: smartname,
-                        smartType: "LIGHT",
-                        byON: "-"
+                        smartType: 'LIGHT',
+                        byON: '-'
                     }
                 },
                 native: {}
@@ -833,7 +833,7 @@ function addState(id, state, val, device) {
                     max: 360,
                     smartName: {
                         de: smartname,
-                        smartType: "LIGHT"
+                        smartType: 'LIGHT'
                     }
                 },
                 native: {}
@@ -854,7 +854,7 @@ function addState(id, state, val, device) {
                     max: 100,
                     smartName: {
                         de: smartname,
-                        smartType: "LIGHT"
+                        smartType: 'LIGHT'
                     }
                 },
                 native: {}
@@ -883,15 +883,15 @@ function addState(id, state, val, device) {
 
 function setStateDevice(aktYeelight, state) {
     //search light in Config
-    let device = ConfigDevices.find(device => device.id === aktYeelight.getId());
+    const device = ConfigDevices.find(device => device.id === aktYeelight.getId());
 
     if (device) {
-        let sid = device.name
+        let sid = device.name;
         adapter.setState(sid + '.info.connect', true, true);
         sid = sid + '.control';
         adapter.log.debug('DEVICE FOUND SET NOTIFY STATE: ' + JSON.stringify(device));
 
-        for (let key in state) {
+        for (const key in state) {
             switch (key) {
                 case 'power':
                 case 'main_power':
@@ -917,12 +917,11 @@ function setStateDevice(aktYeelight, state) {
                     if (key == 'bright') {
                         adapter.setState(sid + '.active_bright', +state[key], true);
                     }
-                    adapter.setState(sid + '.' + key, state[key], true);
+                    adapter.setState(sid + '.' + key, parseInt(state[key]), true);
                     break;
                 case 'rgb':
                 case 'bg_rgb':
-                    const value = dec2hex(state[key]);
-                    adapter.setState(sid + '.' + key, value, true);
+                    adapter.setState(sid + '.' + key, dec2hex(state[key]), true);
                     break;
                 case 'active_mode':
                     switch (+state[key]) {
@@ -955,8 +954,8 @@ function setStateDevice(aktYeelight, state) {
 }
 
 function dec2hex(dec) {
-    const template = "#000000";
-    let hexstring = dec.toString(16)
+    const template = '#000000';
+    const hexstring = dec.toString(16);
     return  template.substring(0,7 - hexstring.length) + hexstring;
 }
 
@@ -990,8 +989,8 @@ function hslToRgb(h, s, l) {
             return p;
         };
 
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
         r = hue2rgb(p, q, h + 1 / 3);
         g = hue2rgb(p, q, h);
         b = hue2rgb(p, q, h - 1 / 3);

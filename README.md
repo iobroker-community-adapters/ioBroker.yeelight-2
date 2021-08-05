@@ -69,7 +69,7 @@ NOTE: Accepted on both "on" and "off" state.
 after 5 minutes.
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.1.2 (2021-08-05)
 * Fix Joi Error
 ### 1.1.1 (2021-08-03)
 * (MeisterTR) js-controller 3.3 fixes

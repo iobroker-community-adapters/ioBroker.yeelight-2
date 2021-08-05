@@ -693,11 +693,11 @@ function addState(id, state, val, device) {
 
     if (typeof device.type !== 'undefined') {
         if (device.type === 'ceiling1' ) {
-            ct_min = 2600;
+            ct_min = 2500;
         }
         // change ct for pedant
         if (device.type === 'ceiling10' && (state.substring(0, 2) !== 'bg_')) {
-            ct_min = 2600;
+            ct_min = 2500;
         }
     }
     if (typeof device.smart_name !== 'undefined') {

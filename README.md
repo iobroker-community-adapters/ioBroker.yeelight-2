@@ -69,6 +69,8 @@ NOTE: Accepted on both "on" and "off" state.
 after 5 minutes.
 
 ## Changelog
+### **WORK IN PROGRESS**
+* Fix Joi Error
 ### 1.1.1 (2021-08-03)
 * (MeisterTR) js-controller 3.3 fixes
 * (jlssmt) fixed unhandled promise rejection causing the adapter to stop

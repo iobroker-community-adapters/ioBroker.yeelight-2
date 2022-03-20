@@ -915,7 +915,7 @@ function setStateDevice(aktYeelight, state) {
                 case 'sat':
                 case 'hue':
                     if (key == 'bright') {
-                        adapter.setState(sid + '.active_bright', +state[key], true);
+                        adapter.setState(sid + '.active_bright', +  parseInt(state[key]), true);
                     }
                     adapter.setState(sid + '.' + key, parseInt(state[key]), true);
                     break;

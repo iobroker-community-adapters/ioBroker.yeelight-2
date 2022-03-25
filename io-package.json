@@ -41,11 +41,27 @@
             },
             "1.0.4": {
                 "en": "fixed data types",
-                "de": "Datentypen korrigiert"
+                "de": "Datentypen korrigiert",
+                "ru": "фиксированные типы данных",
+                "pt": "tipos de dados fixos",
+                "nl": "vaste datatypes",
+                "fr": "types de données fixes",
+                "it": "tipi di dati fissi",
+                "es": "tipos de datos fijos",
+                "pl": "stałe typy danych",
+                "zh-cn": "固定数据类型"
             },
             "1.0.3": {
                 "en": "add Pedant",
-                "de": "Leuchte Pedant hinzugefügt"
+                "de": "Leuchte Pedant hinzugefügt",
+                "ru": "добавить педанта",
+                "pt": "adicionar pedante",
+                "nl": "voeg pedant toe",
+                "fr": "ajouter pédant",
+                "it": "aggiungi pedante",
+                "es": "agregar pedante",
+                "pl": "dodaj pedant",
+                "zh-cn": "添加学究"
             },
             "0.9.6": {
                 "en": "delete object and smartname bugs fixed  ",
@@ -56,7 +72,8 @@
                 "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
                 "it": "eliminato bug di oggetti e smartname risolti",
                 "es": "error de eliminar objeto y nombre inteligente solucionado",
-                "pl": "usunięto błąd obiektu i nazwy smartname"
+                "pl": "usunięto błąd obiektu i nazwy smartname",
+                "zh-cn": "删除对象和智能名称错误已修复"
             },
             "0.9.3": {
                 "en": "fixed  bugs, add manuell light, error handling, fixed reconnect at start",
@@ -67,7 +84,8 @@
                 "fr": "correction de bugs, ajout de lumière manuell, traitement des erreurs, correction de la reconnexion au démarrage",
                 "it": "bug corretti, aggiungi manuell light, gestione degli errori, riparazioni fisse all'avvio",
                 "es": "Se corrigieron errores, se agregó manuell light, manejo de errores, se volvió a conectar al inicio",
-                "pl": "naprawione błędy, dodawanie światła manuell, obsługa błędów, naprawione ponowne połączenie na starcie"
+                "pl": "naprawione błędy, dodawanie światła manuell, obsługa błędów, naprawione ponowne połączenie na starcie",
+                "zh-cn": "修复错误，添加手动灯，错误处理，修复启动时重新连接"
             },
             "0.9.1": {
                 "en": "rebuild",
@@ -78,7 +96,8 @@
                 "fr": "reconstruire",
                 "it": "ricostruire",
                 "es": "reconstruir",
-                "pl": "odbudować"
+                "pl": "odbudować",
+                "zh-cn": "重建"
             },
             "0.4.1": {
                 "en": "fixed JSON error",
@@ -89,7 +108,8 @@
                 "fr": "erreur JSON fixe",
                 "it": "errore JSON corretto",
                 "es": "error JSON corregido",
-                "pl": "naprawiono błąd JSON"
+                "pl": "naprawiono błąd JSON",
+                "zh-cn": "修复 JSON 错误"
             },
             "0.4.0": {
                 "en": "fixed errors, added scenen",
@@ -100,7 +120,8 @@
                 "fr": "erreurs fixes, ajout de scènes",
                 "it": "errori corretti, aggiunto scenen",
                 "es": "errores corregidos, escena añadida",
-                "pl": "naprawiono błędy, dodano scenen"
+                "pl": "naprawiono błędy, dodano scenen",
+                "zh-cn": "修复错误，添加场景"
             },
             "0.3.0": {
                 "en": "fix state update error",
@@ -111,7 +132,8 @@
                 "fr": "correction d'une erreur de mise à jour",
                 "it": "correggere l'errore di aggiornamento dello stato",
                 "es": "corregir el error de actualización del estado",
-                "pl": "napraw błąd stanu aktualizacji"
+                "pl": "napraw błąd stanu aktualizacji",
+                "zh-cn": "修复状态更新错误"
             },
             "0.2.0": {
                 "en": "many changes add smartname option. add manual devices. many fixes",
@@ -122,7 +144,8 @@
                 "fr": "de nombreux changements ajoutent l'option smartname. ajouter des appareils manuels. beaucoup de corrections",
                 "it": "molte modifiche aggiungono l'opzione smartname. aggiungi dispositivi manuali. molte correzioni",
                 "es": "muchos cambios agregan la opción de nombre inteligente. agregar dispositivos manuales. muchas correcciones",
-                "pl": "wiele zmian dodaje opcję smartname. dodaj urządzenia ręczne. wiele poprawek"
+                "pl": "wiele zmian dodaje opcję smartname. dodaj urządzenia ręczne. wiele poprawek",
+                "zh-cn": "许多更改添加了 smartname 选项。"
             },
             "0.1.0": {
                 "en": "many changes, add hue and sat for alexa control",
@@ -133,11 +156,20 @@
                 "fr": "de nombreux changements, ajouter de la teinte et assis pour le contrôle alexa",
                 "it": "molti cambiamenti, aggiungere tonalità e sab per il controllo di alexa",
                 "es": "muchos cambios, agregue matiz y sat para el control alexa",
-                "pl": "wiele zmian, dodaj hue i sat dla kontroli alexa"
+                "pl": "wiele zmian, dodaj hue i sat dla kontroli alexa",
+                "zh-cn": "许多变化，添加色相和坐用于 alexa 控制"
             },
             "0.0.3": {
                 "en": "objects not overwirte after restart",
-                "de": "Objekte werden nach neustart nicht mehr überschrieben"
+                "de": "Objekte werden nach neustart nicht mehr überschrieben",
+                "ru": "объекты не перезаписываются после перезагрузки",
+                "pt": "objetos não sobrescrevem após a reinicialização",
+                "nl": "objecten overschrijven niet na opnieuw opstarten",
+                "fr": "objets non écrasés après le redémarrage",
+                "it": "gli oggetti non vengono sovrascritti dopo il riavvio",
+                "es": "los objetos no se sobrescriben después de reiniciar",
+                "pl": "obiekty nie nadpisują się po restarcie",
+                "zh-cn": "重启后对象不会被覆盖"
             }
         },
         "title": "Yeelight controller",
@@ -187,7 +219,16 @@
         "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
         "loglevel": "info",
         "type": "lighting",
-        "installedFrom": "iobroker-community-adapters/ioBroker.yeelight-2#master"
+        "plugins": {
+            "sentry": {
+                "dsn": "https://0ac9a77d2ec642de99a00e431220b2a1@sentry.iobroker.net/186"
+            }
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
     },
     "native": {
         "devices": []

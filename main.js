@@ -10,7 +10,7 @@ let Yeelights;
 
 //just for test
 const JSON = require('circular-json');
-let timeOutVar
+let timeOutVar;
 let ConfigDevices = [];
 let ObjDecices = [];
 
@@ -66,7 +66,7 @@ adapter.on('message', function (obj) {
     }
 
     switch (obj.command) {
-        case 'discovery':
+        case 'discovery': {
             const deviceDiscovered = [];
             Yeelights = new YeelightSearch();
             Yeelights.refresh();
@@ -78,7 +78,7 @@ adapter.on('message', function (obj) {
                     'port': light.port,
                     'id': light.getId()
                 });
-                adapter.log.debug('Found Light{ id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
+                adapter.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
             });
 
             setTimeout(() => {
@@ -86,6 +86,7 @@ adapter.on('message', function (obj) {
             }, 5000);
 
             return true;
+        }
         default:
             adapter.log.debug('Unknown command: ' + obj.command);
             break;
@@ -514,7 +515,6 @@ function listener() {
             //adapter.log.debug(JSON.stringify(light))
             if (result && result[0] !== 'ok') {
 
-                const model = light.model;
                 if (id === light.initinalid) {
                     adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
                     initObj(light, result);
@@ -547,7 +547,7 @@ function setResponse(aktYeelight, result) {
                 }
             }
             if (!(result[1] === '')) {
-                adapter.setState(sid + '.active_bright', Number(result[1]), true);
+                adapter.setState(sid + '.active_bright', parseInt(result[1]), true);
             }
             if (!(result[2] === '')) {
                 adapter.setState(sid + '.rgb', dec2hex(result[2]), true);
@@ -563,7 +563,7 @@ function setResponse(aktYeelight, result) {
                 }
             }
             if (!(result[4] === '')) {
-                adapter.setState(sid + '.ct', Number(result[4]), true);
+                adapter.setState(sid + '.ct', parseInt(result[4]), true);
             }
         } else {
             adapter.log.warn('EMPTY RESPONSE');
@@ -579,7 +579,7 @@ function main() {
     adapter.subscribeStates('*');
 }
 
-function initObj(aktYeelight, result) {
+async function initObj(aktYeelight, result) {
     //search light in Config
     const device = ConfigDevices.find(device => device.id === aktYeelight.getId());
 
@@ -592,34 +592,34 @@ function initObj(aktYeelight, result) {
 
         if (result) {
             if (!(result[0] === '')) {
-                addState(sid, 'set_scene', '', device);
+                await addState(sid, 'set_scene', '', device);
                 switch (result[0]) {
                     case 'on':
-                        addState(sid, 'power', true, device);
+                        await addState(sid, 'power', true, device);
                         break;
                     case 'off':
-                        addState(sid, 'power', false, device);
+                        await addState(sid, 'power', false, device);
                         break;
                 }
             }
             if (!(result[5] === '')) {
-                addState(sid, 'active_bright', Number(result[5]), device);
+                await addState(sid, 'active_bright', Number(result[5]), device);
             } else {
-                addState(sid, 'active_bright', Number(result[1]), device);
+                await addState(sid, 'active_bright', Number(result[1]), device);
             }
             if (!(result[4] === '')) {
-                addState(sid, 'ct', Number(result[4]), device);
+                await addState(sid, 'ct', Number(result[4]), device);
             }
             if (!(result[2] === '')) {
-                addState(sid, 'rgb', result[2], device);
+                await addState(sid, 'rgb', result[2], device);
             }
             if (!(result[6] === '')) {
                 switch (+result[6]) {
                     case 0:
-                        addState(sid, 'moon_mode', false, device);
+                        await addState(sid, 'moon_mode', false, device);
                         break;
                     case 1:
-                        addState(sid, 'moon_mode', true, device);
+                        await addState(sid, 'moon_mode', true, device);
                         break;
                 }
             }
@@ -627,54 +627,54 @@ function initObj(aktYeelight, result) {
                 if (true) {
                     switch (+result[3]) {
                         case 1:
-                            addState(sid, 'color_mode', true, device);
+                            await addState(sid, 'color_mode', true, device);
                             break;
                         case 2:
-                            addState(sid, 'color_mode', false, device);
+                            await addState(sid, 'color_mode', false, device);
                             break;
                     }
                 }
             }
             if (!(result[7] === '')) {
-                addState(sid, 'hue', Number(result[7]), device);
+                await addState(sid, 'hue', Number(result[7]), device);
             }
             if (!(result[8] === '')) {
-                addState(sid, 'sat', Number(result[8]), device);
+                await addState(sid, 'sat', Number(result[8]), device);
             }
             if (!(result[10] === '')) {
                 switch (result[10]) {
                     case 'on':
-                        addState(sid, 'main_power', true, device);
+                        await addState(sid, 'main_power', true, device);
                         break;
                     case 'off':
-                        addState(sid, 'main_power', false, device);
+                        await addState(sid, 'main_power', false, device);
                         break;
                 }
             }
             if (!(result[11] === '')) {
                 switch (result[11]) {
                     case 'on':
-                        addState(sid, 'bg_power', true, device);
+                        await addState(sid, 'bg_power', true, device);
                         break;
                     case 'off':
-                        addState(sid, 'bg_power', false, device);
+                        await addState(sid, 'bg_power', false, device);
                         break;
                 }
             }
             if (!(result[13] === '')) {
-                addState(sid, 'bg_bright', result[13], device);
+                await addState(sid, 'bg_bright', result[13], device);
             }
             if (!(result[14] === '')) {
-                addState(sid, 'bg_hue', result[14], device);
+                await addState(sid, 'bg_hue', result[14], device);
             }
             if (!(result[15] === '')) {
-                addState(sid, 'bg_sat', result[15], device);
+                await addState(sid, 'bg_sat', result[15], device);
             }
             if (!(result[16] === '')) {
-                addState(sid, 'bg_rgb', result[16], device);
+                await addState(sid, 'bg_rgb', result[16], device);
             }
             if (!(result[17] === '')) {
-                addState(sid, 'bg_ct', result[17], device);
+                await addState(sid, 'bg_ct', result[17], device);
             }
         } else {
             adapter.log.warn('EMPTY INITINAL RESPONSE');
@@ -685,7 +685,7 @@ function initObj(aktYeelight, result) {
     }
 }
 
-function addState(id, state, val, device) {
+async function addState(id, state, val, device) {
 
     let ct_min = 1700;
     const ct_max = 6500;
@@ -711,7 +711,7 @@ function addState(id, state, val, device) {
         case 'power':
         case 'bg_power':
         case 'main_power':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -726,15 +726,15 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, !!val, true);
             break;
 
         case 'set_scene':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
-                    role: 'JSON.text',
+                    role: 'json',
                     write: true,
                     read: true,
                     type: 'string',
@@ -742,11 +742,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, val, true);
             break;
 
         case 'color_mode':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -757,11 +757,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, !!val, true);
             break;
 
         case 'moon_mode':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -772,11 +772,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, !!val, true);
             break;
         case 'ct':
         case 'bg_ct':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -794,11 +794,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'active_bright':
         case 'bg_bright':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -817,11 +817,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'hue':
         case 'bg_hue':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -838,11 +838,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'sat':
         case 'bg_sat':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -859,11 +859,11 @@ function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'rgb':
         case 'bg_rgb':
-            adapter.setObjectNotExists(id + '.' + state, {
+            await adapter.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -875,10 +875,9 @@ function addState(id, state, val, device) {
                 native: {}
             });
             val = dec2hex(val);
-            adapter.setState(id + '.' + state, val, true);
+            await adapter.setStateAsync(id + '.' + state, val, true);
             break;
     }
-
 }
 
 function setStateDevice(aktYeelight, state) {

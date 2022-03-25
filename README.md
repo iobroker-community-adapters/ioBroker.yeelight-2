@@ -75,8 +75,9 @@ after 5 minutes.
 ## Changelog
 
 ### __WORK IN PROGRESS__
-* (Apollon77) Add Sentry for crash reporting
+* (Apollon77) Optimize unload handling and async executions
 * (Apollon77) Prevent log on unexpected types
+* (Apollon77) Add Sentry for crash reporting
 
 ### 1.1.2 (2021-08-05)
 * Fix Joi Error

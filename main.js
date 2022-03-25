@@ -12,12 +12,22 @@ let Yeelights;
 const JSON = require('circular-json');
 let timeOutVar;
 let ConfigDevices = [];
-let ObjDecices = [];
+let ObjDevices = [];
+const initializedLights = [];
+let discoveryTimeout = null;
 
 adapter.on('unload', function (callback) {
     try {
-        adapter.log.info('cleaned everything up...');
         clearTimeout(timeOutVar);
+        clearTimeout(discoveryTimeout);
+        initializedLights.forEach(light => {
+            try {
+                light.disconnect()
+            } catch (err) {
+                // ignore
+            }
+        })
+        adapter.log.info('cleaned everything up...');
         callback();
     } catch (e) {
         callback();
@@ -81,7 +91,7 @@ adapter.on('message', function (obj) {
                 adapter.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
             });
 
-            setTimeout(() => {
+            discoveryTimeout = out(() => {
                 reply(deviceDiscovered);
             }, 5000);
 
@@ -245,60 +255,47 @@ function _createscenen(sid) {
 }
 
 function checkChanges(callback) {
-    adapter.getForeignObjects(adapter.namespace + '.*', 'device', function (err, list) {
+    adapter.getForeignObjects(adapter.namespace + '.*', 'device', async function (err, list) {
         if (err) {
             adapter.log.error(err);
         } else {
-            ObjDecices = list;
+            ObjDevices = list;
 
-            adapter.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDecices));
+            adapter.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDevices));
 
-            const count = Object.keys(ObjDecices).length;
+            const count = Object.keys(ObjDevices).length;
             adapter.log.debug('DEVICES IN OBJECTS FOUND: ' + count);
             //check every device
             for (let j = 0; j < count; j++) {
-                const element = Object.keys(ObjDecices)[j];
+                const element = Object.keys(ObjDevices)[j];
                 adapter.log.debug('OBJ_ELEMENT: ' + element);
 
-                const sid = ObjDecices[element].native.sid;
-                const type = ObjDecices[element].native.type;
-                getastate(element, ifinConfig);
-
-                if (j === count - 1) {
-                    setTimeout(function () {
-                        adapter.subscribeStates('*');
-                        callback && callback();
-                    }, 2000);
-
-
-                }
-
+                const sid = ObjDevices[element].native.sid;
+                const type = ObjDevices[element].native.type;
+                const oldConfig = await getastate(element);
+                await ifinConfig(element, oldConfig);
             }
 
-            if (count === 0) {
-                setTimeout(function () {
-                    adapter.subscribeStates('*');
-                    callback && callback();
-                }, 2000);
-            }
-
-
+            adapter.subscribeStates('*');
+            callback && callback();
         }
-
     });
 
-    function getastate(element, callback) {
-        const info = adapter.getState(element + '.info.com', function (err, state) {
-            adapter.log.debug('OLD CONF. FROM OBJ: ' + state.val);
-            if (callback && typeof (callback) === 'function') callback(element, JSON.parse(state.val));
-        });
-
+    async function getastate(element) {
+        const state = await adapter.getState(element + '.info.com');
+        adapter.log.debug('OLD CONF. FROM OBJ: ' + (state && state.val));
+        try {
+            return JSON.parse(state.val);
+        } catch (err) {
+            adapter.log.error(`Could not parse ${element + '.info.com'}: ${err.message}`);
+            return '';
+        }
     }
 
-    function ifinConfig(element, oldConfig) {
+    async function ifinConfig(element, oldConfig) {
 
-        const sid = ObjDecices[element].native.sid;
-        const type = ObjDecices[element].native.type;
+        const sid = ObjDevices[element].native.sid;
+        const type = ObjDevices[element].native.type;
 
         let isThere = false;
         for (let i = 0; i < ConfigDevices.length; i++) {
@@ -306,37 +303,36 @@ function checkChanges(callback) {
                 isThere = true;
                 adapter.log.debug('SMARTNAME: ' + ConfigDevices[i].smart_name);
                 if (ConfigDevices[i].ip !== oldConfig.ip) {
-                    adapter.setState(element + '.info.IPAdress', ConfigDevices[i].ip, true);
-                    adapter.setState(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                    await adapter.setStateAsync(element + '.info.IPAdress', ConfigDevices[i].ip, true);
+                    await adapter.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
                 if (ConfigDevices[i].port !== oldConfig.port) {
-                    adapter.setState(element + '.info.Port', ConfigDevices[i].port, true);
-                    adapter.setState(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                    await adapter.setStateAsync(element + '.info.Port', ConfigDevices[i].port, true);
+                    await adapter.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
                 if (ConfigDevices[i].smart_name !== oldConfig.smart_name) {
-                    changeSmartName(element, ConfigDevices[i].smart_name);
-                    adapter.setState(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                    await changeSmartName(element, ConfigDevices[i].smart_name);
+                    await adapter.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
 
             }
 
             if (i === ConfigDevices.length - 1 && isThere === false) {
-                delDev(element.split('.')[2]);
+                await delDev(element.split('.')[2]);
 
-                adapter.log.debug('object: ' + ObjDecices[element]._id + ' deleded');
+                adapter.log.debug('object: ' + ObjDevices[element]._id + ' deleted');
             }
         }
     }
 
-    function changeSmartName(element, newSm) {
+    async function changeSmartName(element, newSm) {
         const Names = ['power', 'ct', 'active_bright', 'hue', 'sat'];
-        adapter.getForeignObjects(element + '.*', function (err, list) {
-
-            if (err) return;
+        try {
+            const list = await adapter.getForeignObjectsAsync(element + '.*');
 
             for (let i = 0; i < Names.length; i++) {
                 if (typeof (list[element + '.control.' + Names[i]]) !== 'undefined') {
-                    adapter.extendObject(element + '.control.' + Names[i], {
+                    await adapter.extendObjectAsync(element + '.control.' + Names[i], {
                         common: {
                             smartName: {
                                 de: newSm
@@ -345,18 +341,20 @@ function checkChanges(callback) {
                     });
                 }
             }
+        } catch (err) {
+            // ignore
+        }
 
-        });
-
-        adapter.log.debug('canged ' + Names.length + ' smartname to : ' + newSm);
+        adapter.log.debug('changed ' + Names.length + ' smartname to : ' + newSm);
     }
 
-    function delDev(id) {
+    async function delDev(id) {
         adapter.log.warn('DEL: ' + id);
-        adapter.deleteDevice(id, function (err, dat) {
-            if (err) adapter.log.warn(err);
-            //adapter.log.debug(dat);
-        });
+        try {
+            await adapter.deleteDevice(id);
+        } catch (err) {
+            adapter.log.warn(err.message);
+        }
     }
 }
 
@@ -370,9 +368,9 @@ function createDevice() {
         const device = ConfigDevices[i].name;
 
         //adapter.log.debug("Create Device: " + sid);
-        //adapter.log.debug("onj Device: " + ObjDecices[sid]);
+        //adapter.log.debug("onj Device: " + ObjDevices[sid]);
 
-        if (!ObjDecices[sid]) {
+        if (!ObjDevices[sid]) {
             adapter.log.debug('CREATE DEVICE: ' + sid);
             adapter.createDevice(device, {
                 name: ConfigDevices[i].type,
@@ -472,6 +470,7 @@ function listener() {
     }, 60 * 1000);
 
     Yeelights.on('found', light => {
+        initializedLights.push(light);
         adapter.log.debug('YEELIGHT FOUND: ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
         light.getValues(
             'power',

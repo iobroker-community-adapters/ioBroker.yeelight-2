@@ -50,6 +50,7 @@ export default class Yeelight extends EventEmitter {
     this.model = data.MODEL;
     this.port = parsedUri.port;
     this.hostname = parsedUri.hostname;
+    this.stopped = false;
     this.supports = data.SUPPORT.split(' ');
     if (this.SUPPORT_OBJ) this.supports = this.SUPPORT_OBJ;
     this.status = YeelightStatus.SSDP;
@@ -67,7 +68,7 @@ export default class Yeelight extends EventEmitter {
     this.socket.on('close', () => {
       this.log(`closed connection to ${this.name} id ${this.id} on ${this.hostname}:${this.port}`);
       this.status = YeelightStatus.OFFLINE;
-      setTimeout(this.reconnect2.bind(this), this.config.refresh * 1000);
+      !this.stopped && setTimeout(this.reconnect2.bind(this), this.config.refresh * 1000);
     });
 
     this.socket.on('timeout', this.refresh.bind(this));
@@ -76,14 +77,14 @@ export default class Yeelight extends EventEmitter {
       if (err.code == 'ECONNRESET') {
         this.log(`Connection reset on id ${this.id} ${this.hostname}:${this.port} connection`);
         this.status = YeelightStatus.OFFLINE;
-        this.socket.connect(this.port, this.hostname, this.connect());
+        !this.stopped && this.socket.connect(this.port, this.hostname, this.connect());
       } else if (err.code == 'ECONNREFUSED') {
         this.status = YeelightStatus.OFFLINE;
         this.log(`Connection refused on id ${this.id} ${this.hostname}:${this.port} connection`);
       } else if (err.code == 'EHOSTUNREACH') {
         // retry connect in x sec.
         this.status = YeelightStatus.OFFLINE;
-        setTimeout(this.reconnect2.bind(this), 20 * 1000);
+        !this.stopped && setTimeout(this.reconnect2.bind(this), 20 * 1000);
       }
       this.emit('error', this.id, 'Connection ' + this.hostname + ':' + this.port, err);
     });
@@ -103,15 +104,23 @@ export default class Yeelight extends EventEmitter {
     }
     this.port = this.parsedUri.port;
     this.hostname = this.parsedUri.hostname;
-    this.socket.connect(this.port, this.hostname, this.connect());
+    !this.stopped && this.socket.connect(this.port, this.hostname, this.connect());
   }
-  
+
+  /**
+   * Disconnect socket
+   */
+  disconnect() {
+    this.stopped = true;
+    this.socket && this.socket.close();
+  }
+
   /**
    * reconnect reconnects to the light, use it when lights first connection ist failed
    *
    */
   reconnect2 () {
-    this.socket.connect(this.port, this.hostname, this.connect());
+    !this.stopped && this.socket.connect(this.port, this.hostname, this.connect());
   }
 
   /**
@@ -158,7 +167,7 @@ export default class Yeelight extends EventEmitter {
       if (!schema) {
         schema = Joi.any(); //eslint-disable-line
       }
-      
+
       Joi.validate(params, schema, (err, value) => {
         if (err) {
           reject(err);

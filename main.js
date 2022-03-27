@@ -282,7 +282,7 @@ function checkChanges(callback) {
     });
 
     async function getastate(element) {
-        const state = await adapter.getState(element + '.info.com');
+        const state = await adapter.getStateAsync(element + '.info.com');
         adapter.log.debug('OLD CONF. FROM OBJ: ' + (state && state.val));
         try {
             return JSON.parse(state.val);

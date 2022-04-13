@@ -91,7 +91,7 @@ adapter.on('message', function (obj) {
                 adapter.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
             });
 
-            discoveryTimeout = out(() => {
+            discoveryTimeout = setTimeout(() => {
                 reply(deviceDiscovered);
             }, 5000);
 

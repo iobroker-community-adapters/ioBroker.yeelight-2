@@ -1,237 +1,153 @@
 {
-    "common": {
-        "name": "yeelight-2",
-        "version": "1.1.2",
-        "news": {
-            "1.1.2": {
-                "en": "Fix Joi Error",
-                "de": "Joi-Fehler beheben",
-                "ru": "Исправить ошибку Joi",
-                "pt": "Corrigir erro Joi",
-                "nl": "Fix Joi-fout",
-                "fr": "Corriger l'erreur Joi",
-                "it": "Correggi l'errore Joi",
-                "es": "Solucionar el error de Joi",
-                "pl": "Napraw błąd Joi",
-                "zh-cn": "修复 Joi 错误"
-            },
-            "1.1.1": {
-                "en": "js-controller 3.3 fixes\nfixed unhandled promise rejection causing the adapter to stop\nadapter won't set power of offline devices to off anymore",
-                "de": "js-Controller 3.3 Korrekturen\nDie Ablehnung von nicht behandelten Zusagen wurde behoben, die dazu führte, dass der Adapter stoppte\nAdapter schaltet Offline-Geräte nicht mehr aus",
-                "ru": "js-controller 3.3 исправления\nисправлено необработанное отклонение обещания, приводящее к остановке адаптера\nадаптер больше не отключает питание автономных устройств",
-                "pt": "Correções do js-controller 3.3\nrejeição de promessa não tratada corrigida, fazendo com que o adaptador parasse\no adaptador não desligará mais os dispositivos off-line",
-                "nl": "js-controller 3.3-correcties\nonverwerkte belofte afwijzing opgelost waardoor de adapter stopte\nadapter zet de stroom van offline apparaten niet meer uit",
-                "fr": "js-controller 3.3 correctifs\ncorrection du rejet de la promesse non gérée provoquant l'arrêt de l'adaptateur\nl'adaptateur ne coupe plus l'alimentation des appareils hors ligne",
-                "it": "js-controller 3.3 correzioni\nrisolto il problema del rifiuto della promessa non gestita che causava l'arresto dell'adattatore\nl'adattatore non disattiverà più l'alimentazione dei dispositivi offline",
-                "es": "js-controller 3.3 arreglos\nRechazo de promesa no manejado fijo que hace que el adaptador se detenga\nEl adaptador ya no desactivará la alimentación de los dispositivos fuera de línea",
-                "pl": "js-controller 3.3 poprawki\nnaprawiono nieobsłużone odrzucanie obietnicy powodujące zatrzymanie adaptera;\nadapter nie będzie już wyłączał zasilania urządzeń offline",
-                "zh-cn": "js 控制器 3.3 修复\n修复了未处理的承诺拒绝导致适配器停止\n适配器不会再将离线设备的电源设置为关闭"
-            },
-            "1.1.0": {
-                "en": "add release-script update testing and dependencies\nfixed data types",
-                "de": "Hinzufügen von Release-Skript-Update-Tests und -Abhängigkeiten\nfeste Datentypen",
-                "ru": "добавить тестирование обновления релиз-скрипта и зависимости\nфиксированные типы данных",
-                "pt": "adicionar teste de atualização de script de lançamento e dependências\ntipos de dados fixos",
-                "nl": "release-script update testen en afhankelijkheden toevoegen\nvaste gegevenstypen",
-                "fr": "ajouter des tests et des dépendances de mise à jour du script de publication\ntypes de données fixes",
-                "it": "aggiungi test e dipendenze per l'aggiornamento dello script di rilascio\ntipi di dati fissi",
-                "es": "agregar pruebas y dependencias de actualización del script de lanzamiento\ntipos de datos fijos",
-                "pl": "dodaj testowanie aktualizacji i zależności wersji skryptu\nstałe typy danych",
-                "zh-cn": "添加发布脚本更新测试和依赖项\n固定数据类型"
-            },
-            "1.0.4": {
-                "en": "fixed data types",
-                "de": "Datentypen korrigiert",
-                "ru": "фиксированные типы данных",
-                "pt": "tipos de dados fixos",
-                "nl": "vaste datatypes",
-                "fr": "types de données fixes",
-                "it": "tipi di dati fissi",
-                "es": "tipos de datos fijos",
-                "pl": "stałe typy danych",
-                "zh-cn": "固定数据类型"
-            },
-            "1.0.3": {
-                "en": "add Pedant",
-                "de": "Leuchte Pedant hinzugefügt",
-                "ru": "добавить педанта",
-                "pt": "adicionar pedante",
-                "nl": "voeg pedant toe",
-                "fr": "ajouter pédant",
-                "it": "aggiungi pedante",
-                "es": "agregar pedante",
-                "pl": "dodaj pedant",
-                "zh-cn": "添加学究"
-            },
-            "0.9.6": {
-                "en": "delete object and smartname bugs fixed  ",
-                "de": "Lösche Objekt und Smartname Fehler behoben",
-                "ru": "удалить объект и исправить ошибку",
-                "pt": "excluir bug de objeto e nome inteligente corrigido",
-                "nl": "verwijder object en smartname bug opgelost",
-                "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
-                "it": "eliminato bug di oggetti e smartname risolti",
-                "es": "error de eliminar objeto y nombre inteligente solucionado",
-                "pl": "usunięto błąd obiektu i nazwy smartname",
-                "zh-cn": "删除对象和智能名称错误已修复"
-            },
-            "0.9.3": {
-                "en": "fixed  bugs, add manuell light, error handling, fixed reconnect at start",
-                "de": "Fehler behoben, manuelles Licht hinzugefügt, Fehlerbehandlung behoben, reconnect beim Start behoben",
-                "ru": "исправлены ошибки, добавлена ​​подсветка мануала, обработка ошибок, фиксированное повторное подключение при запуске",
-                "pt": "erros fixos, adicionar luz manuell, manipulação de erros, reconectar fixo no início",
-                "nl": "bugs gerepareerd, manuell light toegevoegd, foutafhandeling, vast opnieuw verbinden bij start",
-                "fr": "correction de bugs, ajout de lumière manuell, traitement des erreurs, correction de la reconnexion au démarrage",
-                "it": "bug corretti, aggiungi manuell light, gestione degli errori, riparazioni fisse all'avvio",
-                "es": "Se corrigieron errores, se agregó manuell light, manejo de errores, se volvió a conectar al inicio",
-                "pl": "naprawione błędy, dodawanie światła manuell, obsługa błędów, naprawione ponowne połączenie na starcie",
-                "zh-cn": "修复错误，添加手动灯，错误处理，修复启动时重新连接"
-            },
-            "0.9.1": {
-                "en": "rebuild",
-                "de": "neu aufbauen",
-                "ru": "перестраивать",
-                "pt": "reconstruir",
-                "nl": "herbouwen",
-                "fr": "reconstruire",
-                "it": "ricostruire",
-                "es": "reconstruir",
-                "pl": "odbudować",
-                "zh-cn": "重建"
-            },
-            "0.4.1": {
-                "en": "fixed JSON error",
-                "de": "JSON-Fehler behoben",
-                "ru": "исправлена ​​ошибка JSON",
-                "pt": "erro JSON fixo",
-                "nl": "vaste JSON-fout",
-                "fr": "erreur JSON fixe",
-                "it": "errore JSON corretto",
-                "es": "error JSON corregido",
-                "pl": "naprawiono błąd JSON",
-                "zh-cn": "修复 JSON 错误"
-            },
-            "0.4.0": {
-                "en": "fixed errors, added scenen",
-                "de": "Fehler behoben, Szenen hinzugefügt",
-                "ru": "исправлены ошибки, добавлены сценарии",
-                "pt": "erros fixos, adicionados",
-                "nl": "vaste fouten, scenen toegevoegd",
-                "fr": "erreurs fixes, ajout de scènes",
-                "it": "errori corretti, aggiunto scenen",
-                "es": "errores corregidos, escena añadida",
-                "pl": "naprawiono błędy, dodano scenen",
-                "zh-cn": "修复错误，添加场景"
-            },
-            "0.3.0": {
-                "en": "fix state update error",
-                "de": "Update-Fehler behoben",
-                "ru": "исправить ошибку обновления состояния",
-                "pt": "corrigir erro de atualização de estado",
-                "nl": "fix state update error",
-                "fr": "correction d'une erreur de mise à jour",
-                "it": "correggere l'errore di aggiornamento dello stato",
-                "es": "corregir el error de actualización del estado",
-                "pl": "napraw błąd stanu aktualizacji",
-                "zh-cn": "修复状态更新错误"
-            },
-            "0.2.0": {
-                "en": "many changes add smartname option. add manual devices. many fixes",
-                "de": "Viele Änderungen fügen die Smartname-Option hinzu. Fügen Sie manuelle Geräte hinzu. viele Korrekturen",
-                "ru": "многие изменения добавляют опцию smartname. добавьте ручные устройства. многие исправления",
-                "pt": "muitas alterações adicionam a opção smartname. adicione dispositivos manuais. muitas correções",
-                "nl": "veel wijzigingen toevoegen de optie smartname. handmatige apparaten toevoegen. veel oplossingen",
-                "fr": "de nombreux changements ajoutent l'option smartname. ajouter des appareils manuels. beaucoup de corrections",
-                "it": "molte modifiche aggiungono l'opzione smartname. aggiungi dispositivi manuali. molte correzioni",
-                "es": "muchos cambios agregan la opción de nombre inteligente. agregar dispositivos manuales. muchas correcciones",
-                "pl": "wiele zmian dodaje opcję smartname. dodaj urządzenia ręczne. wiele poprawek",
-                "zh-cn": "许多更改添加了 smartname 选项。"
-            },
-            "0.1.0": {
-                "en": "many changes, add hue and sat for alexa control",
-                "de": "Viele Änderungen,  hue und sat für alexa control hinzugefügt",
-                "ru": "много изменений, добавить оттенок и сидеть для контроля alexa",
-                "pt": "muitas mudanças, adicionar matiz e sentou-se para controle alexa",
-                "nl": "veel veranderingen, tint toevoegen en sat voor alexa controle",
-                "fr": "de nombreux changements, ajouter de la teinte et assis pour le contrôle alexa",
-                "it": "molti cambiamenti, aggiungere tonalità e sab per il controllo di alexa",
-                "es": "muchos cambios, agregue matiz y sat para el control alexa",
-                "pl": "wiele zmian, dodaj hue i sat dla kontroli alexa",
-                "zh-cn": "许多变化，添加色相和坐用于 alexa 控制"
-            },
-            "0.0.3": {
-                "en": "objects not overwirte after restart",
-                "de": "Objekte werden nach neustart nicht mehr überschrieben",
-                "ru": "объекты не перезаписываются после перезагрузки",
-                "pt": "objetos não sobrescrevem após a reinicialização",
-                "nl": "objecten overschrijven niet na opnieuw opstarten",
-                "fr": "objets non écrasés après le redémarrage",
-                "it": "gli oggetti non vengono sovrascritti dopo il riavvio",
-                "es": "los objetos no se sobrescriben después de reiniciar",
-                "pl": "obiekty nie nadpisują się po restarcie",
-                "zh-cn": "重启后对象不会被覆盖"
-            }
-        },
-        "title": "Yeelight controller",
-        "titleLang": {
-            "en": "Yeelight controller",
-            "de": "Yeelight-Controller",
-            "ru": "Yeelight контроллер",
-            "pt": "Controlador Yeelight",
-            "nl": "Yeelight controller",
-            "fr": "Contrôleur Yeelight",
-            "it": "Controller Yeelight",
-            "es": "Controlador Yeelight",
-            "pl": "Sterownik Yeelight",
-            "zh-cn": "Yeelight控制器"
-        },
-        "desc": {
-            "en": "control your Yeelights",
-            "de": "steuere deine Yeelights",
-            "ru": "контролировать свои Yeelights",
-            "pt": "controle seus Yeelights",
-            "nl": "controle over je Yeelights",
-            "fr": "contrôler vos Yeelights",
-            "it": "controlla i tuoi Yeelights",
-            "es": "controla tus luces laterales",
-            "pl": "kontroluj swoje Yeelights",
-            "zh-cn": "控制你的Yeelights"
-        },
-        "authors": [
-            "<MeisterTR <meistertr.smarthome@gmail.com>"
-        ],
-        "docs": {},
-        "connectionType": "local",
-        "dataSource": "poll",
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "icon": "yeelight.png",
-        "materialize": true,
-        "enabled": true,
-        "messagebox": true,
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
-        "keywords": [
-            "xiaomi",
-            "yeelight",
-            "mihome"
-        ],
-        "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
-        "loglevel": "info",
-        "type": "lighting",
-        "plugins": {
-            "sentry": {
-                "dsn": "https://0ac9a77d2ec642de99a00e431220b2a1@sentry.iobroker.net/186"
-            }
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ]
+  "common": {
+    "name": "yeelight-2",
+    "version": "1.2.0",
+    "news": {
+      "1.2.0": {
+        "en": "Optimize unload handling and async executions\nPrevent log on unexpected types\nAdd Sentry for crash reporting",
+        "de": "Optimieren Sie das Entladehandling und asynchrone Ausführungen\nVerhindern Sie die Anmeldung bei unerwarteten Typen\nFügen Sie Sentry für Absturzberichte hinzu",
+        "ru": "Оптимизация обработки выгрузки и асинхронного выполнения\nПредотвратить вход в систему для непредвиденных типов\nДобавьте Sentry для отчетов о сбоях",
+        "pt": "Otimize o manuseio de descarregamento e execuções assíncronas\nImpedir log em tipos inesperados\nAdicionar Sentinela para relatórios de falhas",
+        "nl": "Optimaliseer de afhandeling van het lossen en asynchrone uitvoeringen\nVoorkom inloggen op onverwachte typen\nSentry toevoegen voor crashrapportage",
+        "fr": "Optimiser la gestion des déchargements et les exécutions asynchrones\nEmpêcher la connexion de types inattendus\nAjouter Sentry pour les rapports de plantage",
+        "it": "Ottimizza la gestione dello scarico e le esecuzioni asincrone\nImpedisci l'accesso a tipi imprevisti\nAggiungi Sentinella per la segnalazione degli arresti anomali",
+        "es": "Optimice el manejo de descargas y las ejecuciones asíncronas\nEvitar iniciar sesión en tipos inesperados\nAgregar Sentry para informes de fallas",
+        "pl": "Zoptymalizuj obsługę rozładunku i asynchroniczne wykonania\nZapobiegaj logowaniu się nieoczekiwanych typów\nDodaj Sentry do zgłaszania awarii",
+        "zh-cn": "优化卸载处理和异步执行\n防止登录意外类型\n添加 Sentry 以进行崩溃报告"
+      },
+      "1.1.2": {
+        "en": "Fix Joi Error",
+        "de": "Joi-Fehler beheben",
+        "ru": "Исправить ошибку Joi",
+        "pt": "Corrigir erro Joi",
+        "nl": "Fix Joi-fout",
+        "fr": "Corriger l'erreur Joi",
+        "it": "Correggi l'errore Joi",
+        "es": "Solucionar el error de Joi",
+        "pl": "Napraw błąd Joi",
+        "zh-cn": "修复 Joi 错误"
+      },
+      "1.1.1": {
+        "en": "js-controller 3.3 fixes\nfixed unhandled promise rejection causing the adapter to stop\nadapter won't set power of offline devices to off anymore",
+        "de": "js-Controller 3.3 Korrekturen\nDie Ablehnung von nicht behandelten Zusagen wurde behoben, die dazu führte, dass der Adapter stoppte\nAdapter schaltet Offline-Geräte nicht mehr aus",
+        "ru": "js-controller 3.3 исправления\nисправлено необработанное отклонение обещания, приводящее к остановке адаптера\nадаптер больше не отключает питание автономных устройств",
+        "pt": "Correções do js-controller 3.3\nrejeição de promessa não tratada corrigida, fazendo com que o adaptador parasse\no adaptador não desligará mais os dispositivos off-line",
+        "nl": "js-controller 3.3-correcties\nonverwerkte belofte afwijzing opgelost waardoor de adapter stopte\nadapter zet de stroom van offline apparaten niet meer uit",
+        "fr": "js-controller 3.3 correctifs\ncorrection du rejet de la promesse non gérée provoquant l'arrêt de l'adaptateur\nl'adaptateur ne coupe plus l'alimentation des appareils hors ligne",
+        "it": "js-controller 3.3 correzioni\nrisolto il problema del rifiuto della promessa non gestita che causava l'arresto dell'adattatore\nl'adattatore non disattiverà più l'alimentazione dei dispositivi offline",
+        "es": "js-controller 3.3 arreglos\nRechazo de promesa no manejado fijo que hace que el adaptador se detenga\nEl adaptador ya no desactivará la alimentación de los dispositivos fuera de línea",
+        "pl": "js-controller 3.3 poprawki\nnaprawiono nieobsłużone odrzucanie obietnicy powodujące zatrzymanie adaptera;\nadapter nie będzie już wyłączał zasilania urządzeń offline",
+        "zh-cn": "js 控制器 3.3 修复\n修复了未处理的承诺拒绝导致适配器停止\n适配器不会再将离线设备的电源设置为关闭"
+      },
+      "1.1.0": {
+        "en": "add release-script update testing and dependencies\nfixed data types",
+        "de": "Hinzufügen von Release-Skript-Update-Tests und -Abhängigkeiten\nfeste Datentypen",
+        "ru": "добавить тестирование обновления релиз-скрипта и зависимости\nфиксированные типы данных",
+        "pt": "adicionar teste de atualização de script de lançamento e dependências\ntipos de dados fixos",
+        "nl": "release-script update testen en afhankelijkheden toevoegen\nvaste gegevenstypen",
+        "fr": "ajouter des tests et des dépendances de mise à jour du script de publication\ntypes de données fixes",
+        "it": "aggiungi test e dipendenze per l'aggiornamento dello script di rilascio\ntipi di dati fissi",
+        "es": "agregar pruebas y dependencias de actualización del script de lanzamiento\ntipos de datos fijos",
+        "pl": "dodaj testowanie aktualizacji i zależności wersji skryptu\nstałe typy danych",
+        "zh-cn": "添加发布脚本更新测试和依赖项\n固定数据类型"
+      },
+      "1.0.4": {
+        "en": "fixed data types",
+        "de": "Datentypen korrigiert",
+        "ru": "фиксированные типы данных",
+        "pt": "tipos de dados fixos",
+        "nl": "vaste datatypes",
+        "fr": "types de données fixes",
+        "it": "tipi di dati fissi",
+        "es": "tipos de datos fijos",
+        "pl": "stałe typy danych",
+        "zh-cn": "固定数据类型"
+      },
+      "1.0.3": {
+        "en": "add Pedant",
+        "de": "Leuchte Pedant hinzugefügt",
+        "ru": "добавить педанта",
+        "pt": "adicionar pedante",
+        "nl": "voeg pedant toe",
+        "fr": "ajouter pédant",
+        "it": "aggiungi pedante",
+        "es": "agregar pedante",
+        "pl": "dodaj pedant",
+        "zh-cn": "添加学究"
+      },
+      "0.9.6": {
+        "en": "delete object and smartname bugs fixed  ",
+        "de": "Lösche Objekt und Smartname Fehler behoben",
+        "ru": "удалить объект и исправить ошибку",
+        "pt": "excluir bug de objeto e nome inteligente corrigido",
+        "nl": "verwijder object en smartname bug opgelost",
+        "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
+        "it": "eliminato bug di oggetti e smartname risolti",
+        "es": "error de eliminar objeto y nombre inteligente solucionado",
+        "pl": "usunięto błąd obiektu i nazwy smartname",
+        "zh-cn": "删除对象和智能名称错误已修复"
+      }
     },
-    "native": {
-        "devices": []
+    "title": "Yeelight controller",
+    "titleLang": {
+      "en": "Yeelight controller",
+      "de": "Yeelight-Controller",
+      "ru": "Yeelight контроллер",
+      "pt": "Controlador Yeelight",
+      "nl": "Yeelight controller",
+      "fr": "Contrôleur Yeelight",
+      "it": "Controller Yeelight",
+      "es": "Controlador Yeelight",
+      "pl": "Sterownik Yeelight",
+      "zh-cn": "Yeelight控制器"
     },
-    "objects": []
+    "desc": {
+      "en": "control your Yeelights",
+      "de": "steuere deine Yeelights",
+      "ru": "контролировать свои Yeelights",
+      "pt": "controle seus Yeelights",
+      "nl": "controle over je Yeelights",
+      "fr": "contrôler vos Yeelights",
+      "it": "controlla i tuoi Yeelights",
+      "es": "controla tus luces laterales",
+      "pl": "kontroluj swoje Yeelights",
+      "zh-cn": "控制你的Yeelights"
+    },
+    "authors": [
+      "<MeisterTR <meistertr.smarthome@gmail.com>"
+    ],
+    "docs": {},
+    "connectionType": "local",
+    "dataSource": "poll",
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "yeelight.png",
+    "materialize": true,
+    "enabled": true,
+    "messagebox": true,
+    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
+    "keywords": [
+      "xiaomi",
+      "yeelight",
+      "mihome"
+    ],
+    "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
+    "loglevel": "info",
+    "type": "lighting",
+    "plugins": {
+      "sentry": {
+        "dsn": "https://0ac9a77d2ec642de99a00e431220b2a1@sentry.iobroker.net/186"
+      }
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ]
+  },
+  "native": {
+    "devices": []
+  },
+  "objects": []
 }

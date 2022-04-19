@@ -78,10 +78,10 @@ adapter.on('message', function (obj) {
     switch (obj.command) {
         case 'discovery': {
             const deviceDiscovered = [];
-            Yeelights = new YeelightSearch();
+            Yeelights = Yeelights || new YeelightSearch();
             Yeelights.refresh();
 
-            Yeelights.on('found', light => {
+            const foundHandler = Yeelights.on('found', light => {
                 deviceDiscovered.push({
                     'model': light.model,
                     'host': light.hostname,
@@ -92,6 +92,7 @@ adapter.on('message', function (obj) {
             });
 
             discoveryTimeout = setTimeout(() => {
+                Yeelights.removeEventListener('found', foundHandler);
                 reply(deviceDiscovered);
             }, 5000);
 
@@ -111,6 +112,7 @@ adapter.on('ready', function () {
 });
 
 function uploadState(id, parameter, value, sid) {
+    if (!Yeelights) return;
     let checkHex = null;
     adapter.log.debug('SEND STATE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
@@ -228,6 +230,7 @@ function uploadState(id, parameter, value, sid) {
 }
 
 function _sendscene(id, parameter, value, sid) {
+    if (!Yeelights) return;
     adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
     const aktYeelight = Yeelights.getYeelightById(id);
@@ -439,6 +442,7 @@ function createDevice() {
 }
 
 function checkOnline() {
+    if (!Yeelights) return;
     const lights = Yeelights.yeelights;
 
     if (lights.length !== 0) {
@@ -470,6 +474,10 @@ function listener() {
     }, 60 * 1000);
 
     Yeelights.on('found', light => {
+        if (initializedLights.find(l => l.id === light.id)) {
+            adapter.log.debug('YEELIGHT FOUND (but already initialized): ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
+            return;
+        }
         initializedLights.push(light);
         adapter.log.debug('YEELIGHT FOUND: ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
         light.getValues(
@@ -499,7 +507,7 @@ function listener() {
             adapter.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
         });
 
-        light.on('notifcation', message => {
+        light.on('notification', message => {
             adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message));
             //adapter.log.debug(JSON.stringify(Yeelights))
             if (message.method === 'props' && message.params) {

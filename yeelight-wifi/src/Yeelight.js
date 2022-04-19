@@ -216,7 +216,7 @@ export default class Yeelight extends EventEmitter {
 
       if (!id) {
         this.log(`got response without id: ${resp.toString().replace(/\r\n/, '')}`);
-        this.emit('notifcation', json);
+        this.emit('notification', json);
         return;
       }
 

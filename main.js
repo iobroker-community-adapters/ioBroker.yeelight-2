@@ -66,6 +66,16 @@ adapter.on('stateChange', function (id, state) {
     }
 });
 
+function initYeelight() {
+    if (Yeelights) {
+        return;
+    }
+    Yeelights = new YeelightSearch();
+    Yeelights.on('error', err => {
+        adapter.log.error('Yeelight Error: ' + err);
+    });
+}
+
 adapter.on('message', function (obj) {
     adapter.log.debug('here is a Message' + JSON.stringify(obj));
 
@@ -78,7 +88,7 @@ adapter.on('message', function (obj) {
     switch (obj.command) {
         case 'discovery': {
             const deviceDiscovered = [];
-            Yeelights = Yeelights || new YeelightSearch();
+            initYeelight();
             Yeelights.refresh();
 
             const foundHandler = Yeelights.on('found', light => {
@@ -466,7 +476,7 @@ function checkOnline() {
 }
 
 function listener() {
-    Yeelights = new YeelightSearch();
+    initYeelight();
     ConfigDevices.forEach((element, index) => setTimeout(() => Yeelights.addInitLights(element), index * 300));
     timeOutVar = setInterval(() => {
         //Yeelights.refresh();

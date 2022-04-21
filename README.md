@@ -73,6 +73,11 @@ NOTE: Accepted on both "on" and "off" state.
 after 5 minutes.
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) register error handler for Yeelight instance
+* (Apollon77) Prevent to register too many event listeners on discovery
+
 ### 1.2.0 (2022-04-13)
 * (Apollon77) Optimize unload handling and async executions
 * (Apollon77) Prevent log on unexpected types

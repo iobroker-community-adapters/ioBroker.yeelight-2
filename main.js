@@ -608,7 +608,7 @@ async function initObj(aktYeelight, result) {
         adapter.log.debug('DEVICE FOUND IN AND CONFIG: ' + JSON.stringify(device));
 
         if (result) {
-            if (!(result[0] === '')) {
+            if (!(result[0] == '')) {
                 await addState(sid, 'set_scene', '', device);
                 switch (result[0]) {
                     case 'on':
@@ -619,18 +619,18 @@ async function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[5] === '')) {
+            if (!(result[5] == '')) {
                 await addState(sid, 'active_bright', Number(result[5]), device);
             } else {
                 await addState(sid, 'active_bright', Number(result[1]), device);
             }
-            if (!(result[4] === '')) {
+            if (!(result[4] == '')) {
                 await addState(sid, 'ct', Number(result[4]), device);
             }
-            if (!(result[2] === '')) {
+            if (!(result[2] == '')) {
                 await addState(sid, 'rgb', result[2], device);
             }
-            if (!(result[6] === '')) {
+            if (!(result[6] == '')) {
                 switch (+result[6]) {
                     case 0:
                         await addState(sid, 'moon_mode', false, device);
@@ -640,7 +640,7 @@ async function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[3] === '')) {
+            if (!(result[3] == '')) {
                 if (true) {
                     switch (+result[3]) {
                         case 1:
@@ -652,13 +652,13 @@ async function initObj(aktYeelight, result) {
                     }
                 }
             }
-            if (!(result[7] === '')) {
+            if (!(result[7] == '')) {
                 await addState(sid, 'hue', Number(result[7]), device);
             }
-            if (!(result[8] === '')) {
+            if (!(result[8] == '')) {
                 await addState(sid, 'sat', Number(result[8]), device);
             }
-            if (!(result[10] === '')) {
+            if (!(result[10] == '')) {
                 switch (result[10]) {
                     case 'on':
                         await addState(sid, 'main_power', true, device);
@@ -668,7 +668,7 @@ async function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[11] === '')) {
+            if (!(result[11] == '')) {
                 switch (result[11]) {
                     case 'on':
                         await addState(sid, 'bg_power', true, device);
@@ -678,19 +678,19 @@ async function initObj(aktYeelight, result) {
                         break;
                 }
             }
-            if (!(result[13] === '')) {
+            if (!(result[13] == '')) {
                 await addState(sid, 'bg_bright', result[13], device);
             }
-            if (!(result[14] === '')) {
+            if (!(result[14] == '')) {
                 await addState(sid, 'bg_hue', result[14], device);
             }
-            if (!(result[15] === '')) {
+            if (!(result[15] == '')) {
                 await addState(sid, 'bg_sat', result[15], device);
             }
-            if (!(result[16] === '')) {
+            if (!(result[16] == '')) {
                 await addState(sid, 'bg_rgb', result[16], device);
             }
-            if (!(result[17] === '')) {
+            if (!(result[17] == '')) {
                 await addState(sid, 'bg_ct', result[17], device);
             }
         } else {

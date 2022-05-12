@@ -198,14 +198,14 @@ function uploadState(id, parameter, value, sid) {
                 // TODO catch NAN an 1-360;
                 adapter.getState(sid + '.control.sat', function (err, state) {
                     const saturation = state.val;
-                    aktYeelight.setHSV(value.toString(), saturation.toString())
+                    aktYeelight.setHSV((value || '').toString(), (saturation || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'bg_hue':
                 adapter.getState(sid + '.control.bg_sat', function (err, state) {
                     const saturation = state.val;
-                    aktYeelight.setHSVBg(value.toString(), saturation.toString())
+                    aktYeelight.setHSVBg((value || '').toString(), (saturation || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
@@ -213,14 +213,14 @@ function uploadState(id, parameter, value, sid) {
                 // TODO catch NAN an 1-100;
                 adapter.getState(sid + '.control.hue', function (err, state) {
                     const hue = state.val;
-                    aktYeelight.setHSV(hue.toString(), value.toString())
+                    aktYeelight.setHSV((hue || '').toString(), (value || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;
             case 'bg_sat':
                 adapter.getState(sid + '.control.bg_hue', function (err, state) {
                     const hue = state.val;
-                    aktYeelight.setHSVBg(hue.toString(), value.toString())
+                    aktYeelight.setHSVBg((hue || '').toString(), (value || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 });
                 break;

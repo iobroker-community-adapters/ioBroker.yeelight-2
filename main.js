@@ -102,7 +102,7 @@ adapter.on('message', function (obj) {
             });
 
             discoveryTimeout = setTimeout(() => {
-                Yeelights.removeEventListener('found', foundHandler);
+                Yeelights && Yeelights.removeEventListener('found', foundHandler);
                 reply(deviceDiscovered);
             }, 5000);
 

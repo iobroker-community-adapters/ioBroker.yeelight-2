@@ -22,11 +22,11 @@ adapter.on('unload', function (callback) {
         clearTimeout(discoveryTimeout);
         initializedLights.forEach(light => {
             try {
-                light.disconnect()
+                light.disconnect();
             } catch (err) {
                 // ignore
             }
-        })
+        });
         adapter.log.info('cleaned everything up...');
         callback();
     } catch (e) {
@@ -102,7 +102,7 @@ adapter.on('message', function (obj) {
             });
 
             discoveryTimeout = setTimeout(() => {
-                Yeelights && Yeelights.removeEventListener('found', foundHandler);
+                Yeelights && Yeelights.removeEventListener && Yeelights.removeEventListener('found', foundHandler);
                 reply(deviceDiscovered);
             }, 5000);
 
@@ -197,6 +197,9 @@ function uploadState(id, parameter, value, sid) {
             case 'hue':
                 // TODO catch NAN an 1-360;
                 adapter.getState(sid + '.control.sat', function (err, state) {
+                    if (!state) {
+                        return;
+                    }
                     const saturation = state.val;
                     aktYeelight.setHSV((value || '').toString(), (saturation || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
@@ -204,6 +207,9 @@ function uploadState(id, parameter, value, sid) {
                 break;
             case 'bg_hue':
                 adapter.getState(sid + '.control.bg_sat', function (err, state) {
+                    if (!state) {
+                        return;
+                    }
                     const saturation = state.val;
                     aktYeelight.setHSVBg((value || '').toString(), (saturation || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
@@ -212,6 +218,9 @@ function uploadState(id, parameter, value, sid) {
             case 'sat':
                 // TODO catch NAN an 1-100;
                 adapter.getState(sid + '.control.hue', function (err, state) {
+                    if (!state) {
+                        return;
+                    }
                     const hue = state.val;
                     aktYeelight.setHSV((hue || '').toString(), (value || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
@@ -219,6 +228,9 @@ function uploadState(id, parameter, value, sid) {
                 break;
             case 'bg_sat':
                 adapter.getState(sid + '.control.bg_hue', function (err, state) {
+                    if (!state) {
+                        return;
+                    }
                     const hue = state.val;
                     aktYeelight.setHSVBg((hue || '').toString(), (value || '').toString())
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
@@ -396,6 +408,7 @@ function createDevice() {
             adapter.createChannel(device, 'control');
             adapter.createChannel(device, 'scenen');
             _createscenen(sid);
+
             adapter.setObjectNotExists(sid + '.info.com', {
                 common: {
                     name: 'Command',
@@ -406,9 +419,7 @@ function createDevice() {
                 },
                 type: 'state',
                 native: {}
-            });
-
-            adapter.setState(sid + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+            }, () => adapter.setState(sid + '.info.com', JSON.stringify(ConfigDevices[i]), true));
 
             adapter.setObjectNotExists(sid + '.info.connect', {
                 common: {
@@ -421,6 +432,7 @@ function createDevice() {
                 type: 'state',
                 native: {}
             });
+
             adapter.setObjectNotExists(sid + '.info.IPAdress', {
                 common: {
                     name: 'IP',
@@ -431,7 +443,8 @@ function createDevice() {
                 },
                 type: 'state',
                 native: {}
-            });
+            }, () => adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true));
+
             adapter.setObjectNotExists(sid + '.info.Port', {
                 common: {
                     name: 'Port',
@@ -442,10 +455,7 @@ function createDevice() {
                 },
                 type: 'state',
                 native: {}
-            });
-
-            adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true);
-            adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true);
+            }, () => adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true));
         }
         if (i === ConfigDevices.length - 1) listener();
     }

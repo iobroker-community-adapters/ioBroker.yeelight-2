@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "news": {
+      "1.2.1": {
+        "en": "register error handler for Yeelight instance\nPrevent to register too many event listeners on discovery\nSet some states after object creation\nPrevent some crash cases reported by Sentry",
+        "de": "registerfehlerhandler für Yeelight Instanz\nVerhindern Sie, zu viele Eventzuhörer auf Entdeckung zu registrieren\nEinige Zustände nach der Objekterstellung einstellen\nVerhindern Sie einige Crashfälle, die von Sentry gemeldet wurden",
+        "ru": "зарегистрировать обработку ошибок для Eelight\nПредотвратить регистрацию слишком много слушателей событий на открытии\nУстановите некоторые государства после создания объекта\nПредотвратить некоторые случаи аварии, описанные Сентри",
+        "pt": "identificador de erro de registro para a instância de Yeelight\nEvite registrar muitos ouvintes de eventos na descoberta\nDefinir alguns estados após a criação de objetos\nEvite alguns casos de acidente relatados por Sentry",
+        "nl": "vertaling:\nVertaling:\nZet wat staten na object creatie\nVertaling:",
+        "fr": "enregistreur d'erreur pour Yeelight instance\nEmpêcher d'enregistrer trop d'auditeurs d'événements sur la découverte\nDéfinir quelques états après la création d'objet\nPrévenir certains cas de crash signalés par Sentry",
+        "it": "registro di errore handler per Yeelight istanza\nPrevenire di registrare troppi ascoltatori di eventi alla scoperta\nImpostare alcuni stati dopo la creazione di oggetti\nPrevenire alcuni casi di crash segnalati da Sentry",
+        "es": "registrador de error para instancia Yeelight\nPrevenir registrar demasiados oyentes de eventos en el descubrimiento\nEstablecer algunos estados después de la creación de objetos\nPrevent some accident cases reported by Sentry",
+        "pl": "rejestrator\nPrzygotowania do rejestru zbyt wielu słuchaczy\nUstanowione stany po powstaniu obiektowym\nWynaleziono kilka przypadków katastrofy w Sentry",
+        "zh-cn": "印页\n防止发现事件的听众登记过多\n目标的设定\nSentry报告的一些事故"
+      },
       "1.2.0": {
         "en": "Optimize unload handling and async executions\nPrevent log on unexpected types\nAdd Sentry for crash reporting",
         "de": "Optimieren Sie das Entladehandling und asynchrone Ausführungen\nVerhindern Sie die Anmeldung bei unerwarteten Typen\nFügen Sie Sentry für Absturzberichte hinzu",
@@ -74,18 +86,6 @@
         "es": "agregar pedante",
         "pl": "dodaj pedant",
         "zh-cn": "添加学究"
-      },
-      "0.9.6": {
-        "en": "delete object and smartname bugs fixed  ",
-        "de": "Lösche Objekt und Smartname Fehler behoben",
-        "ru": "удалить объект и исправить ошибку",
-        "pt": "excluir bug de objeto e nome inteligente corrigido",
-        "nl": "verwijder object en smartname bug opgelost",
-        "fr": "supprimer un bug d'objet et de nom intelligent corrigé",
-        "it": "eliminato bug di oggetti e smartname risolti",
-        "es": "error de eliminar objeto y nombre inteligente solucionado",
-        "pl": "usunięto błąd obiektu i nazwy smartname",
-        "zh-cn": "删除对象和智能名称错误已修复"
       }
     },
     "title": "Yeelight controller",

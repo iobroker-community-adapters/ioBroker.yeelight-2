@@ -111,7 +111,7 @@ var Yeelight = function (_EventEmitter) {
       if (err.code == 'ECONNRESET') {
         _this.log('Connection reset on id ' + _this.id + ' ' + _this.hostname + ':' + _this.port + ' connection');
         _this.status = YeelightStatus.OFFLINE;
-        _this.socket.connect(_this.port, _this.hostname, _this.connect());
+        _this.socket.connect(_this.port, _this.hostname, () => _this.connect());
       } else if (err.code == 'ECONNREFUSED') {
         _this.status = YeelightStatus.OFFLINE;
         _this.log('Connection refused on id ' + _this.id + ' ' + _this.hostname + ':' + _this.port + ' connection');
@@ -123,7 +123,7 @@ var Yeelight = function (_EventEmitter) {
       _this.emit('error', _this.id, 'Connection ' + _this.hostname + ':' + _this.port, err);
     });
 
-    _this.socket.connect(_this.port, _this.hostname, _this.connect());
+    _this.socket.connect(_this.port, _this.hostname, () => _this.connect());
     return _this;
   }
 
@@ -143,7 +143,7 @@ var Yeelight = function (_EventEmitter) {
       }
       this.port = this.parsedUri.port;
       this.hostname = this.parsedUri.hostname;
-      this.socket.connect(this.port, this.hostname, this.connect());
+      this.socket.connect(this.port, this.hostname, () => this.connect());
     }
 
     /**
@@ -154,7 +154,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'reconnect2',
     value: function reconnect2() {
-      this.socket.connect(this.port, this.hostname, this.connect());
+      this.socket.connect(this.port, this.hostname, () => this.connect());
     }
 
     /**

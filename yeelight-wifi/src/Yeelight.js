@@ -77,7 +77,7 @@ export default class Yeelight extends EventEmitter {
       if (err.code == 'ECONNRESET') {
         this.log(`Connection reset on id ${this.id} ${this.hostname}:${this.port} connection`);
         this.status = YeelightStatus.OFFLINE;
-        !this.stopped && this.socket.connect(this.port, this.hostname, this.connect());
+        !this.stopped && this.socket.connect(this.port, this.hostname, () => this.connect());
       } else if (err.code == 'ECONNREFUSED') {
         this.status = YeelightStatus.OFFLINE;
         this.log(`Connection refused on id ${this.id} ${this.hostname}:${this.port} connection`);
@@ -89,7 +89,7 @@ export default class Yeelight extends EventEmitter {
       this.emit('error', this.id, 'Connection ' + this.hostname + ':' + this.port, err);
     });
 
-    this.socket.connect(this.port, this.hostname, this.connect());
+    this.socket.connect(this.port, this.hostname, () => this.connect());
   }
 
   /**
@@ -104,7 +104,7 @@ export default class Yeelight extends EventEmitter {
     }
     this.port = this.parsedUri.port;
     this.hostname = this.parsedUri.hostname;
-    !this.stopped && this.socket.connect(this.port, this.hostname, this.connect());
+    !this.stopped && this.socket.connect(this.port, this.hostname, () => this.connect());
   }
 
   /**
@@ -120,7 +120,7 @@ export default class Yeelight extends EventEmitter {
    *
    */
   reconnect2 () {
-    !this.stopped && this.socket.connect(this.port, this.hostname, this.connect());
+    !this.stopped && this.socket.connect(this.port, this.hostname, () => this.connect());
   }
 
   /**

@@ -45,7 +45,7 @@
     "gulp": "^4.0.2",
     "mocha": "^10.2.0",
     "eslint": "^8.39.0",
-    "@iobroker/testing": "^3.0.2"
+    "@iobroker/testing": "^4.1.0"
   },
   "main": "main.js",
   "scripts": {

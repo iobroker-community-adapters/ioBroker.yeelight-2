@@ -44,7 +44,7 @@
     "chai": "^4.3.7",
     "gulp": "^4.0.2",
     "mocha": "^10.2.0",
-    "eslint": "^8.39.0",
+    "eslint": "^8.41.0",
     "@iobroker/testing": "^4.1.0"
   },
   "main": "main.js",

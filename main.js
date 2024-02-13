@@ -521,6 +521,8 @@ function listener() {
             'bg_ct'
         ).then((resp) => {
             light['initinalid'] = 1;
+        }).catch((err) => {
+            adapter.log.error(`Exception at calling getValues() for light ${light.id}: ${err.toString()}`);
         });
 
         light.on('error', function (id, ex, err) {
@@ -719,7 +721,7 @@ async function addState(id, state, val, device) {
     let smartname = '';
 
     if (typeof device.type !== 'undefined') {
-        if (device.type === 'ceiling1' ) {
+        if (device.type === 'ceiling1') {
             ct_min = 2500;
         }
         // change ct for pedant
@@ -982,7 +984,7 @@ function setStateDevice(aktYeelight, state) {
 function dec2hex(dec) {
     const template = '#000000';
     const hexstring = dec.toString(16);
-    return  template.substring(0,7 - hexstring.length) + hexstring;
+    return template.substring(0, 7 - hexstring.length) + hexstring;
 }
 
 function hex2dec(hex) {

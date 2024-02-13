@@ -1,154 +1,161 @@
 {
-  "common": {
-    "name": "yeelight-2",
-    "version": "1.2.1",
-    "news": {
-      "1.2.1": {
-        "en": "register error handler for Yeelight instance\nPrevent to register too many event listeners on discovery\nSet some states after object creation\nPrevent some crash cases reported by Sentry",
-        "de": "registerfehlerhandler für Yeelight Instanz\nVerhindern Sie, zu viele Eventzuhörer auf Entdeckung zu registrieren\nEinige Zustände nach der Objekterstellung einstellen\nVerhindern Sie einige Crashfälle, die von Sentry gemeldet wurden",
-        "ru": "зарегистрировать обработку ошибок для Eelight\nПредотвратить регистрацию слишком много слушателей событий на открытии\nУстановите некоторые государства после создания объекта\nПредотвратить некоторые случаи аварии, описанные Сентри",
-        "pt": "identificador de erro de registro para a instância de Yeelight\nEvite registrar muitos ouvintes de eventos na descoberta\nDefinir alguns estados após a criação de objetos\nEvite alguns casos de acidente relatados por Sentry",
-        "nl": "vertaling:\nVertaling:\nZet wat staten na object creatie\nVertaling:",
-        "fr": "enregistreur d'erreur pour Yeelight instance\nEmpêcher d'enregistrer trop d'auditeurs d'événements sur la découverte\nDéfinir quelques états après la création d'objet\nPrévenir certains cas de crash signalés par Sentry",
-        "it": "registro di errore handler per Yeelight istanza\nPrevenire di registrare troppi ascoltatori di eventi alla scoperta\nImpostare alcuni stati dopo la creazione di oggetti\nPrevenire alcuni casi di crash segnalati da Sentry",
-        "es": "registrador de error para instancia Yeelight\nPrevenir registrar demasiados oyentes de eventos en el descubrimiento\nEstablecer algunos estados después de la creación de objetos\nPrevent some accident cases reported by Sentry",
-        "pl": "rejestrator\nPrzygotowania do rejestru zbyt wielu słuchaczy\nUstanowione stany po powstaniu obiektowym\nWynaleziono kilka przypadków katastrofy w Sentry",
-        "zh-cn": "印页\n防止发现事件的听众登记过多\n目标的设定\nSentry报告的一些事故"
-      },
-      "1.2.0": {
-        "en": "Optimize unload handling and async executions\nPrevent log on unexpected types\nAdd Sentry for crash reporting",
-        "de": "Optimieren Sie das Entladehandling und asynchrone Ausführungen\nVerhindern Sie die Anmeldung bei unerwarteten Typen\nFügen Sie Sentry für Absturzberichte hinzu",
-        "ru": "Оптимизация обработки выгрузки и асинхронного выполнения\nПредотвратить вход в систему для непредвиденных типов\nДобавьте Sentry для отчетов о сбоях",
-        "pt": "Otimize o manuseio de descarregamento e execuções assíncronas\nImpedir log em tipos inesperados\nAdicionar Sentinela para relatórios de falhas",
-        "nl": "Optimaliseer de afhandeling van het lossen en asynchrone uitvoeringen\nVoorkom inloggen op onverwachte typen\nSentry toevoegen voor crashrapportage",
-        "fr": "Optimiser la gestion des déchargements et les exécutions asynchrones\nEmpêcher la connexion de types inattendus\nAjouter Sentry pour les rapports de plantage",
-        "it": "Ottimizza la gestione dello scarico e le esecuzioni asincrone\nImpedisci l'accesso a tipi imprevisti\nAggiungi Sentinella per la segnalazione degli arresti anomali",
-        "es": "Optimice el manejo de descargas y las ejecuciones asíncronas\nEvitar iniciar sesión en tipos inesperados\nAgregar Sentry para informes de fallas",
-        "pl": "Zoptymalizuj obsługę rozładunku i asynchroniczne wykonania\nZapobiegaj logowaniu się nieoczekiwanych typów\nDodaj Sentry do zgłaszania awarii",
-        "zh-cn": "优化卸载处理和异步执行\n防止登录意外类型\n添加 Sentry 以进行崩溃报告"
-      },
-      "1.1.2": {
-        "en": "Fix Joi Error",
-        "de": "Joi-Fehler beheben",
-        "ru": "Исправить ошибку Joi",
-        "pt": "Corrigir erro Joi",
-        "nl": "Fix Joi-fout",
-        "fr": "Corriger l'erreur Joi",
-        "it": "Correggi l'errore Joi",
-        "es": "Solucionar el error de Joi",
-        "pl": "Napraw błąd Joi",
-        "zh-cn": "修复 Joi 错误"
-      },
-      "1.1.1": {
-        "en": "js-controller 3.3 fixes\nfixed unhandled promise rejection causing the adapter to stop\nadapter won't set power of offline devices to off anymore",
-        "de": "js-Controller 3.3 Korrekturen\nDie Ablehnung von nicht behandelten Zusagen wurde behoben, die dazu führte, dass der Adapter stoppte\nAdapter schaltet Offline-Geräte nicht mehr aus",
-        "ru": "js-controller 3.3 исправления\nисправлено необработанное отклонение обещания, приводящее к остановке адаптера\nадаптер больше не отключает питание автономных устройств",
-        "pt": "Correções do js-controller 3.3\nrejeição de promessa não tratada corrigida, fazendo com que o adaptador parasse\no adaptador não desligará mais os dispositivos off-line",
-        "nl": "js-controller 3.3-correcties\nonverwerkte belofte afwijzing opgelost waardoor de adapter stopte\nadapter zet de stroom van offline apparaten niet meer uit",
-        "fr": "js-controller 3.3 correctifs\ncorrection du rejet de la promesse non gérée provoquant l'arrêt de l'adaptateur\nl'adaptateur ne coupe plus l'alimentation des appareils hors ligne",
-        "it": "js-controller 3.3 correzioni\nrisolto il problema del rifiuto della promessa non gestita che causava l'arresto dell'adattatore\nl'adattatore non disattiverà più l'alimentazione dei dispositivi offline",
-        "es": "js-controller 3.3 arreglos\nRechazo de promesa no manejado fijo que hace que el adaptador se detenga\nEl adaptador ya no desactivará la alimentación de los dispositivos fuera de línea",
-        "pl": "js-controller 3.3 poprawki\nnaprawiono nieobsłużone odrzucanie obietnicy powodujące zatrzymanie adaptera;\nadapter nie będzie już wyłączał zasilania urządzeń offline",
-        "zh-cn": "js 控制器 3.3 修复\n修复了未处理的承诺拒绝导致适配器停止\n适配器不会再将离线设备的电源设置为关闭"
-      },
-      "1.1.0": {
-        "en": "add release-script update testing and dependencies\nfixed data types",
-        "de": "Hinzufügen von Release-Skript-Update-Tests und -Abhängigkeiten\nfeste Datentypen",
-        "ru": "добавить тестирование обновления релиз-скрипта и зависимости\nфиксированные типы данных",
-        "pt": "adicionar teste de atualização de script de lançamento e dependências\ntipos de dados fixos",
-        "nl": "release-script update testen en afhankelijkheden toevoegen\nvaste gegevenstypen",
-        "fr": "ajouter des tests et des dépendances de mise à jour du script de publication\ntypes de données fixes",
-        "it": "aggiungi test e dipendenze per l'aggiornamento dello script di rilascio\ntipi di dati fissi",
-        "es": "agregar pruebas y dependencias de actualización del script de lanzamiento\ntipos de datos fijos",
-        "pl": "dodaj testowanie aktualizacji i zależności wersji skryptu\nstałe typy danych",
-        "zh-cn": "添加发布脚本更新测试和依赖项\n固定数据类型"
-      },
-      "1.0.4": {
-        "en": "fixed data types",
-        "de": "Datentypen korrigiert",
-        "ru": "фиксированные типы данных",
-        "pt": "tipos de dados fixos",
-        "nl": "vaste datatypes",
-        "fr": "types de données fixes",
-        "it": "tipi di dati fissi",
-        "es": "tipos de datos fijos",
-        "pl": "stałe typy danych",
-        "zh-cn": "固定数据类型"
-      },
-      "1.0.3": {
-        "en": "add Pedant",
-        "de": "Leuchte Pedant hinzugefügt",
-        "ru": "добавить педанта",
-        "pt": "adicionar pedante",
-        "nl": "voeg pedant toe",
-        "fr": "ajouter pédant",
-        "it": "aggiungi pedante",
-        "es": "agregar pedante",
-        "pl": "dodaj pedant",
-        "zh-cn": "添加学究"
-      }
+    "common": {
+        "name": "yeelight-2",
+        "version": "1.2.1",
+        "news": {
+            "1.2.1": {
+                "en": "register error handler for Yeelight instance\nPrevent to register too many event listeners on discovery\nSet some states after object creation\nPrevent some crash cases reported by Sentry",
+                "de": "registerfehlerhandler für Yeelight Instanz\nVerhindern Sie, zu viele Eventzuhörer auf Entdeckung zu registrieren\nEinige Zustände nach der Objekterstellung einstellen\nVerhindern Sie einige Crashfälle, die von Sentry gemeldet wurden",
+                "ru": "зарегистрировать обработку ошибок для Eelight\nПредотвратить регистрацию слишком много слушателей событий на открытии\nУстановите некоторые государства после создания объекта\nПредотвратить некоторые случаи аварии, описанные Сентри",
+                "pt": "identificador de erro de registro para a instância de Yeelight\nEvite registrar muitos ouvintes de eventos na descoberta\nDefinir alguns estados após a criação de objetos\nEvite alguns casos de acidente relatados por Sentry",
+                "nl": "vertaling:\nVertaling:\nZet wat staten na object creatie\nVertaling:",
+                "fr": "enregistreur d'erreur pour Yeelight instance\nEmpêcher d'enregistrer trop d'auditeurs d'événements sur la découverte\nDéfinir quelques états après la création d'objet\nPrévenir certains cas de crash signalés par Sentry",
+                "it": "registro di errore handler per Yeelight istanza\nPrevenire di registrare troppi ascoltatori di eventi alla scoperta\nImpostare alcuni stati dopo la creazione di oggetti\nPrevenire alcuni casi di crash segnalati da Sentry",
+                "es": "registrador de error para instancia Yeelight\nPrevenir registrar demasiados oyentes de eventos en el descubrimiento\nEstablecer algunos estados después de la creación de objetos\nPrevent some accident cases reported by Sentry",
+                "pl": "rejestrator\nPrzygotowania do rejestru zbyt wielu słuchaczy\nUstanowione stany po powstaniu obiektowym\nWynaleziono kilka przypadków katastrofy w Sentry",
+                "zh-cn": "印页\n防止发现事件的听众登记过多\n目标的设定\nSentry报告的一些事故",
+                "uk": "зареєструвати обробник помилок для екземпляра Yeelight\nЗапобігання реєстрації занадто великої кількості слухачів подій після виявлення\nВстановіть деякі стани після створення об'єкта\nЗапобігайте деяким випадкам збоїв, про які повідомляє Sentry"
+            },
+            "1.2.0": {
+                "en": "Optimize unload handling and async executions\nPrevent log on unexpected types\nAdd Sentry for crash reporting",
+                "de": "Optimieren Sie das Entladehandling und asynchrone Ausführungen\nVerhindern Sie die Anmeldung bei unerwarteten Typen\nFügen Sie Sentry für Absturzberichte hinzu",
+                "ru": "Оптимизация обработки выгрузки и асинхронного выполнения\nПредотвратить вход в систему для непредвиденных типов\nДобавьте Sentry для отчетов о сбоях",
+                "pt": "Otimize o manuseio de descarregamento e execuções assíncronas\nImpedir log em tipos inesperados\nAdicionar Sentinela para relatórios de falhas",
+                "nl": "Optimaliseer de afhandeling van het lossen en asynchrone uitvoeringen\nVoorkom inloggen op onverwachte typen\nSentry toevoegen voor crashrapportage",
+                "fr": "Optimiser la gestion des déchargements et les exécutions asynchrones\nEmpêcher la connexion de types inattendus\nAjouter Sentry pour les rapports de plantage",
+                "it": "Ottimizza la gestione dello scarico e le esecuzioni asincrone\nImpedisci l'accesso a tipi imprevisti\nAggiungi Sentinella per la segnalazione degli arresti anomali",
+                "es": "Optimice el manejo de descargas y las ejecuciones asíncronas\nEvitar iniciar sesión en tipos inesperados\nAgregar Sentry para informes de fallas",
+                "pl": "Zoptymalizuj obsługę rozładunku i asynchroniczne wykonania\nZapobiegaj logowaniu się nieoczekiwanych typów\nDodaj Sentry do zgłaszania awarii",
+                "zh-cn": "优化卸载处理和异步执行\n防止登录意外类型\n添加 Sentry 以进行崩溃报告",
+                "uk": "Оптимізуйте обробку вивантаження та асинхронне виконання\nЗапобігання реєстрації неочікуваних типів\nДодайте Sentry для звітування про збої"
+            },
+            "1.1.2": {
+                "en": "Fix Joi Error",
+                "de": "Joi-Fehler beheben",
+                "ru": "Исправить ошибку Joi",
+                "pt": "Corrigir erro Joi",
+                "nl": "Fix Joi-fout",
+                "fr": "Corriger l'erreur Joi",
+                "it": "Correggi l'errore Joi",
+                "es": "Solucionar el error de Joi",
+                "pl": "Napraw błąd Joi",
+                "zh-cn": "修复 Joi 错误",
+                "uk": "Виправте помилку Joi"
+            },
+            "1.1.1": {
+                "en": "js-controller 3.3 fixes\nfixed unhandled promise rejection causing the adapter to stop\nadapter won't set power of offline devices to off anymore",
+                "de": "js-Controller 3.3 Korrekturen\nDie Ablehnung von nicht behandelten Zusagen wurde behoben, die dazu führte, dass der Adapter stoppte\nAdapter schaltet Offline-Geräte nicht mehr aus",
+                "ru": "js-controller 3.3 исправления\nисправлено необработанное отклонение обещания, приводящее к остановке адаптера\nадаптер больше не отключает питание автономных устройств",
+                "pt": "Correções do js-controller 3.3\nrejeição de promessa não tratada corrigida, fazendo com que o adaptador parasse\no adaptador não desligará mais os dispositivos off-line",
+                "nl": "js-controller 3.3-correcties\nonverwerkte belofte afwijzing opgelost waardoor de adapter stopte\nadapter zet de stroom van offline apparaten niet meer uit",
+                "fr": "js-controller 3.3 correctifs\ncorrection du rejet de la promesse non gérée provoquant l'arrêt de l'adaptateur\nl'adaptateur ne coupe plus l'alimentation des appareils hors ligne",
+                "it": "js-controller 3.3 correzioni\nrisolto il problema del rifiuto della promessa non gestita che causava l'arresto dell'adattatore\nl'adattatore non disattiverà più l'alimentazione dei dispositivi offline",
+                "es": "js-controller 3.3 arreglos\nRechazo de promesa no manejado fijo que hace que el adaptador se detenga\nEl adaptador ya no desactivará la alimentación de los dispositivos fuera de línea",
+                "pl": "js-controller 3.3 poprawki\nnaprawiono nieobsłużone odrzucanie obietnicy powodujące zatrzymanie adaptera;\nadapter nie będzie już wyłączał zasilania urządzeń offline",
+                "zh-cn": "js 控制器 3.3 修复\n修复了未处理的承诺拒绝导致适配器停止\n适配器不会再将离线设备的电源设置为关闭",
+                "uk": "Виправлення js-контролера 3.3\nвиправлено відхилення необробленої обіцянки, через яку адаптер зупинявся\nадаптер більше не вимикає живлення офлайн-пристроїв"
+            },
+            "1.1.0": {
+                "en": "add release-script update testing and dependencies\nfixed data types",
+                "de": "Hinzufügen von Release-Skript-Update-Tests und -Abhängigkeiten\nfeste Datentypen",
+                "ru": "добавить тестирование обновления релиз-скрипта и зависимости\nфиксированные типы данных",
+                "pt": "adicionar teste de atualização de script de lançamento e dependências\ntipos de dados fixos",
+                "nl": "release-script update testen en afhankelijkheden toevoegen\nvaste gegevenstypen",
+                "fr": "ajouter des tests et des dépendances de mise à jour du script de publication\ntypes de données fixes",
+                "it": "aggiungi test e dipendenze per l'aggiornamento dello script di rilascio\ntipi di dati fissi",
+                "es": "agregar pruebas y dependencias de actualización del script de lanzamiento\ntipos de datos fijos",
+                "pl": "dodaj testowanie aktualizacji i zależności wersji skryptu\nstałe typy danych",
+                "zh-cn": "添加发布脚本更新测试和依赖项\n固定数据类型",
+                "uk": "додати тестування оновлення сценарію випуску та залежності\nфіксовані типи даних"
+            },
+            "1.0.4": {
+                "en": "fixed data types",
+                "de": "Datentypen korrigiert",
+                "ru": "фиксированные типы данных",
+                "pt": "tipos de dados fixos",
+                "nl": "vaste datatypes",
+                "fr": "types de données fixes",
+                "it": "tipi di dati fissi",
+                "es": "tipos de datos fijos",
+                "pl": "stałe typy danych",
+                "zh-cn": "固定数据类型",
+                "uk": "фіксовані типи даних"
+            },
+            "1.0.3": {
+                "en": "add Pedant",
+                "de": "Leuchte Pedant hinzugefügt",
+                "ru": "добавить педанта",
+                "pt": "adicionar pedante",
+                "nl": "voeg pedant toe",
+                "fr": "ajouter pédant",
+                "it": "aggiungi pedante",
+                "es": "agregar pedante",
+                "pl": "dodaj pedant",
+                "zh-cn": "添加学究",
+                "uk": "додати Педант"
+            }
+        },
+        "titleLang": {
+            "en": "Yeelight controller",
+            "de": "Yelight Controller",
+            "ru": "Контроллер",
+            "pt": "Controlador de Yeelight",
+            "nl": "Yeelight controller",
+            "fr": "Contrôleur Yeelight",
+            "it": "Controller Yeelight",
+            "es": "Yeelight controlador",
+            "pl": "Kontroler Yeelight",
+            "uk": "Eelight контролер",
+            "zh-cn": "Yeelight 控制器"
+        },
+        "desc": {
+            "en": "Control your Yeelights",
+            "de": "Steuern Sie Ihre Yeelights",
+            "ru": "Контролируйте свои Йелайты",
+            "pt": "Controle seus Yeelights",
+            "nl": "Controleer uw Yeelights",
+            "fr": "Contrôlez vos Yeelights",
+            "it": "Controlla i tuoi Yeelights",
+            "es": "Controla tus Yeelights",
+            "pl": "Kontroluj swoje Yeelights",
+            "uk": "Керуйте Yeelights",
+            "zh-cn": "控制你的灯光"
+        },
+        "authors": [
+            "<MeisterTR <meistertr.smarthome@gmail.com>"
+        ],
+        "docs": {},
+        "connectionType": "local",
+        "dataSource": "poll",
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "icon": "yeelight.png",
+        "materialize": true,
+        "enabled": true,
+        "messagebox": true,
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
+        "keywords": [
+            "xiaomi",
+            "yeelight",
+            "mihome"
+        ],
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
+        "loglevel": "info",
+        "type": "lighting",
+        "plugins": {
+            "sentry": {
+                "dsn": "https://0ac9a77d2ec642de99a00e431220b2a1@sentry.iobroker.net/186"
+            }
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
     },
-    "titleLang": {
-      "en": "Yeelight controller",
-      "de": "Yelight Controller",
-      "ru": "Контроллер",
-      "pt": "Controlador de Yeelight",
-      "nl": "Yeelight controller",
-      "fr": "Contrôleur Yeelight",
-      "it": "Controller Yeelight",
-      "es": "Yeelight controlador",
-      "pl": "Kontroler Yeelight",
-      "uk": "Eelight контролер",
-      "zh-cn": "Yeelight 控制器"
+    "native": {
+        "devices": []
     },
-    "desc": {
-      "en": "Control your Yeelights",
-      "de": "Steuern Sie Ihre Yeelights",
-      "ru": "Контролируйте свои Йелайты",
-      "pt": "Controle seus Yeelights",
-      "nl": "Controleer uw Yeelights",
-      "fr": "Contrôlez vos Yeelights",
-      "it": "Controlla i tuoi Yeelights",
-      "es": "Controla tus Yeelights",
-      "pl": "Kontroluj swoje Yeelights",
-      "uk": "Керуйте Yeelights",
-      "zh-cn": "控制你的灯光"
-    },
-    "authors": [
-      "<MeisterTR <meistertr.smarthome@gmail.com>"
-    ],
-    "docs": {},
-    "connectionType": "local",
-    "dataSource": "poll",
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "icon": "yeelight.png",
-    "materialize": true,
-    "enabled": true,
-    "messagebox": true,
-    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
-    "keywords": [
-      "xiaomi",
-      "yeelight",
-      "mihome"
-    ],
-    "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
-    "loglevel": "info",
-    "type": "lighting",
-    "plugins": {
-      "sentry": {
-        "dsn": "https://0ac9a77d2ec642de99a00e431220b2a1@sentry.iobroker.net/186"
-      }
-    },
-    "dependencies": [
-      {
-        "js-controller": ">=2.0.0"
-      }
-    ]
-  },
-  "native": {
-    "devices": []
-  },
-  "objects": []
+    "objects": []
 }

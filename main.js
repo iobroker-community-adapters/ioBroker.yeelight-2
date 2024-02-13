@@ -10,7 +10,7 @@ let Yeelights;
 
 //just for test
 const JSON = require('circular-json');
-let timeOutVar;
+let timeOutInterval;
 let ConfigDevices = [];
 let ObjDevices = [];
 const initializedLights = [];
@@ -18,7 +18,7 @@ let discoveryTimeout = null;
 
 adapter.on('unload', function (callback) {
     try {
-        clearTimeout(timeOutVar);
+        clearInterval(timeOutInterval);
         clearTimeout(discoveryTimeout);
         initializedLights.forEach(light => {
             try {
@@ -488,8 +488,7 @@ function checkOnline() {
 function listener() {
     initYeelight();
     ConfigDevices.forEach((element, index) => setTimeout(() => Yeelights.addInitLights(element), index * 300));
-    timeOutVar = setInterval(() => {
-        //Yeelights.refresh();
+    timeOutInterval = setInterval(() => {
         checkOnline();
     }, 60 * 1000);
 

@@ -88,30 +88,31 @@
         "zh-cn": "添加学究"
       }
     },
-    "title": "Yeelight controller",
     "titleLang": {
       "en": "Yeelight controller",
-      "de": "Yeelight-Controller",
-      "ru": "Yeelight контроллер",
-      "pt": "Controlador Yeelight",
+      "de": "Yelight Controller",
+      "ru": "Контроллер",
+      "pt": "Controlador de Yeelight",
       "nl": "Yeelight controller",
       "fr": "Contrôleur Yeelight",
       "it": "Controller Yeelight",
-      "es": "Controlador Yeelight",
-      "pl": "Sterownik Yeelight",
-      "zh-cn": "Yeelight控制器"
+      "es": "Yeelight controlador",
+      "pl": "Kontroler Yeelight",
+      "uk": "Eelight контролер",
+      "zh-cn": "Yeelight 控制器"
     },
     "desc": {
-      "en": "control your Yeelights",
-      "de": "steuere deine Yeelights",
-      "ru": "контролировать свои Yeelights",
-      "pt": "controle seus Yeelights",
-      "nl": "controle over je Yeelights",
-      "fr": "contrôler vos Yeelights",
-      "it": "controlla i tuoi Yeelights",
-      "es": "controla tus luces laterales",
-      "pl": "kontroluj swoje Yeelights",
-      "zh-cn": "控制你的Yeelights"
+      "en": "Control your Yeelights",
+      "de": "Steuern Sie Ihre Yeelights",
+      "ru": "Контролируйте свои Йелайты",
+      "pt": "Controle seus Yeelights",
+      "nl": "Controleer uw Yeelights",
+      "fr": "Contrôlez vos Yeelights",
+      "it": "Controlla i tuoi Yeelights",
+      "es": "Controla tus Yeelights",
+      "pl": "Kontroluj swoje Yeelights",
+      "uk": "Керуйте Yeelights",
+      "zh-cn": "控制你的灯光"
     },
     "authors": [
       "<MeisterTR <meistertr.smarthome@gmail.com>"

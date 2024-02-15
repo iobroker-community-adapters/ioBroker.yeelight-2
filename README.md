@@ -77,7 +77,7 @@ after 5 minutes.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 1.3.0 (2024-02-15)
+**WORK IN PROGRESS**
 - (mcm1957) BREAKING: adapter requires node.js 18 or newer now.
 - (Black-Thunder) Crashes at startup of adapter have been fixed. [#271, #227 and #222]
 - (mcm1957) Testing has been changed to support node 18 and 20

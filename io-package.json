@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "news": {
+      "1.3.1": {
+        "en": "BREAKING: adapter requires node.js 18 or newer now.\nCrashes at startup of adapter have been fixed. [#271, #227 and #222]\nTesting has been changed to support node 18 and 20\nDependencies have been updated\nmake sure reconnects work correctly",
+        "de": "BREAKING: Adapter benötigt node.js 18 oder neuer.\nCrashes beim Start des Adapters wurden behoben. [#271, #227 und #222]\nTests wurde in auf Node 18 und 20 geändert\nAbhängigkeiten wurden aktualisiert\nReconnect Behandlung wurde korrigiert",
+        "ru": "Для адаптера требуется node.js 18 или более новый.\nКрыши при запуске адаптера были зафиксированы. [#271, #227 и #222]\nТестирование было изменено на узел 18 и 20\nЗависимость обновлена\nубедиться, что перезагрузка работает правильно",
+        "pt": "BREAKING: adaptador requer node.js 18 ou mais recente agora.\nCrashes na inicialização do adaptador foram corrigidos. [#271, #227 e #222]\nOs testes foram alterados para suportar o nó 18 e 20\nAs dependências foram atualizadas\ncertifique-se de reconectar o trabalho corretamente",
+        "nl": "BREAKING: adapter vereist node.js 18 of nieuwer nu.\nCrashes bij het opstarten van de adapter zijn opgelost. [#271, #227 en #222]\nTesten is gewijzigd om node 18 en 20 te ondersteunen\nAfhankelijkheden zijn bijgewerkt\nervoor zorgen dat opnieuw verbinden correct werkt",
+        "fr": "BREAKING: adaptateur nécessite node.js 18 ou plus récent maintenant.\nLes crashes au démarrage de l'adaptateur ont été réparées. [#271, #227 et #222]\nLes essais ont été modifiés pour soutenir les nœuds 18 et 20\nLes dépendances ont été actualisées\ns'assurer que les reconnects fonctionnent correctement",
+        "it": "BREAKING: l'adattatore richiede node.js 18 o più nuovo ora.\nGli errori all'avvio dell'adattatore sono stati fissati. [#271, #227 e #222]\nI test sono stati modificati per supportare il nodo 18 e 20\nLe dipendenze sono state aggiornate\nassicurarsi che le connessioni funzionino correttamente",
+        "es": "BREAKING: adaptador requiere node.js 18 o más nuevo ahora.\nLos grilletes al inicio del adaptador han sido fijos. [#271, #227 y #222]\nLos exámenes se han modificado para apoyar los nodos 18 y 20\nSe han actualizado las dependencias\nasegúrese de que las reconexiones funcionan correctamente",
+        "pl": "BREAKING: adapter wymaga node.js 18 lub nowsze teraz.\nUszkodzenia przy starcie adaptera zostały naprawione. [# 271, # 227 i # 222]\nTesty zostały zmienione, aby wspierać węzeł 18 i 20\nZaktualizowano zależności\nupewnić się, że ponowne połączenie działa prawidłowo",
+        "uk": "BREAKING: адаптер вимагає node.js 18 або новіший зараз.\nВиправлено краше при запуску адаптера. [#271, #227 та #222]\nТестування було змінено для підтримки вузла 18 та 20\nЗалежність було оновлено\nпереконайтеся, що відключення працюють правильно",
+        "zh-cn": "适配器需要节点 js 18或现在更新.\n适配器启动时的崩溃已被固定 。 [#271,#227和#222] (中文(简体) )\n测试已更改为支持节点18和20\n依赖关系已更新\n确保正确重新连接工作"
+      },
       "1.2.1": {
         "en": "register error handler for Yeelight instance\nPrevent to register too many event listeners on discovery\nSet some states after object creation\nPrevent some crash cases reported by Sentry",
         "de": "registerfehlerhandler für Yeelight Instanz\nVerhindern Sie, zu viele Eventzuhörer auf Entdeckung zu registrieren\nEinige Zustände nach der Objekterstellung einstellen\nVerhindern Sie einige Crashfälle, die von Sentry gemeldet wurden",

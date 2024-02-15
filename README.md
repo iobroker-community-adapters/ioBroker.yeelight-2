@@ -77,13 +77,12 @@ after 5 minutes.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-**WORK IN PROGRESS**
+###WORK IN PROGRESS###
 - (mcm1957) BREAKING: adapter requires node.js 18 or newer now.
 - (Black-Thunder) Crashes at startup of adapter have been fixed. [#271, #227 and #222]
 - (mcm1957) Testing has been changed to support node 18 and 20
 - (mcm1957) Dependencies have been updated
-
-* (Apollon77) make sure reconnects work correctly
+- (Apollon77) make sure reconnects work correctly
 
 ### 1.2.1 (2022-06-16)
 * (Apollon77) register error handler for Yeelight instance

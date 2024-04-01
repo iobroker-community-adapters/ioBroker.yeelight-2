@@ -50,7 +50,7 @@
     "chai": "^4.4.1",
     "eslint": "^8.57.0",
     "gulp": "^4.0.2",
-    "mocha": "^10.3.0"
+    "mocha": "^10.4.0"
   },
   "main": "main.js",
   "scripts": {

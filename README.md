@@ -77,6 +77,10 @@ after 5 minutes.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (mcm1957) Adapter requires node.js >= 18 and js-controller >= 5 now
+* (mcm1957) Dependencies have been updated
+
 ### 1.3.1 (2024-02-15)
 - (mcm1957) BREAKING: adapter requires node.js 18 or newer now.
 - (Black-Thunder) Crashes at startup of adapter have been fixed. [#271, #227 and #222]

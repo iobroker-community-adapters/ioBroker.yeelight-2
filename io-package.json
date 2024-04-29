@@ -127,7 +127,10 @@
     "docs": {},
     "connectionType": "local",
     "dataSource": "poll",
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "icon": "yeelight.png",
@@ -142,6 +145,7 @@
     ],
     "readme": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/blob/master/README.md",
     "loglevel": "info",
+    "tier": 2,
     "type": "lighting",
     "plugins": {
       "sentry": {
@@ -150,7 +154,12 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=2.0.0"
+        "js-controller": ">=5.0.19"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=6.13.16"
       }
     ]
   },

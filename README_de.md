@@ -16,7 +16,7 @@ Dieser Adapter steuert Yeelight Lampen. Statusänderungen durch die App werden d
 
 ## Installation
 
-Bei vielen Lampem muss über die Yeelight App die "LAN-Steuerung" aktiviert werden, bevor sie gefunden und gesteuert werden können.
+Bei vielen Lampen muss über die Yeelight App die "LAN-Steuerung" aktiviert werden, bevor sie gefunden und gesteuert werden können.
 
 ![](admin/lan.jpg)
 

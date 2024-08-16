@@ -14,7 +14,7 @@
 
 [Deutsche Beschreibung hier](README_de.md)
 
-This adapter controls your Yeelight device over your local network.
+This adapter controls your Yeelight devices over your local network.
 
 ## Installation
 

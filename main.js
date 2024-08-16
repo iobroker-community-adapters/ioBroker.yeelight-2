@@ -8,6 +8,7 @@ const scenen = require(__dirname + '/lib/scenen');
 const YeelightSearch = require(__dirname + '/yeelight-wifi/build/index');
 
 let Yeelights;
+let gthis = null; // global to 'this' of Yeelight2 main instance
 
 //just for test
 const JSON = require('circular-json');
@@ -32,6 +33,7 @@ class Yeelight2 extends utils.Adapter {
         this.on('objectChange', this.onObjectChange.bind(this));
         this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
+        gthis = this;
     }
 
     /**
@@ -115,12 +117,12 @@ class Yeelight2 extends utils.Adapter {
      * @param {ioBroker.Message} obj
     */
     onMessage(obj) {
-        this.log.debug('here is a Message' + JSON.stringify(obj));
+        this.log.debug('here is a Message: ' + JSON.stringify(obj));
 
         if (!obj) return;
 
         function reply(result) {
-            this.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
+            gthis.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
         }
 
         switch (obj.command) {
@@ -328,20 +330,20 @@ class Yeelight2 extends utils.Adapter {
             } else {
                 ObjDevices = list;
 
-                this.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDevices));
+                gthis.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDevices));
 
                 const count = Object.keys(ObjDevices).length;
-                this.log.debug('DEVICES IN OBJECTS FOUND: ' + count);
+                gthis.log.debug('DEVICES IN OBJECTS FOUND: ' + count);
                 //check every device
                 for (let j = 0; j < count; j++) {
                     const element = Object.keys(ObjDevices)[j];
-                    this.log.debug('OBJ_ELEMENT: ' + element);
+                    gthis.log.debug('OBJ_ELEMENT: ' + element);
 
                     const oldConfig = await getastate(element);
                     await ifinConfig(element, oldConfig);
                 }
 
-                this.subscribeStates('*');
+                gthis.subscribeStates('*');
                 callback && callback();
             }
         });
@@ -372,7 +374,7 @@ class Yeelight2 extends utils.Adapter {
                         await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                     }
                     if (ConfigDevices[i].port !== oldConfig.port) {
-                        await this.setStateAsync(element + '.info.Port', ConfigDevices[i].port, true);
+                        await this.setStateAsync(element + '.info.Port', parseInt(ConfigDevices[i].port), true);
                         await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                     }
                     if (ConfigDevices[i].smart_name !== oldConfig.smart_name) {
@@ -423,33 +425,62 @@ class Yeelight2 extends utils.Adapter {
         }
     }
 
-    createDevice() {
+    createDevices() {
 
         if (typeof ConfigDevices === 'undefined') return;
 
         for (let i = 0; i < ConfigDevices.length; i++) {
 
-            const sid = this.namespace + '.' + ConfigDevices[i].name;
-            const device = ConfigDevices[i].name;
+            const deviceSId = gthis.namespace + '.' + ConfigDevices[i].name;
+            const deviceName = ConfigDevices[i].name;
+            const deviceType = ConfigDevices[i].type;
 
-            //this.log.debug("Create Device: " + sid);
-            //this.log.debug("onj Device: " + ObjDevices[sid]);
+            if (!ObjDevices[deviceSId]) {
+                gthis.log.debug('CREATE DEVICE: ' + deviceSId);
 
-            if (!ObjDevices[sid]) {
-                this.log.debug('CREATE DEVICE: ' + sid);
-                this.createDevice(device, {
-                    name: ConfigDevices[i].type,
-                    icon: '/icons/' + ConfigDevices[i].type + '.png',
-                }, {
-                    sid: ConfigDevices[i].name,
-                    type: ConfigDevices[i].type
-                });
-                this.createChannel(device, 'info');
-                this.createChannel(device, 'control');
-                this.createChannel(device, 'scenen');
-                this._createscenen(sid);
+                const deviceObj = {
+                    type: 'device',
+                    common: {
+                        name: deviceType,
+                        icon: `/icons/${deviceType}.png`,
+                    },
+                    native: {
+                        sid: deviceName,
+                        type: deviceType
+                    }
+                };
+                gthis.extendObject(deviceName, deviceObj);
 
-                this.setObjectNotExists(sid + '.info.com', {
+                const deviceInfoObj = {
+                    type: 'channel',
+                    common: {
+                        name: 'info'
+                    },
+                    native: {}
+                };
+                gthis.extendObject(`${deviceName}.info`, deviceInfoObj);
+
+                const deviceControlObj = {
+                    type: 'channel',
+                    common: {
+                        name: 'control'
+                    },
+                    native: {}
+                };
+                gthis.extendObject(`${deviceName}.control`, deviceControlObj);
+
+                const devicesScenesObj = {
+                    type: 'channel',
+                    common: {
+                        name: 'scenen'
+                    },
+                    native: {}
+                };
+                gthis.extendObject(`${deviceName}.scenen`, devicesScenesObj);
+
+                gthis._createscenen(deviceSId);
+
+                gthis.setObjectNotExists(deviceSId + '.info.com', {
                     common: {
                         name: 'Command',
                         role: 'state',
@@ -459,9 +490,9 @@ class Yeelight2 extends utils.Adapter {
                     },
                     type: 'state',
                     native: {}
-                }, () => this.setState(sid + '.info.com', JSON.stringify(ConfigDevices[i]), true));
+                }, () => gthis.setState(deviceSId + '.info.com', JSON.stringify(ConfigDevices[i]), true));
 
-                this.setObjectNotExists(sid + '.info.connect', {
+                gthis.setObjectNotExists(deviceSId + '.info.connect', {
                     common: {
                         name: 'Connect',
                         role: 'indicator.connected',
@@ -473,7 +504,7 @@ class Yeelight2 extends utils.Adapter {
                     native: {}
                 });
 
-                this.setObjectNotExists(sid + '.info.IPAdress', {
+                gthis.setObjectNotExists(deviceSId + '.info.IPAdress', {
                     common: {
                         name: 'IP',
                         role: 'state',
@@ -483,9 +514,9 @@ class Yeelight2 extends utils.Adapter {
                     },
                     type: 'state',
                     native: {}
-                }, () => this.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true));
+                }, () => gthis.setState(deviceSId + '.info.IPAdress', ConfigDevices[i].ip, true));
 
-                this.setObjectNotExists(sid + '.info.Port', {
+                gthis.setObjectNotExists(deviceSId + '.info.Port', {
                     common: {
                         name: 'Port',
                         role: 'state',
@@ -495,9 +526,9 @@ class Yeelight2 extends utils.Adapter {
                     },
                     type: 'state',
                     native: {}
-                }, () => this.setState(sid + '.info.Port', ConfigDevices[i].port, true));
+                }, () => gthis.setState(deviceSId + '.info.Port', parseInt(ConfigDevices[i].port), true));
             }
-            if (i === ConfigDevices.length - 1) this.listener();
+            if (i === ConfigDevices.length - 1) gthis.listener();
         }
     }
 
@@ -643,7 +674,7 @@ class Yeelight2 extends utils.Adapter {
     }
 
     main() {
-        this.checkChanges(this.createDevice);
+        this.checkChanges(this.createDevices);
         this.subscribeStates('*');
     }
 

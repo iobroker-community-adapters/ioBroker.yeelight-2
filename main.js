@@ -349,12 +349,12 @@ class Yeelight2 extends utils.Adapter {
         });
 
         async function getastate(element) {
-            const state = await this.getStateAsync(element + '.info.com');
-            this.log.debug('OLD CONF. FROM OBJ: ' + (state && state.val));
+            const state = await gthis.getStateAsync(element + '.info.com');
+            gthis.log.debug('OLD CONF. FROM OBJ: ' + (state && state.val));
             try {
                 return JSON.parse(state.val);
             } catch (err) {
-                this.log.error(`Could not parse ${element + '.info.com'}: ${err.message}`);
+                gthis.log.error(`Could not parse ${element + '.info.com'}: ${err.message}`);
                 return '';
             }
         }
@@ -368,18 +368,18 @@ class Yeelight2 extends utils.Adapter {
             for (let i = 0; i < ConfigDevices.length; i++) {
                 if (ConfigDevices[i].name == sid && ConfigDevices[i].type == type) {
                     isThere = true;
-                    this.log.debug('SMARTNAME: ' + ConfigDevices[i].smart_name);
+                    gthis.log.debug('SMARTNAME: ' + ConfigDevices[i].smart_name);
                     if (ConfigDevices[i].ip !== oldConfig.ip) {
-                        await this.setStateAsync(element + '.info.IPAdress', ConfigDevices[i].ip, true);
-                        await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                        await gthis.setStateAsync(element + '.info.IPAdress', ConfigDevices[i].ip, true);
+                        await gthis.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                     }
                     if (ConfigDevices[i].port !== oldConfig.port) {
-                        await this.setStateAsync(element + '.info.Port', parseInt(ConfigDevices[i].port), true);
-                        await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                        await gthis.setStateAsync(element + '.info.Port', parseInt(ConfigDevices[i].port), true);
+                        await gthis.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                     }
                     if (ConfigDevices[i].smart_name !== oldConfig.smart_name) {
                         await changeSmartName(element, ConfigDevices[i].smart_name);
-                        await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                        await gthis.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                     }
 
                 }
@@ -387,7 +387,7 @@ class Yeelight2 extends utils.Adapter {
                 if (i === ConfigDevices.length - 1 && isThere === false) {
                     await delDev(element.split('.')[2]);
 
-                    this.log.debug('object: ' + ObjDevices[element]._id + ' deleted');
+                    gthis.log.debug('object: ' + ObjDevices[element]._id + ' deleted');
                 }
             }
         }
@@ -395,11 +395,11 @@ class Yeelight2 extends utils.Adapter {
         async function changeSmartName(element, newSm) {
             const Names = ['power', 'ct', 'active_bright', 'hue', 'sat'];
             try {
-                const list = await this.getForeignObjectsAsync(element + '.*');
+                const list = await gthis.getForeignObjectsAsync(element + '.*');
 
                 for (let i = 0; i < Names.length; i++) {
                     if (typeof (list[element + '.control.' + Names[i]]) !== 'undefined') {
-                        await this.extendObjectAsync(element + '.control.' + Names[i], {
+                        await gthis.extendObjectAsync(element + '.control.' + Names[i], {
                             common: {
                                 smartName: {
                                     de: newSm
@@ -412,15 +412,15 @@ class Yeelight2 extends utils.Adapter {
                 // ignore
             }
 
-            this.log.debug('changed ' + Names.length + ' smartname to : ' + newSm);
+            gthis.log.debug('changed ' + Names.length + ' smartname to : ' + newSm);
         }
 
         async function delDev(id) {
-            this.log.warn('DEL: ' + id);
+            gthis.log.warn('DEL: ' + id);
             try {
-                await this.deleteDevice(id);
+                await gthis.deleteDevice(id);
             } catch (err) {
-                this.log.warn(err.message);
+                gthis.log.warn(err.message);
             }
         }
     }
@@ -435,99 +435,101 @@ class Yeelight2 extends utils.Adapter {
             const deviceName = ConfigDevices[i].name;
             const deviceType = ConfigDevices[i].type;
 
-            if (!ObjDevices[deviceSId]) {
-                gthis.log.debug('CREATE DEVICE: ' + deviceSId);
+            gthis.log.debug('CREATE DEVICE: ' + deviceSId);
 
-                const deviceObj = {
-                    type: 'device',
-                    common: {
-                        name: deviceType,
-                        icon: `/icons/${deviceType}.png`,
+            const deviceObj = {
+                type: 'device',
+                common: {
+                    statusStates: {
+                        onlineId: deviceSId + '.info.connect'
                     },
-                    native: {
-                        sid: deviceName,
-                        type: deviceType
-                    }
-                };
-                gthis.extendObject(deviceName, deviceObj);
+                    name: deviceType,
+                    icon: `/icons/${deviceType}.png`,
+                },
+                native: {
+                    sid: deviceName,
+                    type: deviceType
+                }
+            };
+            gthis.extendObject(deviceName, deviceObj);
 
-                const deviceInfoObj = {
-                    type: 'channel',
-                    common: {
-                        name: 'info'
-                    },
-                    native: {}
-                };
-                gthis.extendObject(`${deviceName}.info`, deviceInfoObj);
+            const deviceInfoObj = {
+                type: 'channel',
+                common: {
+                    name: 'info'
+                },
+                native: {}
+            };
+            gthis.setObjectNotExists(`${deviceName}.info`, deviceInfoObj);
 
-                const deviceControlObj = {
-                    type: 'channel',
-                    common: {
-                        name: 'control'
-                    },
-                    native: {}
-                };
-                gthis.extendObject(`${deviceName}.control`, deviceControlObj);
+            const deviceControlObj = {
+                type: 'channel',
+                common: {
+                    name: 'control'
+                },
+                native: {}
+            };
+            gthis.setObjectNotExists(`${deviceName}.control`, deviceControlObj);
 
-                const devicesScenesObj = {
-                    type: 'channel',
-                    common: {
-                        name: 'scenen'
-                    },
-                    native: {}
-                };
-                gthis.extendObject(`${deviceName}.scenen`, devicesScenesObj);
+            const devicesScenesObj = {
+                type: 'channel',
+                common: {
+                    name: 'scenen'
+                },
+                native: {}
+            };
+            gthis.extendObject(`${deviceName}.scenen`, devicesScenesObj);
 
-                gthis._createscenen(deviceSId);
+            gthis._createscenen(deviceSId);
 
-                gthis.setObjectNotExists(deviceSId + '.info.com', {
-                    common: {
-                        name: 'Command',
-                        role: 'state',
-                        write: false,
-                        read: true,
-                        type: 'string'
-                    },
-                    type: 'state',
-                    native: {}
-                }, () => gthis.setState(deviceSId + '.info.com', JSON.stringify(ConfigDevices[i]), true));
+            gthis.setObjectNotExists(deviceSId + '.info.com', {
+                common: {
+                    name: 'Command',
+                    role: 'state',
+                    write: false,
+                    read: true,
+                    type: 'string'
+                },
+                type: 'state',
+                native: {}
+            }, () => gthis.setStateChanged(deviceSId + '.info.com', JSON.stringify(ConfigDevices[i]), true));
 
-                gthis.setObjectNotExists(deviceSId + '.info.connect', {
-                    common: {
-                        name: 'Connect',
-                        role: 'indicator.connected',
-                        write: false,
-                        read: true,
-                        type: 'boolean'
-                    },
-                    type: 'state',
-                    native: {}
-                });
+            gthis.setObjectNotExists(deviceSId + '.info.connect', {
+                common: {
+                    name: 'Connect',
+                    role: 'indicator.connected',
+                    write: false,
+                    read: true,
+                    type: 'boolean'
+                },
+                type: 'state',
+                native: {}
+            });
 
-                gthis.setObjectNotExists(deviceSId + '.info.IPAdress', {
-                    common: {
-                        name: 'IP',
-                        role: 'state',
-                        write: false,
-                        read: true,
-                        type: 'string'
-                    },
-                    type: 'state',
-                    native: {}
-                }, () => gthis.setState(deviceSId + '.info.IPAdress', ConfigDevices[i].ip, true));
+            gthis.setObjectNotExists(deviceSId + '.info.IPAdress', {
+                common: {
+                    name: 'IP',
+                    role: 'state',
+                    write: false,
+                    read: true,
+                    type: 'string'
+                },
+                type: 'state',
+                native: {}
+            }, () => gthis.setStateChanged(deviceSId + '.info.IPAdress', ConfigDevices[i].ip, true));
 
-                gthis.setObjectNotExists(deviceSId + '.info.Port', {
-                    common: {
-                        name: 'Port',
-                        role: 'state',
-                        write: false,
-                        read: true,
-                        type: 'number'
-                    },
-                    type: 'state',
-                    native: {}
-                }, () => gthis.setState(deviceSId + '.info.Port', parseInt(ConfigDevices[i].port), true));
-            }
+            gthis.setObjectNotExists(deviceSId + '.info.Port', {
+                common: {
+                    name: 'Port',
+                    role: 'state',
+                    write: false,
+                    read: true,
+                    type: 'number'
+                },
+                type: 'state',
+                native: {}
+            }, () => gthis.setStateChanged(deviceSId + '.info.Port', parseInt(ConfigDevices[i].port), true));
+
             if (i === ConfigDevices.length - 1) gthis.listener();
         }
     }

@@ -161,7 +161,7 @@ class Yeelight2 extends utils.Adapter {
         }
         Yeelights = new YeelightSearch();
         Yeelights.on('error', err => {
-            this.log.error('Yeelight Error: ' + err);
+            gthis.log.error('Yeelight Error: ' + err);
         });
     }
 
@@ -598,29 +598,29 @@ class Yeelight2 extends utils.Adapter {
             });
 
             light.on('error', function (id, ex, err) {
-                this.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
+                gthis.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
             });
 
             light.on('notification', message => {
-                this.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message));
-                //this.log.debug(JSON.stringify(Yeelights))
+                gthis.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message));
+                //gthis.log.debug(JSON.stringify(Yeelights))
                 if (message.method === 'props' && message.params) {
 
-                    this.setStateDevice(light, message.params);
+                    gthis.setStateDevice(light, message.params);
                 }
 
             });
 
             light.on('response', (id, result) => {
-                this.log.debug('RESPONSE MESSAGE: from: ' + light.getId() + ', id: ' + id + ', result:[' + result + ']}');
-                //this.log.debug(JSON.stringify(light))
+                gthis.log.debug('RESPONSE MESSAGE: from: ' + light.getId() + ', id: ' + id + ', result:[' + result + ']}');
+                //gthis.log.debug(JSON.stringify(light))
                 if (result && result[0] !== 'ok') {
 
                     if (id === light.initinalid) {
-                        this.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
-                        this.initObj(light, result);
+                        gthis.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
+                        gthis.initObj(light, result);
                     } else {
-                        this.setResponse(light, result);
+                        gthis.setResponse(light, result);
                     }
                 }
             });

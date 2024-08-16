@@ -134,7 +134,9 @@
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "icon": "yeelight.png",
-    "materialize": true,
+		"adminUI": {
+			"config": "materialize"
+		},
     "enabled": true,
     "messagebox": true,
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",
@@ -147,6 +149,7 @@
     "loglevel": "info",
     "tier": 2,
     "type": "lighting",
+    "compact": true,
     "plugins": {
       "sentry": {
         "dsn": "https://0ac9a77d2ec642de99a00e431220b2a1@sentry.iobroker.net/186"

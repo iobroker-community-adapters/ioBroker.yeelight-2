@@ -16,55 +16,142 @@ let ObjDevices = [];
 const initializedLights = [];
 let discoveryTimeout = null;
 
-adapter.on('unload', function (callback) {
-    try {
-        clearInterval(timeOutInterval);
-        clearTimeout(discoveryTimeout);
-        initializedLights.forEach(light => {
-            try {
-                light.disconnect();
-            } catch (err) {
-                // ignore
-            }
+class Yeelight2 extends utils.Adapter {
+
+    /**
+     * @param {Partial<utils.AdapterOptions>} [options={}]
+     */
+    constructor(options) {
+        super({
+            ...options,
+            name: 'yeelight-2',
         });
-        adapter.log.info('cleaned everything up...');
-        callback();
-    } catch (e) {
-        callback();
+        this.on('ready', this.onReady.bind(this));
+        this.on('stateChange', this.onStateChange.bind(this));
+        this.on('objectChange', this.onObjectChange.bind(this));
+        this.on('message', this.onMessage.bind(this));
+        this.on('unload', this.onUnload.bind(this));
     }
-});
 
-// is called if a subscribed object changes
-adapter.on('objectChange', function (id, obj) {
-    // Warning, obj can be null if it was deleted
-    adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
-});
+    /**
+     * Is called when databases are connected and adapter received configuration.
+     */
+    async onReady() {
+        main();
+        adapter.log.debug('DEVICES IN CONFIG: ' + JSON.stringify(adapter.config.devices));
+        ConfigDevices = adapter.config.devices;
+    }
 
-adapter.on('stateChange', function (id, state) {
-    if (state && !state.ack) {
-        const changeState = id.split('.');
-        const sid = adapter.namespace + '.' + changeState[2];
-
-        // search id in config
-        const findlight = ConfigDevices.find(device => device.name === changeState[2]);
-
-        if (findlight) {
-            if (changeState[3] !== 'info' && changeState[3] !== 'scenen') {
-                if (!state.ack) {
-                    uploadState(findlight.id, changeState[4], state.val, sid);
-
+    /**
+     * Is called when adapter shuts down - callback has to be called under any circumstances!
+     * @param {() => void} callback
+     */
+    onUnload(callback) {
+        try {
+            clearInterval(timeOutInterval);
+            clearTimeout(discoveryTimeout);
+            initializedLights.forEach(light => {
+                try {
+                    light.disconnect();
+                } catch (err) {
+                    // ignore
                 }
-            } else if (changeState[3] === 'scenen') {
-                if (!state.ack) {
-                    _sendscene(findlight.id, changeState[4], state.val, sid);
-
-                }
-            }
-        } else {
-            adapter.log.error('LIGHT: ' + changeState[2] + ' NOT FOUND IN CONFIG!');
+            });
+            adapter.log.info('cleaned everything up...');
+            callback();
+        } catch (e) {
+            callback();
         }
     }
-});
+
+    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
+    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
+    /**
+     * Is called if a subscribed object changes
+     * @param {string} id
+     * @param {ioBroker.Object | null | undefined} obj
+     */
+    onObjectChange(id, obj) {
+        // Warning, obj can be null if it was deleted
+        adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
+    }
+
+    /**
+     * Is called if a subscribed state changes
+     * @param {string} id
+     * @param {ioBroker.State | null | undefined} state
+     */
+    onStateChange(id, state) {
+        if (state && !state.ack) {
+            const changeState = id.split('.');
+            const sid = adapter.namespace + '.' + changeState[2];
+
+            // search id in config
+            const findlight = ConfigDevices.find(device => device.name === changeState[2]);
+
+            if (findlight) {
+                if (changeState[3] !== 'info' && changeState[3] !== 'scenen') {
+                    if (!state.ack) {
+                        uploadState(findlight.id, changeState[4], state.val, sid);
+
+                    }
+                } else if (changeState[3] === 'scenen') {
+                    if (!state.ack) {
+                        _sendscene(findlight.id, changeState[4], state.val);
+
+                    }
+                }
+            } else {
+                adapter.log.error('LIGHT: ' + changeState[2] + ' NOT FOUND IN CONFIG!');
+            }
+        }
+    }
+
+    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
+    /**
+     * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
+     * Using this method requires "common.messagebox" property to be set to true in io-package.json
+     * @param {ioBroker.Message} obj
+    */
+    onMessage(obj) {
+        adapter.log.debug('here is a Message' + JSON.stringify(obj));
+
+        if (!obj) return;
+
+        function reply(result) {
+            adapter.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
+        }
+
+        switch (obj.command) {
+            case 'discovery': {
+                const deviceDiscovered = [];
+                initYeelight();
+                Yeelights.refresh();
+
+                const foundHandler = Yeelights.on('found', light => {
+                    deviceDiscovered.push({
+                        'model': light.model,
+                        'host': light.hostname,
+                        'port': light.port,
+                        'id': light.getId()
+                    });
+                    adapter.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
+                });
+
+                discoveryTimeout = setTimeout(() => {
+                    Yeelights && Yeelights.removeEventListener && Yeelights.removeEventListener('found', foundHandler);
+                    reply(deviceDiscovered);
+                }, 5000);
+
+                return true;
+            }
+            default:
+                adapter.log.debug('Unknown command: ' + obj.command);
+                break;
+        }
+    }
+
+}
 
 function initYeelight() {
     if (Yeelights) {
@@ -75,51 +162,6 @@ function initYeelight() {
         adapter.log.error('Yeelight Error: ' + err);
     });
 }
-
-adapter.on('message', function (obj) {
-    adapter.log.debug('here is a Message' + JSON.stringify(obj));
-
-    if (!obj) return;
-
-    function reply(result) {
-        adapter.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
-    }
-
-    switch (obj.command) {
-        case 'discovery': {
-            const deviceDiscovered = [];
-            initYeelight();
-            Yeelights.refresh();
-
-            const foundHandler = Yeelights.on('found', light => {
-                deviceDiscovered.push({
-                    'model': light.model,
-                    'host': light.hostname,
-                    'port': light.port,
-                    'id': light.getId()
-                });
-                adapter.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
-            });
-
-            discoveryTimeout = setTimeout(() => {
-                Yeelights && Yeelights.removeEventListener && Yeelights.removeEventListener('found', foundHandler);
-                reply(deviceDiscovered);
-            }, 5000);
-
-            return true;
-        }
-        default:
-            adapter.log.debug('Unknown command: ' + obj.command);
-            break;
-    }
-});
-
-
-adapter.on('ready', function () {
-    main();
-    adapter.log.debug('DEVICES IN CONFIG: ' + JSON.stringify(adapter.config.devices));
-    ConfigDevices = adapter.config.devices;
-});
 
 function uploadState(id, parameter, value, sid) {
     if (!Yeelights) return;
@@ -251,7 +293,7 @@ function uploadState(id, parameter, value, sid) {
     }
 }
 
-function _sendscene(id, parameter, value, sid) {
+function _sendscene(id, parameter, value) {
     if (!Yeelights) return;
     adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
@@ -295,8 +337,6 @@ function checkChanges(callback) {
                 const element = Object.keys(ObjDevices)[j];
                 adapter.log.debug('OBJ_ELEMENT: ' + element);
 
-                const sid = ObjDevices[element].native.sid;
-                const type = ObjDevices[element].native.type;
                 const oldConfig = await getastate(element);
                 await ifinConfig(element, oldConfig);
             }
@@ -518,7 +558,7 @@ function listener() {
             'bg_sat',
             'bg_rgb',
             'bg_ct'
-        ).then((resp) => {
+        ).then(() => {
             light['initinalid'] = 1;
         }).catch((err) => {
             adapter.log.error(`Exception at calling getValues() for light ${light.id}: ${err.toString()}`);
@@ -652,15 +692,13 @@ async function initObj(aktYeelight, result) {
                 }
             }
             if (!(result[3] == '')) {
-                if (true) {
-                    switch (+result[3]) {
-                        case 1:
-                            await addState(sid, 'color_mode', true, device);
-                            break;
-                        case 2:
-                            await addState(sid, 'color_mode', false, device);
-                            break;
-                    }
+                switch (+result[3]) {
+                    case 1:
+                        await addState(sid, 'color_mode', true, device);
+                        break;
+                    case 2:
+                        await addState(sid, 'color_mode', false, device);
+                        break;
                 }
             }
             if (!(result[7] == '')) {
@@ -986,92 +1024,17 @@ function dec2hex(dec) {
     return template.substring(0, 7 - hexstring.length) + hexstring;
 }
 
-function hex2dec(hex) {
-    return parseInt(hex.substring(1), 16);
-}
-
-/**
- * Converts an HSL color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes h, s, and l are contained in the set [0, 1] and
- * returns r, g, and b in the set [0, 255].
- *
- * @param   {number}  h       The hue
- * @param   {number}  s       The saturation
- * @param   {number}  l       The lightness
- * @return  {Array}           The RGB representation
- */
-function hslToRgb(h, s, l) {
-    let r, g, b;
-
-    if (s == 0) {
-        r = g = b = l; // achromatic
-    } else {
-        const hue2rgb = function hue2rgb(p, q, t) {
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1 / 6) return p + (q - p) * 6 * t;
-            if (t < 1 / 2) return q;
-            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-            return p;
-        };
-
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1 / 3);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1 / 3);
-    }
-
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
-
-/**
- * Converts an RGB color value to HSL. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * Assumes r, g, and b are contained in the set [0, 255] and
- * returns h, s, and l in the set [0, 1].
- *
- * @param   {number}  r       The red color value
- * @param   {number}  g       The green color value
- * @param   {number}  b       The blue color value
- * @return  {Array}           The HSL representation
- */
-function rgbToHsl(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
-    let r = parseInt(result[1], 16);
-    let g = parseInt(result[2], 16);
-    let b = parseInt(result[3], 16);
-
-    r /= 255, g /= 255, b /= 255;
-    const max = Math.max(r, g, b),
-        min = Math.min(r, g, b);
-    let h, s;
-    const l = (max + min) / 2;
-
-    if (max == min) {
-        h = s = 0; // achromatic
-    } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r:
-                h = (g - b) / d + (g < b ? 6 : 0);
-                break;
-            case g:
-                h = (b - r) / d + 2;
-                break;
-            case b:
-                h = (r - g) / d + 4;
-                break;
-        }
-        h /= 6;
-    }
-
-    return [Math.round(h * 360), Math.round(s * 100)];
-}
-
 function generateWarnMessageForUploadState(parameter, value, id, err) {
     adapter.log.warn(`Could not set state (${parameter}) to value (${value}) for device: ${id}. Error: ${err}`);
+}
+
+if (require.main !== module) {
+    // Export the constructor in compact mode
+    /**
+     * @param {Partial<utils.AdapterOptions>} [options={}]
+     */
+    module.exports = (options) => new Yeelight2(options);
+} else {
+    // otherwise start the instance directly
+    new Yeelight2();
 }

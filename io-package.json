@@ -134,9 +134,9 @@
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "icon": "yeelight.png",
-		"adminUI": {
-			"config": "materialize"
-		},
+    "adminUI": {
+       "config": "materialize"
+    },
     "enabled": true,
     "messagebox": true,
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.yeelight-2/master/admin/yeelight.png",

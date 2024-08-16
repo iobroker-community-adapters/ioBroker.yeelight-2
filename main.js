@@ -2,10 +2,11 @@
 /*jslint node: true */
 'use strict';
 
+// The adapter-core module gives you access to the core ioBroker functions
 const utils = require('@iobroker/adapter-core');
-const adapter = new utils.Adapter('yeelight-2');
 const scenen = require(__dirname + '/lib/scenen');
 const YeelightSearch = require(__dirname + '/yeelight-wifi/build/index');
+
 let Yeelights;
 
 //just for test
@@ -38,8 +39,8 @@ class Yeelight2 extends utils.Adapter {
      */
     async onReady() {
         main();
-        adapter.log.debug('DEVICES IN CONFIG: ' + JSON.stringify(adapter.config.devices));
-        ConfigDevices = adapter.config.devices;
+        this.log.debug('DEVICES IN CONFIG: ' + JSON.stringify(this.config.devices));
+        ConfigDevices = this.config.devices;
     }
 
     /**
@@ -57,7 +58,7 @@ class Yeelight2 extends utils.Adapter {
                     // ignore
                 }
             });
-            adapter.log.info('cleaned everything up...');
+            this.log.info('cleaned everything up...');
             callback();
         } catch (e) {
             callback();
@@ -73,7 +74,7 @@ class Yeelight2 extends utils.Adapter {
      */
     onObjectChange(id, obj) {
         // Warning, obj can be null if it was deleted
-        adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
+        this.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
     }
 
     /**
@@ -84,7 +85,7 @@ class Yeelight2 extends utils.Adapter {
     onStateChange(id, state) {
         if (state && !state.ack) {
             const changeState = id.split('.');
-            const sid = adapter.namespace + '.' + changeState[2];
+            const sid = this.namespace + '.' + changeState[2];
 
             // search id in config
             const findlight = ConfigDevices.find(device => device.name === changeState[2]);
@@ -102,7 +103,7 @@ class Yeelight2 extends utils.Adapter {
                     }
                 }
             } else {
-                adapter.log.error('LIGHT: ' + changeState[2] + ' NOT FOUND IN CONFIG!');
+                this.log.error('LIGHT: ' + changeState[2] + ' NOT FOUND IN CONFIG!');
             }
         }
     }
@@ -114,12 +115,12 @@ class Yeelight2 extends utils.Adapter {
      * @param {ioBroker.Message} obj
     */
     onMessage(obj) {
-        adapter.log.debug('here is a Message' + JSON.stringify(obj));
+        this.log.debug('here is a Message' + JSON.stringify(obj));
 
         if (!obj) return;
 
         function reply(result) {
-            adapter.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
+            this.sendTo(obj.from, obj.command, JSON.stringify(result), obj.callback);
         }
 
         switch (obj.command) {
@@ -135,7 +136,7 @@ class Yeelight2 extends utils.Adapter {
                         'port': light.port,
                         'id': light.getId()
                     });
-                    adapter.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
+                    this.log.debug('Found Light {id: ' + light.getId() + ', name: ' + light.name + ', model: ' + light.model + ', \nsupports: ' + light.supports + '}');
                 });
 
                 discoveryTimeout = setTimeout(() => {
@@ -146,7 +147,7 @@ class Yeelight2 extends utils.Adapter {
                 return true;
             }
             default:
-                adapter.log.debug('Unknown command: ' + obj.command);
+                this.log.debug('Unknown command: ' + obj.command);
                 break;
         }
     }
@@ -159,14 +160,14 @@ function initYeelight() {
     }
     Yeelights = new YeelightSearch();
     Yeelights.on('error', err => {
-        adapter.log.error('Yeelight Error: ' + err);
+        this.log.error('Yeelight Error: ' + err);
     });
 }
 
 function uploadState(id, parameter, value, sid) {
     if (!Yeelights) return;
     let checkHex = null;
-    adapter.log.debug('SEND STATE: id:' + id + ', state: ' + parameter + ', value: ' + value);
+    this.log.debug('SEND STATE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
     const aktYeelight = Yeelights.getYeelightById(id);
     if (aktYeelight) {
@@ -224,7 +225,7 @@ function uploadState(id, parameter, value, sid) {
                     aktYeelight.setRGB(value, 'sudden', 400)
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 } else {
-                    adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
+                    this.log.warn('Please enter a Hex Format like: "#FF22AA"');
                 }
                 break;
             case 'bg_rgb':
@@ -233,12 +234,12 @@ function uploadState(id, parameter, value, sid) {
                     aktYeelight.setRGBBg(value)
                         .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 } else {
-                    adapter.log.warn('Please enter a Hex Format like: "#FF22AA"');
+                    this.log.warn('Please enter a Hex Format like: "#FF22AA"');
                 }
                 break;
             case 'hue':
                 // TODO catch NAN an 1-360;
-                adapter.getState(sid + '.control.sat', function (err, state) {
+                this.getState(sid + '.control.sat', function (err, state) {
                     if (!state) {
                         return;
                     }
@@ -248,7 +249,7 @@ function uploadState(id, parameter, value, sid) {
                 });
                 break;
             case 'bg_hue':
-                adapter.getState(sid + '.control.bg_sat', function (err, state) {
+                this.getState(sid + '.control.bg_sat', function (err, state) {
                     if (!state) {
                         return;
                     }
@@ -259,7 +260,7 @@ function uploadState(id, parameter, value, sid) {
                 break;
             case 'sat':
                 // TODO catch NAN an 1-100;
-                adapter.getState(sid + '.control.hue', function (err, state) {
+                this.getState(sid + '.control.hue', function (err, state) {
                     if (!state) {
                         return;
                     }
@@ -269,7 +270,7 @@ function uploadState(id, parameter, value, sid) {
                 });
                 break;
             case 'bg_sat':
-                adapter.getState(sid + '.control.bg_hue', function (err, state) {
+                this.getState(sid + '.control.bg_hue', function (err, state) {
                     if (!state) {
                         return;
                     }
@@ -288,14 +289,14 @@ function uploadState(id, parameter, value, sid) {
                     .catch(err => generateWarnMessageForUploadState(parameter, value, id, err));
                 break;
             default:
-                adapter.log.warn('State not found');
+                this.log.warn('State not found');
         }
     }
 }
 
 function _sendscene(id, parameter, value) {
     if (!Yeelights) return;
-    adapter.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
+    this.log.debug('SEND SCENE: id:' + id + ', state: ' + parameter + ', value: ' + value);
 
     const aktYeelight = Yeelights.getYeelightById(id);
     if (aktYeelight) {
@@ -307,7 +308,7 @@ function _sendscene(id, parameter, value) {
 
 function _createscenen(sid) {
     for (const key in scenen) {
-        adapter.setObjectNotExists(sid + '.scenen.' + key, {
+        this.setObjectNotExists(sid + '.scenen.' + key, {
             common: {
                 name: key,
                 role: 'button.scenen',
@@ -322,37 +323,37 @@ function _createscenen(sid) {
 }
 
 function checkChanges(callback) {
-    adapter.getForeignObjects(adapter.namespace + '.*', 'device', async function (err, list) {
+    this.getForeignObjects(this.namespace + '.*', 'device', async function (err, list) {
         if (err) {
-            adapter.log.error(err);
+            this.log.error(err);
         } else {
             ObjDevices = list;
 
-            adapter.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDevices));
+            this.log.debug('DEVICES IN OBJECTS: ' + JSON.stringify(ObjDevices));
 
             const count = Object.keys(ObjDevices).length;
-            adapter.log.debug('DEVICES IN OBJECTS FOUND: ' + count);
+            this.log.debug('DEVICES IN OBJECTS FOUND: ' + count);
             //check every device
             for (let j = 0; j < count; j++) {
                 const element = Object.keys(ObjDevices)[j];
-                adapter.log.debug('OBJ_ELEMENT: ' + element);
+                this.log.debug('OBJ_ELEMENT: ' + element);
 
                 const oldConfig = await getastate(element);
                 await ifinConfig(element, oldConfig);
             }
 
-            adapter.subscribeStates('*');
+            this.subscribeStates('*');
             callback && callback();
         }
     });
 
     async function getastate(element) {
-        const state = await adapter.getStateAsync(element + '.info.com');
-        adapter.log.debug('OLD CONF. FROM OBJ: ' + (state && state.val));
+        const state = await this.getStateAsync(element + '.info.com');
+        this.log.debug('OLD CONF. FROM OBJ: ' + (state && state.val));
         try {
             return JSON.parse(state.val);
         } catch (err) {
-            adapter.log.error(`Could not parse ${element + '.info.com'}: ${err.message}`);
+            this.log.error(`Could not parse ${element + '.info.com'}: ${err.message}`);
             return '';
         }
     }
@@ -366,18 +367,18 @@ function checkChanges(callback) {
         for (let i = 0; i < ConfigDevices.length; i++) {
             if (ConfigDevices[i].name == sid && ConfigDevices[i].type == type) {
                 isThere = true;
-                adapter.log.debug('SMARTNAME: ' + ConfigDevices[i].smart_name);
+                this.log.debug('SMARTNAME: ' + ConfigDevices[i].smart_name);
                 if (ConfigDevices[i].ip !== oldConfig.ip) {
-                    await adapter.setStateAsync(element + '.info.IPAdress', ConfigDevices[i].ip, true);
-                    await adapter.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                    await this.setStateAsync(element + '.info.IPAdress', ConfigDevices[i].ip, true);
+                    await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
                 if (ConfigDevices[i].port !== oldConfig.port) {
-                    await adapter.setStateAsync(element + '.info.Port', ConfigDevices[i].port, true);
-                    await adapter.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                    await this.setStateAsync(element + '.info.Port', ConfigDevices[i].port, true);
+                    await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
                 if (ConfigDevices[i].smart_name !== oldConfig.smart_name) {
                     await changeSmartName(element, ConfigDevices[i].smart_name);
-                    await adapter.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
+                    await this.setStateAsync(element + '.info.com', JSON.stringify(ConfigDevices[i]), true);
                 }
 
             }
@@ -385,7 +386,7 @@ function checkChanges(callback) {
             if (i === ConfigDevices.length - 1 && isThere === false) {
                 await delDev(element.split('.')[2]);
 
-                adapter.log.debug('object: ' + ObjDevices[element]._id + ' deleted');
+                this.log.debug('object: ' + ObjDevices[element]._id + ' deleted');
             }
         }
     }
@@ -393,11 +394,11 @@ function checkChanges(callback) {
     async function changeSmartName(element, newSm) {
         const Names = ['power', 'ct', 'active_bright', 'hue', 'sat'];
         try {
-            const list = await adapter.getForeignObjectsAsync(element + '.*');
+            const list = await this.getForeignObjectsAsync(element + '.*');
 
             for (let i = 0; i < Names.length; i++) {
                 if (typeof (list[element + '.control.' + Names[i]]) !== 'undefined') {
-                    await adapter.extendObjectAsync(element + '.control.' + Names[i], {
+                    await this.extendObjectAsync(element + '.control.' + Names[i], {
                         common: {
                             smartName: {
                                 de: newSm
@@ -410,15 +411,15 @@ function checkChanges(callback) {
             // ignore
         }
 
-        adapter.log.debug('changed ' + Names.length + ' smartname to : ' + newSm);
+        this.log.debug('changed ' + Names.length + ' smartname to : ' + newSm);
     }
 
     async function delDev(id) {
-        adapter.log.warn('DEL: ' + id);
+        this.log.warn('DEL: ' + id);
         try {
-            await adapter.deleteDevice(id);
+            await this.deleteDevice(id);
         } catch (err) {
-            adapter.log.warn(err.message);
+            this.log.warn(err.message);
         }
     }
 }
@@ -429,27 +430,27 @@ function createDevice() {
 
     for (let i = 0; i < ConfigDevices.length; i++) {
 
-        const sid = adapter.namespace + '.' + ConfigDevices[i].name;
+        const sid = this.namespace + '.' + ConfigDevices[i].name;
         const device = ConfigDevices[i].name;
 
-        //adapter.log.debug("Create Device: " + sid);
-        //adapter.log.debug("onj Device: " + ObjDevices[sid]);
+        //this.log.debug("Create Device: " + sid);
+        //this.log.debug("onj Device: " + ObjDevices[sid]);
 
         if (!ObjDevices[sid]) {
-            adapter.log.debug('CREATE DEVICE: ' + sid);
-            adapter.createDevice(device, {
+            this.log.debug('CREATE DEVICE: ' + sid);
+            this.createDevice(device, {
                 name: ConfigDevices[i].type,
                 icon: '/icons/' + ConfigDevices[i].type + '.png',
             }, {
                 sid: ConfigDevices[i].name,
                 type: ConfigDevices[i].type
             });
-            adapter.createChannel(device, 'info');
-            adapter.createChannel(device, 'control');
-            adapter.createChannel(device, 'scenen');
+            this.createChannel(device, 'info');
+            this.createChannel(device, 'control');
+            this.createChannel(device, 'scenen');
             _createscenen(sid);
 
-            adapter.setObjectNotExists(sid + '.info.com', {
+            this.setObjectNotExists(sid + '.info.com', {
                 common: {
                     name: 'Command',
                     role: 'state',
@@ -459,9 +460,9 @@ function createDevice() {
                 },
                 type: 'state',
                 native: {}
-            }, () => adapter.setState(sid + '.info.com', JSON.stringify(ConfigDevices[i]), true));
+            }, () => this.setState(sid + '.info.com', JSON.stringify(ConfigDevices[i]), true));
 
-            adapter.setObjectNotExists(sid + '.info.connect', {
+            this.setObjectNotExists(sid + '.info.connect', {
                 common: {
                     name: 'Connect',
                     role: 'indicator.connected',
@@ -473,7 +474,7 @@ function createDevice() {
                 native: {}
             });
 
-            adapter.setObjectNotExists(sid + '.info.IPAdress', {
+            this.setObjectNotExists(sid + '.info.IPAdress', {
                 common: {
                     name: 'IP',
                     role: 'state',
@@ -483,9 +484,9 @@ function createDevice() {
                 },
                 type: 'state',
                 native: {}
-            }, () => adapter.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true));
+            }, () => this.setState(sid + '.info.IPAdress', ConfigDevices[i].ip, true));
 
-            adapter.setObjectNotExists(sid + '.info.Port', {
+            this.setObjectNotExists(sid + '.info.Port', {
                 common: {
                     name: 'Port',
                     role: 'state',
@@ -495,7 +496,7 @@ function createDevice() {
                 },
                 type: 'state',
                 native: {}
-            }, () => adapter.setState(sid + '.info.Port', ConfigDevices[i].port, true));
+            }, () => this.setState(sid + '.info.Port', ConfigDevices[i].port, true));
         }
         if (i === ConfigDevices.length - 1) listener();
     }
@@ -513,12 +514,12 @@ function checkOnline() {
 
                 if (element.status !== 3) {
                     //turn off
-                    adapter.setState(sid + '.info.connect', false, true);
-                    adapter.log.debug('YEELIGHT OFFLINE: ' + element.id);
+                    this.setState(sid + '.info.connect', false, true);
+                    this.log.debug('YEELIGHT OFFLINE: ' + element.id);
 
                 } else {
                     //turn on
-                    adapter.setState(sid + '.info.connect', true, true);
+                    this.setState(sid + '.info.connect', true, true);
                 }
             }
         });
@@ -534,11 +535,11 @@ function listener() {
 
     Yeelights.on('found', light => {
         if (initializedLights.find(l => l.id === light.id)) {
-            adapter.log.debug('YEELIGHT FOUND (but already initialized): ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
+            this.log.debug('YEELIGHT FOUND (but already initialized): ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
             return;
         }
         initializedLights.push(light);
-        adapter.log.debug('YEELIGHT FOUND: ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
+        this.log.debug('YEELIGHT FOUND: ' + light.hostname + ':' + light.port + '  id: ' + light.getId() + ' model: ' + light.model);
         light.getValues(
             'power',
             'bright',
@@ -561,16 +562,16 @@ function listener() {
         ).then(() => {
             light['initinalid'] = 1;
         }).catch((err) => {
-            adapter.log.error(`Exception at calling getValues() for light ${light.id}: ${err.toString()}`);
+            this.log.error(`Exception at calling getValues() for light ${light.id}: ${err.toString()}`);
         });
 
         light.on('error', function (id, ex, err) {
-            adapter.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
+            this.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
         });
 
         light.on('notification', message => {
-            adapter.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message));
-            //adapter.log.debug(JSON.stringify(Yeelights))
+            this.log.debug('NOTIFY MESSAGE: from: ' + light.getId() + ', message: ' + JSON.stringify(message));
+            //this.log.debug(JSON.stringify(Yeelights))
             if (message.method === 'props' && message.params) {
 
                 setStateDevice(light, message.params);
@@ -579,12 +580,12 @@ function listener() {
         });
 
         light.on('response', (id, result) => {
-            adapter.log.debug('RESPONSE MESSAGE: from: ' + light.getId() + ', id: ' + id + ', result:[' + result + ']}');
-            //adapter.log.debug(JSON.stringify(light))
+            this.log.debug('RESPONSE MESSAGE: from: ' + light.getId() + ', id: ' + id + ', result:[' + result + ']}');
+            //this.log.debug(JSON.stringify(light))
             if (result && result[0] !== 'ok') {
 
                 if (id === light.initinalid) {
-                    adapter.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
+                    this.log.debug('INITINAL ID FOUND FOR: ' + light.model + '-' + light.getId());
                     initObj(light, result);
                 } else {
                     setResponse(light, result);
@@ -600,51 +601,51 @@ function setResponse(aktYeelight, result) {
     //result:[off,100,16711680,2,4000]};
     if (device) {
         let sid = device.name;
-        adapter.setState(sid + '.info.connect', true, true);
+        this.setState(sid + '.info.connect', true, true);
         sid = sid + '.control';
-        adapter.log.debug('DEVICE FOUND IN CONFIG: ' + JSON.stringify(device));
+        this.log.debug('DEVICE FOUND IN CONFIG: ' + JSON.stringify(device));
         if (result) {
             if (!(result[0] === '')) {
                 switch (result[0]) {
                     case 'on':
-                        adapter.setState(sid + '.power', true, true);
+                        this.setState(sid + '.power', true, true);
                         break;
                     case 'off':
-                        adapter.setState(sid + '.power', false, true);
+                        this.setState(sid + '.power', false, true);
                         break;
                 }
             }
             if (!(result[1] === '')) {
-                adapter.setState(sid + '.active_bright', parseInt(result[1]), true);
+                this.setState(sid + '.active_bright', parseInt(result[1]), true);
             }
             if (!(result[2] === '')) {
-                adapter.setState(sid + '.rgb', dec2hex(result[2]), true);
+                this.setState(sid + '.rgb', dec2hex(result[2]), true);
             }
             if (!(result[3] === '')) {
                 switch (+result[3]) {
                     case 1:
-                        adapter.setState(sid + '.color_mode', true, true);
+                        this.setState(sid + '.color_mode', true, true);
                         break;
                     case 2:
-                        adapter.setState(sid + '.color_mode', false, true);
+                        this.setState(sid + '.color_mode', false, true);
                         break;
                 }
             }
             if (!(result[4] === '')) {
-                adapter.setState(sid + '.ct', parseInt(result[4]), true);
+                this.setState(sid + '.ct', parseInt(result[4]), true);
             }
         } else {
-            adapter.log.warn('EMPTY RESPONSE');
+            this.log.warn('EMPTY RESPONSE');
         }
 
     } else {
-        adapter.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+        this.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
     }
 }
 
 function main() {
     checkChanges(createDevice);
-    adapter.subscribeStates('*');
+    this.subscribeStates('*');
 }
 
 async function initObj(aktYeelight, result) {
@@ -654,9 +655,9 @@ async function initObj(aktYeelight, result) {
     //result = ["off", "1", "4000", "", "0", "2", "1", "", "", "0", "off", "off", "", "40", "180", "100", "65535", "4000"];
     if (device) {
         let sid = device.name;
-        adapter.setState(sid + '.info.connect', true, true);
+        this.setState(sid + '.info.connect', true, true);
         sid = sid + '.control';
-        adapter.log.debug('DEVICE FOUND IN AND CONFIG: ' + JSON.stringify(device));
+        this.log.debug('DEVICE FOUND IN AND CONFIG: ' + JSON.stringify(device));
 
         if (result) {
             if (!(result[0] == '')) {
@@ -743,11 +744,11 @@ async function initObj(aktYeelight, result) {
                 await addState(sid, 'bg_ct', result[17], device);
             }
         } else {
-            adapter.log.warn('EMPTY INITINAL RESPONSE');
+            this.log.warn('EMPTY INITINAL RESPONSE');
         }
 
     } else {
-        adapter.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+        this.log.warn('NEW DEVICE FOUND, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
     }
 }
 
@@ -770,14 +771,14 @@ async function addState(id, state, val, device) {
         if (device.smart_name !== '') {
             smartname = device.smart_name;
         }
-        //adapter.log.warn(device.smart_name);
+        //this.log.warn(device.smart_name);
     }
 
     switch (state) {
         case 'power':
         case 'bg_power':
         case 'main_power':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -792,11 +793,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, !!val, true);
+            await this.setStateAsync(id + '.' + state, !!val, true);
             break;
 
         case 'set_scene':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -808,11 +809,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, val, true);
+            await this.setStateAsync(id + '.' + state, val, true);
             break;
 
         case 'color_mode':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -823,11 +824,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, !!val, true);
+            await this.setStateAsync(id + '.' + state, !!val, true);
             break;
 
         case 'moon_mode':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -838,11 +839,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, !!val, true);
+            await this.setStateAsync(id + '.' + state, !!val, true);
             break;
         case 'ct':
         case 'bg_ct':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -860,11 +861,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
+            await this.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'active_bright':
         case 'bg_bright':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -883,11 +884,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
+            await this.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'hue':
         case 'bg_hue':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -904,11 +905,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
+            await this.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'sat':
         case 'bg_sat':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -925,11 +926,11 @@ async function addState(id, state, val, device) {
                 },
                 native: {}
             });
-            await adapter.setStateAsync(id + '.' + state, parseInt(val), true);
+            await this.setStateAsync(id + '.' + state, parseInt(val), true);
             break;
         case 'rgb':
         case 'bg_rgb':
-            await adapter.setObjectNotExistsAsync(id + '.' + state, {
+            await this.setObjectNotExistsAsync(id + '.' + state, {
                 type: 'state',
                 common: {
                     name: state,
@@ -941,7 +942,7 @@ async function addState(id, state, val, device) {
                 native: {}
             });
             val = dec2hex(val);
-            await adapter.setStateAsync(id + '.' + state, val, true);
+            await this.setStateAsync(id + '.' + state, val, true);
             break;
     }
 }
@@ -952,9 +953,9 @@ function setStateDevice(aktYeelight, state) {
 
     if (device) {
         let sid = device.name;
-        adapter.setState(sid + '.info.connect', true, true);
+        this.setState(sid + '.info.connect', true, true);
         sid = sid + '.control';
-        adapter.log.debug('DEVICE FOUND SET NOTIFY STATE: ' + JSON.stringify(device));
+        this.log.debug('DEVICE FOUND SET NOTIFY STATE: ' + JSON.stringify(device));
 
         for (const key in state) {
             switch (key) {
@@ -963,10 +964,10 @@ function setStateDevice(aktYeelight, state) {
                 case 'bg_power':
                     switch (state[key]) {
                         case 'on':
-                            adapter.setState(sid + '.' + key, true, true);
+                            this.setState(sid + '.' + key, true, true);
                             break;
                         case 'off':
-                            adapter.setState(sid + '.' + key, false, true);
+                            this.setState(sid + '.' + key, false, true);
                             break;
                     }
                     break;
@@ -980,21 +981,21 @@ function setStateDevice(aktYeelight, state) {
                 case 'sat':
                 case 'hue':
                     if (key == 'bright') {
-                        adapter.setState(sid + '.active_bright', +  parseInt(state[key]), true);
+                        this.setState(sid + '.active_bright', +  parseInt(state[key]), true);
                     }
-                    adapter.setState(sid + '.' + key, parseInt(state[key]), true);
+                    this.setState(sid + '.' + key, parseInt(state[key]), true);
                     break;
                 case 'rgb':
                 case 'bg_rgb':
-                    adapter.setState(sid + '.' + key, dec2hex(state[key]), true);
+                    this.setState(sid + '.' + key, dec2hex(state[key]), true);
                     break;
                 case 'active_mode':
                     switch (+state[key]) {
                         case 0:
-                            adapter.setState(sid + '.moon_mode', false, true);
+                            this.setState(sid + '.moon_mode', false, true);
                             break;
                         case 1:
-                            adapter.setState(sid + '.moon_mode', true, true);
+                            this.setState(sid + '.moon_mode', true, true);
                             break;
                     }
                     break;
@@ -1002,17 +1003,17 @@ function setStateDevice(aktYeelight, state) {
                     //modeVal = state[key];
                     switch (+state[key]) {
                         case 1:
-                            adapter.setState(sid + '.color_mode', true, true);
+                            this.setState(sid + '.color_mode', true, true);
                             break;
                         case 2:
-                            adapter.setState(sid + '.color_mode', false, true);
+                            this.setState(sid + '.color_mode', false, true);
                             break;
                     }
                     break;
             }
         }
     } else {
-        adapter.log.debug('NEW DEVICE FOUND IN NOTIFY, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
+        this.log.debug('NEW DEVICE FOUND IN NOTIFY, PLEASE ADD TO CONFIG: ' + aktYeelight.model + ', id: ' + aktYeelight.getId());
     }
 
 
@@ -1025,7 +1026,7 @@ function dec2hex(dec) {
 }
 
 function generateWarnMessageForUploadState(parameter, value, id, err) {
-    adapter.log.warn(`Could not set state (${parameter}) to value (${value}) for device: ${id}. Error: ${err}`);
+    this.log.warn(`Could not set state (${parameter}) to value (${value}) for device: ${id}. Error: ${err}`);
 }
 
 if (require.main !== module) {

@@ -598,7 +598,7 @@ class Yeelight2 extends utils.Adapter {
             });
 
             light.on('error', function (id, ex, err) {
-                gthis.log.debug('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
+                gthis.log.error('ERROR YEELIGHT CONNECTION: ' + id + ': ' + ex + ': ' + err);
             });
 
             light.on('notification', message => {

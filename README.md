@@ -78,7 +78,7 @@ For the above examples:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.5.1 (2025-02-26)
 
 -   (mcm1957) Update of joi has been reverted due to incompatibilities.
 
@@ -109,12 +109,6 @@ For the above examples:
 -   (Apollon77) Prevent to register too many event listeners on discovery
 -   (Apollon77) Set some states after object creation
 -   (Apollon77) Prevent some crash cases reported by Sentry
-
-### 1.2.0 (2022-04-13)
-
--   (Apollon77) Optimize unload handling and async executions
--   (Apollon77) Prevent log on unexpected types
--   (Apollon77) Add Sentry for crash reporting
 
 ## License
 

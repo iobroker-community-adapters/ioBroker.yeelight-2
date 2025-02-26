@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "news": {
+      "1.5.1": {
+        "en": "Update of joi has been reverted due to incompatibilities.",
+        "de": "Update von joi wurde aufgrund von Inkompatibilitäten wiederverwendet.",
+        "ru": "Обновление joi было отменено из-за несовместимости.",
+        "pt": "A atualização de joi foi revertida devido a incompatibilidades.",
+        "nl": "Update van joi is teruggedraaid als gevolg van onverenigbaarheden.",
+        "fr": "La mise à jour de joi a été rétablie en raison d'incompatibilités.",
+        "it": "L'aggiornamento di joi è stato reindirizzato a causa di incompatibilità.",
+        "es": "La actualización de joi se ha revertido debido a incompatibilidades.",
+        "pl": "Aktualizacja joi została cofnięta z powodu niezgodności.",
+        "uk": "Оновити joi було відновлено через незручності.",
+        "zh-cn": "Joi的更新因不兼容而恢复."
+      },
       "1.5.0": {
         "en": "Adapter requires node.js >= 20, js-controller >= 6 and admin >= 6 now\nOnline status for each device has been added (visible in admin object tree).\nSupport for compact mode has been added.\nCode has been partially refeactored.\nDependencies have been updated",
         "de": "Adapter benötigt node.js >= 20, js-controller >== 6 und admin >= 6 jetzt\nDer Online-Status für jedes Gerät wurde hinzugefügt (sichtbar in Admin-Objektbaum).\nDie Unterstützung für den kompakten Modus wurde hinzugefügt.\nDer Code wurde teilweise neu geschrieben.\nAbhängigkeiten wurden aktualisiert",

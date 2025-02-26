@@ -78,8 +78,7 @@ For the above examples:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.5.0-alpha.0 (2025-02-26)
 
 -   (mcm1957) Adapter requires node.js >= 20, js-controller >= 6 and admin >= 6 now
 -   (Black-Thunder) Online status for each device has been added (visible in admin object tree).
@@ -112,10 +111,6 @@ For the above examples:
 -   (Apollon77) Optimize unload handling and async executions
 -   (Apollon77) Prevent log on unexpected types
 -   (Apollon77) Add Sentry for crash reporting
-
-### 1.1.2 (2021-08-05)
-
--   Fix Joi Error
 
 ## License
 

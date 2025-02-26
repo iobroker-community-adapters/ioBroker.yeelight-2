@@ -12,27 +12,26 @@
 
 # ioBroker.yeelight-2
 
-Dieser Adapter steuert Yeelight Lampen. Statusäderungen durch die App werden direkt erkannt.
-## Versionsprung
-Beim wechsel von der 0.4.X zur 0.9.X oder höher müssen die objekte manuell alle gelöscht werden, damit sie neu erzeugt werden können.
+Dieser Adapter steuert Yeelight Lampen. Statusänderungen durch die App werden direkt erkannt.
 
 ## Installation
 
-Bei vielen Lampem muss über die Yeelight app der Lan Modus aktiviert werden, bevor sie gefunden und gesteuert werden können. 
+Bei vielen Lampen muss über die Yeelight App die "LAN-Steuerung" aktiviert werden, bevor sie gefunden und gesteuert werden können.
 
 ![](admin/lan.jpg)
 
-## Config
-Die Leuchten können manuell hinzugefügt werden oder gesucht werden. Es kann die IP, smartname, port und der Name angepasst werden. Der Standard Port ist 55443. Wird ein Leerzeichen im Namen benutzt wird es ersetzt durch "_". 
+## Konfiguration
 
-Bitte Beachten, dass beim adapterstart alle Lampen eingeschaltet (mit Spannung versorgt sind).
+Lampen können manuell hinzugefügt oder gesucht werden. IP, Smartname, Port und Name können angepasst werden. Der Standard-Port ist 55443. Wenn ein Leerzeichen im Namen verwendet wird, wird es durch "\_" ersetzt.
 
 ### smartname
-Wird ein Smartname in der Config eingegeben, wird diese Lampe automatisch zum Cloud adapter hinzugefügt und kann über alexa gesteuert werden.
 
-### Find device
-über diese Funktion können die Lampen automatisch gesucht und hinzugefügt werden. die Suche dauert ca 20 Sekunden. Die gefundenen Geräte werden anschließend in der Tabelle aufgelistet.
+Wird in der Konfiguration ein Smartname angegeben, wird diese Lampe automatisch zum Cloud Adapter hinzugefügt und kann über Alexa gesteuert werden.
 
+### Geräte suchen
 
-## Changelog
-Das Änderungsprotokoll findet sich in der Datei README.md
+Mit dieser Funktion können Lampen automatisch gesucht und hinzugefügt werden. die Suche dauert ca. 20 Sekunden. Danach werden die gefundenen Geräte in der Tabelle aufgelistet.
+
+## Änderungsprotokoll
+
+Das Änderungsprotokoll ist in der Datei [README.md](https://github.com/iobroker-community-adapters/ioBroker.yeelight-2/tree/master?tab=readme-ov-file#changelog) zu finden.

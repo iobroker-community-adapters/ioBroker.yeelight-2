@@ -81,8 +81,11 @@ For the above examples:
 
 ### **WORK IN PROGRESS**
 
--   (Black-Thunder) Online status for each device has been added (visible in admin object tree)
--   (Black-Thunder) Support for compact mode has been added
+-   (mcm1957) Adapter requires node.js >= 20, js-controller >= 6 and admin >= 6 now
+-   (Black-Thunder) Online status for each device has been added (visible in admin object tree).
+-   (Black-Thunder) Support for compact mode has been added.
+-   (Black-Thunder) Code has been partially refeactored.
+-   (mcm1957) Dependencies have been updated
 
 ### 1.4.0 (2024-04-29)
 

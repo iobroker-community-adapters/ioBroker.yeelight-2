@@ -78,6 +78,10 @@ For the above examples:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+-   (mcm1957) Update of joi has been reverted due to incompatibilities.
+
 ### 1.5.0 (2025-02-26)
 
 -   (mcm1957) Adapter requires node.js >= 20, js-controller >= 6 and admin >= 6 now

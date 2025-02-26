@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.5.0-alpha.1",
+    "version": "1.5.0",
     "news": {
+      "1.5.0": {
+        "en": "Adapter requires node.js >= 20, js-controller >= 6 and admin >= 6 now\nOnline status for each device has been added (visible in admin object tree).\nSupport for compact mode has been added.\nCode has been partially refeactored.\nDependencies have been updated",
+        "de": "Adapter benötigt node.js >= 20, js-controller >== 6 und admin >= 6 jetzt\nDer Online-Status für jedes Gerät wurde hinzugefügt (sichtbar in Admin-Objektbaum).\nDie Unterstützung für den kompakten Modus wurde hinzugefügt.\nDer Code wurde teilweise neu geschrieben.\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Адаптер требует node.js >= 20, js-контроллер >= 6 и админ >= 6 сейчас\nОнлайн-статус для каждого устройства был добавлен (видим в дереве объектов администратора).\nДобавлена поддержка компактного режима.\nКод был частично восстановлен.\nЗависимости были обновлены",
+        "pt": "Adapter requer node.js >= 20, js-controller >= 6 e admin >= 6 agora\nO status on-line para cada dispositivo foi adicionado (visível na árvore de objetos admin).\nO suporte para o modo compacto foi adicionado.\nO código foi parcialmente refutado.\nAs dependências foram atualizadas",
+        "nl": "Voor adapters zijn node.js (m.u.v. js-controller) 6 en admin 6 nu\nOnline status voor elk apparaat is toegevoegd (zichtbaar in admin object boom).\nOndersteuning voor compacte modus is toegevoegd.\nCode is gedeeltelijk nagespeeld.\nAfhankelijkheden zijn bijgewerkt",
+        "fr": "Adaptateur nécessite node.js >= 20, js-controller >= 6 et administrateur >= 6 maintenant\nLe statut en ligne de chaque périphérique a été ajouté (visible dans l'arborescence des objets admin).\nLe support pour le mode compact a été ajouté.\nLe code a été partiellement refait.\nLes dépendances ont été actualisées",
+        "it": "Adattatore richiede node.js >= 20, js-controller >= 6 e admin >= 6 ora\nLo stato online per ogni dispositivo è stato aggiunto (visibile nell'albero degli oggetti di amministrazione).\nÈ stato aggiunto il supporto per la modalità compatta.\nIl codice è stato parzialmente refettore.\nLe dipendenze sono state aggiornate",
+        "es": "Adaptador requiere node.js >= 20, js-controller √= 6 y admin= 6 ahora\nSe ha añadido el estado en línea para cada dispositivo (visible en el árbol del objeto administrador).\nSe ha añadido soporte para modo compacto.\nEl código ha sido parcialmente modificado.\nSe han actualizado las dependencias",
+        "pl": "Adapter wymaga node.js > = 20, kontroler js- > = 6 i admin > = 6 teraz\nDodano status online dla każdego urządzenia (widoczny w drzewie obiektu admin).\nDodano obsługę trybu kompaktowego.\nKod został częściowo uznany.\nZaktualizowano zależności",
+        "uk": "Адаптер вимагає node.js >= 20, js-controller >= 6 і admin >= 6 тепер\nДодано статус Інтернет для кожного пристрою (видимий у дереві об'єкта адміністратора).\nДодано підтримку компактного режиму.\nКод був частково реакторований.\nЗалежність було оновлено",
+        "zh-cn": "适配器需要节点.js QQ20,js控制器QQ 第6条 行政 现在6个\n已添加每个设备的在线状态( 可见于管理员对象树) .\n已添加对紧凑模式的支持 .\n代码已经部分重置 .\n依赖关系已更新"
+      },
       "1.4.0": {
         "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
         "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",

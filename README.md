@@ -80,7 +80,8 @@ For the above examples:
 -->
 
 ### **WORK IN PROGRESS**
--   (Black-Thunder) Incompatibilities with the dependency "joy" have been fixed.
+
+-   (Black-Thunder) Incompatibilities with the dependency "joy" have been fixed and "joy" has been updated.
 
 ### 1.5.1 (2025-02-26)
 

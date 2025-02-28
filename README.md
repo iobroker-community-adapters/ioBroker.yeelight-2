@@ -78,8 +78,7 @@ For the above examples:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.5.2 (2025-02-28)
 
 -   (Black-Thunder) Incompatibilities with the dependency "joy" have been fixed and "joy" has been updated.
 
@@ -107,13 +106,6 @@ For the above examples:
 -   (mcm1957) Testing has been changed to support node 18 and 20
 -   (mcm1957) Dependencies have been updated
 -   (Apollon77) make sure reconnects work correctly
-
-### 1.2.1 (2022-06-16)
-
--   (Apollon77) register error handler for Yeelight instance
--   (Apollon77) Prevent to register too many event listeners on discovery
--   (Apollon77) Set some states after object creation
--   (Apollon77) Prevent some crash cases reported by Sentry
 
 ## License
 

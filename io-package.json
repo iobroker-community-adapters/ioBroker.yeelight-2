@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "yeelight-2",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "news": {
+      "1.5.2": {
+        "en": "Incompatibilities with the dependency \"joy\" have been fixed and \"joy\" has been updated.",
+        "de": "Inkompatibilitäten mit der Abhängigkeit \"joy\" wurden behoben und \"joy\" wurde aktualisiert.",
+        "ru": "Несоответствия с зависимостью «радость» были исправлены и «радость» была обновлена.",
+        "pt": "As incompatibilidades com a dependência \"joy\" foram corrigidas e \"joy\" foi atualizado.",
+        "nl": "Gevallen van onverenigbaarheid met de afhankelijkheid \"geniet\" zijn vastgesteld en \"geniet\" is bijgewerkt.",
+        "fr": "Les incompatibilités avec la dépendance \"joy\" ont été corrigées et \"joy\" a été mis à jour.",
+        "it": "Le incompatibilità con la dipendenza \"gioia\" sono state fissate e \"gioia\" è stata aggiornata.",
+        "es": "Las incompatibilidades con la dependencia \"joy\" han sido fijadas y \"joy\" ha sido actualizada.",
+        "pl": "Niezgodności z uzależnieniem \"radość\" zostały ustalone i \"radość\" została zaktualizowana.",
+        "uk": "Оновлено нерівності з залежностю \"joy\" та \"joy\".",
+        "zh-cn": "与依附\"欢乐\"的不相容性得到固定,\"欢乐\"得到更新."
+      },
       "1.5.1": {
         "en": "Update of joi has been reverted due to incompatibilities.",
         "de": "Update von joi wurde aufgrund von Inkompatibilitäten wiederverwendet.",
@@ -80,19 +93,6 @@
         "pl": "Zoptymalizuj obsługę rozładunku i asynchroniczne wykonania\nZapobiegaj logowaniu się nieoczekiwanych typów\nDodaj Sentry do zgłaszania awarii",
         "zh-cn": "优化卸载处理和异步执行\n防止登录意外类型\n添加 Sentry 以进行崩溃报告",
         "uk": "Оптимізуйте обробку вивантаження та асинхронне виконання\nЗапобігання реєстрації неочікуваних типів\nДодайте Sentry для звітування про збої"
-      },
-      "1.1.2": {
-        "en": "Fix Joi Error",
-        "de": "Joi-Fehler beheben",
-        "ru": "Исправить ошибку Joi",
-        "pt": "Corrigir erro Joi",
-        "nl": "Fix Joi-fout",
-        "fr": "Corriger l'erreur Joi",
-        "it": "Correggi l'errore Joi",
-        "es": "Solucionar el error de Joi",
-        "pl": "Napraw błąd Joi",
-        "zh-cn": "修复 Joi 错误",
-        "uk": "Виправте помилку Joi"
       }
     },
     "titleLang": {

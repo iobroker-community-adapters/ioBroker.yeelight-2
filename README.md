@@ -78,6 +78,10 @@ For the above examples:
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+-   (Black-Thunder) Incompatibilities with the dependency "joy" have been fixed.
+
 ### 1.5.1 (2025-02-26)
 
 -   (mcm1957) Update of joi has been reverted due to incompatibilities.

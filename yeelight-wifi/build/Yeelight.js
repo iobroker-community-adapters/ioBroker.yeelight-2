@@ -15,8 +15,6 @@ var _net2 = _interopRequireDefault(_net);
 
 var _joi = require('joi');
 
-var _joi2 = _interopRequireDefault(_joi);
-
 var _url = require('url');
 
 var _url2 = _interopRequireDefault(_url);
@@ -210,39 +208,39 @@ var Yeelight = function (_EventEmitter) {
 
       return new Promise(function (resolve, reject) {
         if (!schema) {
-          schema = _joi2.default.any(); //eslint-disable-line
+          schema = _joi.any(); //eslint-disable-line
         }
 
-        _joi2.default.validate(params, schema, function (err, value) {
-          if (err) {
-            reject(err);
-            return;
-          }
+        const result = schema.validate(params);
 
-          var req = JSON.stringify({
-            method: method,
-            params: value,
-            id: _this2.reqCount
-          });
+        if (result.error) {
+          reject(err);
+          return;
+        }
 
-          // Avoid to send data on stale sockets
-          if (_this2.status >= YeelightStatus.OFFLINE) {
-            _this2.log('sending req: ' + req);
-
-            _this2.socket.write(req + '\r\n', function (err) {
-              if (err) {
-                _this2.log('Error sending req: ' + req + ' on ' + err.address);
-                reject(err);
-                return;
-              }
-              resolve(_this2.reqCount);
-              _this2.reqCount += 1;
-            });
-          } else {
-            _this2.log('Not sending request for offline bulb');
-            resolve();
-          }
+        var req = JSON.stringify({
+          method: method,
+          params: result.value,
+          id: _this2.reqCount
         });
+
+        // Avoid to send data on stale sockets
+        if (_this2.status >= YeelightStatus.OFFLINE) {
+          _this2.log('sending req: ' + req);
+
+          _this2.socket.write(req + '\r\n', function (err) {
+            if (err) {
+              _this2.log('Error sending req: ' + req + ' on ' + err.address);
+              reject(err);
+              return;
+            }
+            resolve(_this2.reqCount);
+            _this2.reqCount += 1;
+          });
+        } else {
+          _this2.log('Not sending request for offline bulb');
+          resolve();
+        }
       });
     }
 
@@ -327,7 +325,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'setName',
     value: function setName(name) {
-      var schema = _joi2.default.array().items(_joi2.default.string().required());
+      var schema = _joi.array().items(_joi.string().required());
       return this.sendRequest('set_name', [name], schema);
     }
 
@@ -417,7 +415,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'smooth';
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.number().min(1700).max(6500).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(1700).max(6500).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_ct_abx', [temperature, effect, time], schema);
     }
 
@@ -449,7 +447,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'smooth';
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.number().min(1700).max(6500).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(1700).max(6500).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('bg_set_ct_abx', [temperature, effect, time], schema);
     }
 
@@ -476,7 +474,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'smooth';
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.number().min(0).max(100).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(0).max(100).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_bright', [brightness, effect, time], schema);
     }
 
@@ -503,7 +501,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'smooth';
       var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.number().min(0).max(100).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(0).max(100).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('bg_set_bright', [brightness, effect, time], schema);
     }
 
@@ -526,7 +524,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_power', ['on', effect, time], schema);
     }
 
@@ -549,7 +547,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('bg_set_power', ['on', effect, time], schema);
     }
 
@@ -572,7 +570,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_power', ['off', effect, time], schema);
     }
 
@@ -595,7 +593,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('bg_set_power', ['off', effect, time], schema);
     }
 
@@ -618,7 +616,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_power', ['on', effect, time, 5], schema);
     }
     /**
@@ -640,7 +638,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_power', ['on', effect, time, 1], schema);
     }
 
@@ -663,7 +661,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'smooth';
       var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
 
-      var schema = _joi2.default.array().items(_joi2.default.any().required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.any().required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_power', ['on', effect, time, 2], schema);
     }
 
@@ -692,7 +690,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'setScene',
     value: function setScene(params) {
-      var schema = _joi2.default.array().items(_joi2.default.string().allow('color', 'hsv', 'ct', 'auto_delay_off').required(), _joi2.default.any().required(), _joi2.default.any().required(), _joi2.default.any());
+      var schema = _joi.array().items(_joi.string().allow('color', 'hsv', 'ct', 'auto_delay_off').required(), _joi.any().required(), _joi.any().required(), _joi.any());
       return this.sendRequest('set_scene', params, schema);
     }
 
@@ -721,7 +719,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'setSceneBg',
     value: function setSceneBg(params) {
-      var schema = _joi2.default.array().items(_joi2.default.string().allow('color', 'hsv', 'ct', 'auto_delay_off').required(), _joi2.default.any().required(), _joi2.default.any().required(), _joi2.default.any());
+      var schema = _joi.array().items(_joi.string().allow('color', 'hsv', 'ct', 'auto_delay_off').required(), _joi.any().required(), _joi.any().required(), _joi.any());
       return this.sendRequest('bg_set_scene', params, schema);
     }
 
@@ -749,7 +747,7 @@ var Yeelight = function (_EventEmitter) {
 
       var color = (0, _utils.hexToRgb)(hex);
       var colorDec = color.red * 65536 + color.green * 256 + color.blue;
-      var schema = _joi2.default.array().items(_joi2.default.number().min(0).max(16777215).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(0).max(16777215).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_rgb', [colorDec, effect, time], schema);
     }
 
@@ -777,7 +775,7 @@ var Yeelight = function (_EventEmitter) {
 
       var color = (0, _utils.hexToRgb)(hex);
       var colorDec = color.red * 65536 + color.green * 256 + color.blue;
-      var schema = _joi2.default.array().items(_joi2.default.number().min(0).max(16777215).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(0).max(16777215).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('bg_set_rgb', [colorDec, effect, time], schema);
     }
 
@@ -806,7 +804,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'smooth';
       var time = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 100;
 
-      var schema = _joi2.default.array().items(_joi2.default.number().min(0).max(359).required(), _joi2.default.number().min(0).max(100).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(0).max(359).required(), _joi.number().min(0).max(100).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('set_hsv', [hue, saturation, effect, time], schema);
     }
 
@@ -835,7 +833,7 @@ var Yeelight = function (_EventEmitter) {
       var effect = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'smooth';
       var time = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 100;
 
-      var schema = _joi2.default.array().items(_joi2.default.number().min(0).max(359).required(), _joi2.default.number().min(0).max(100).required(), _joi2.default.string().allow('sudden', 'smooth').required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().min(0).max(359).required(), _joi.number().min(0).max(100).required(), _joi.string().allow('sudden', 'smooth').required(), _joi.number().required());
       return this.sendRequest('bg_set_hsv', [hue, saturation, effect, time], schema);
     }
 
@@ -853,7 +851,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'addCron',
     value: function addCron(type, value) {
-      var schema = _joi2.default.array().items(_joi2.default.number().required(), _joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().required(), _joi.number().required());
       return this.sendRequest('cron_add', [type, value], schema);
     }
 
@@ -870,7 +868,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'getCron',
     value: function getCron(index) {
-      var schema = _joi2.default.array().items(_joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().required());
       return this.sendRequest('cron_get', [index], schema);
     }
 
@@ -887,7 +885,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'deleteCron',
     value: function deleteCron(index) {
-      var schema = _joi2.default.array().items(_joi2.default.number().required());
+      var schema = _joi.array().items(_joi.number().required());
       return this.sendRequest('cron_del', [index], schema);
     }
 
@@ -913,7 +911,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'setAdjust',
     value: function setAdjust(action, prop) {
-      var schema = _joi2.default.array().items(_joi2.default.string().allow('increase', 'decrease', 'circle').required(), _joi2.default.string().allow('bright', 'ct', 'color').required());
+      var schema = _joi.array().items(_joi.string().allow('increase', 'decrease', 'circle').required(), _joi.string().allow('bright', 'ct', 'color').required());
       return this.sendRequest('set_adjust', [action, prop], schema);
     }
 
@@ -939,7 +937,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'setAdjustBg',
     value: function setAdjustBg(action, prop) {
-      var schema = _joi2.default.array().items(_joi2.default.string().allow('increase', 'decrease', 'circle').required(), _joi2.default.string().allow('bright', 'ct', 'color').required());
+      var schema = _joi.array().items(_joi.string().allow('increase', 'decrease', 'circle').required(), _joi.string().allow('bright', 'ct', 'color').required());
       return this.sendRequest('bg_set_adjust', [action, prop], schema);
     }
 
@@ -961,7 +959,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'setMusicMode',
     value: function setMusicMode(action, host, port) {
-      var schema = _joi2.default.array().items(_joi2.default.number().allow(0, 1).required(), _joi2.default.string().required(), _joi2.default.number().min(1).max(65535).required());
+      var schema = _joi.array().items(_joi.number().allow(0, 1).required(), _joi.string().required(), _joi.number().min(1).max(65535).required());
       return this.sendRequest('set_music', [action, host, port], schema);
     }
 
@@ -986,7 +984,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'startColorFlow',
     value: function startColorFlow(count, action, flowExpression) {
-      var schema = _joi2.default.array().items(_joi2.default.number().required(), _joi2.default.number().allow(0, 1, 2).required(), _joi2.default.string().required());
+      var schema = _joi.array().items(_joi.number().required(), _joi.number().allow(0, 1, 2).required(), _joi.string().required());
       return this.sendRequest('start_cf', [action, action, flowExpression], schema);
     }
 
@@ -1011,7 +1009,7 @@ var Yeelight = function (_EventEmitter) {
   }, {
     key: 'startColorFlowBg',
     value: function startColorFlowBg(count, action, flowExpression) {
-      var schema = _joi2.default.array().items(_joi2.default.number().required(), _joi2.default.number().allow(0, 1, 2).required(), _joi2.default.string().required());
+      var schema = _joi.array().items(_joi.number().required(), _joi.number().allow(0, 1, 2).required(), _joi.string().required());
       return this.sendRequest('bg_start_cf', [action, action, flowExpression], schema);
     }
 

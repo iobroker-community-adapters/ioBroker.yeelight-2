@@ -28,7 +28,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.2.3",
+    "@iobroker/adapter-core": "^3.3.2",
     "babel": "^6.23.0",
     "circular-json": "^0.5.9",
     "cli": "^1.0.1",

@@ -2,15 +2,10 @@
   "name": "iobroker.yeelight-2",
   "version": "1.5.2",
   "description": "ioBroker Yeelight Adapter",
-  "author": {
-    "name": "MeisterTR",
-    "email": "meistertr.smarthome@gmail.com"
-  },
+  "author": "MeisterTR <meistertr.smarthome@gmail.com>",
   "contributors": [
-    {
-      "name": "MeisterTR",
-      "email": "meistertr.smarthome@gmail.com"
-    }
+    "MeisterTR <meistertr.smarthome@gmail.com>",
+    "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
   ],
   "homepage": "https://github.com/iobroker-community-adapters/ioBroker.yeelight-2",
   "license": "MIT",

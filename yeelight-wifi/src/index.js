@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import EventEmitter from 'node:events';
 import { Client } from 'node-ssdp';
 import debug from 'debug';
 import Yeelight from './Yeelight';

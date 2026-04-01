@@ -1,8 +1,8 @@
-import net from 'net';
+import net from 'node:net';
 import Joi from 'joi';
-import url from 'url';
+import url from 'node:url';
 import debug from 'debug';
-import EventEmitter from 'events';
+import EventEmitter from 'node:events';
 
 import {
   hexToRgb

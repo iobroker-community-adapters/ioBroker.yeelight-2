@@ -136,7 +136,7 @@
     "mode": "daemon",
     "icon": "yeelight.png",
     "adminUI": {
-      "config": "materialize"
+      "config": "json"
     },
     "enabled": true,
     "messagebox": true,

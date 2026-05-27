@@ -1,0 +1,108 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "main": {
+            "type": "panel",
+            "label": "Main settings",
+            "items": {
+                "_logo": {
+                    "newLine": true,
+                    "type": "staticImage",
+                    "src": "yeelight.png",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 2,
+                    "xl": 2
+                },
+                "devices": {
+                    "newLine": true,
+                    "type": "table",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Name",
+                            "width": "22%",
+                            "sort": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "ip",
+                            "title": "ip adress",
+                            "width": "22%",
+                            "sort": true
+                        },
+                        {
+                            "type": "number",
+                            "attr": "port",
+                            "title": "port",
+                            "width": "10%",
+                            "sort": true
+                        },
+                        {
+                            "type": "text",
+                            "attr": "smart_name",
+                            "title": "smartname",
+                            "width": "22%"
+                        },
+                        {
+                            "type": "select",
+                            "attr": "type",
+                            "title": "type",
+                            "width": "24%",
+                            "options": [
+                                {
+                                    "label": "color",
+                                    "value": "color"
+                                },
+                                {
+                                    "label": "ceiling1",
+                                    "value": "ceiling1"
+                                },
+                                {
+                                    "label": "ceiling2",
+                                    "value": "ceiling2"
+                                },
+                                {
+                                    "label": "ceiling3/yeelight480",
+                                    "value": "ceiling3/yeelight480"
+                                },
+                                {
+                                    "label": "ceiling4/yeelight650",
+                                    "value": "ceiling4/yeelight650"
+                                },
+                                {
+                                    "label": "ceiling10/pendant",
+                                    "value": "ceiling10/pendant"
+                                },
+                                {
+                                    "label": "bslamp1",
+                                    "value": "bslamp1"
+                                },
+                                {
+                                    "label": "desklamp",
+                                    "value": "desklamp"
+                                },
+                                {
+                                    "label": "mono",
+                                    "value": "mono"
+                                },
+                                {
+                                    "label": "stripe",
+                                    "value": "stripe"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

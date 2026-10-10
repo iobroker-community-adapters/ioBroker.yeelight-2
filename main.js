@@ -260,7 +260,7 @@ class Yeelight2 extends utils.Adapter {
                     break;
                 case 'hue':
                     // TODO catch NAN an 1-360;
-                    this.getState(`${sid}.control.sat`, function (err, state) {
+                    this.getState(`${sid}.control.sat`, (err, state) => {
                         if (!state) {
                             return;
                         }
@@ -271,7 +271,7 @@ class Yeelight2 extends utils.Adapter {
                     });
                     break;
                 case 'bg_hue':
-                    this.getState(`${sid}.control.bg_sat`, function (err, state) {
+                    this.getState(`${sid}.control.bg_sat`, (err, state) => {
                         if (!state) {
                             return;
                         }
@@ -283,7 +283,7 @@ class Yeelight2 extends utils.Adapter {
                     break;
                 case 'sat':
                     // TODO catch NAN an 1-100;
-                    this.getState(`${sid}.control.hue`, function (err, state) {
+                    this.getState(`${sid}.control.hue`, (err, state) => {
                         if (!state) {
                             return;
                         }
@@ -294,7 +294,7 @@ class Yeelight2 extends utils.Adapter {
                     });
                     break;
                 case 'bg_sat':
-                    this.getState(`${sid}.control.bg_hue`, function (err, state) {
+                    this.getState(`${sid}.control.bg_hue`, (err, state) => {
                         if (!state) {
                             return;
                         }
